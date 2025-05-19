@@ -1,0 +1,28 @@
+.login-card {
+    width: 400px;
+    background-color: #c9e9e6;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    margin-top: 100px;
+}
+  
+.main-title {
+    text-align: left;
+}
+
+.login-title {
+    text-align: center;
+}
+
+.login-button-form {
+    text-align: right;
+}
+
+.login-button {
+    background-color: #26a69a;
+}
+
+.login-button:hover {
+    background-color: #26a69a !important;
+}
