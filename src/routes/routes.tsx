@@ -5,12 +5,14 @@ import {
   HOME_PATH,
   ROOM_PATH,
   LOGIN_PATH,
+  SIGNUP_PATH,
 } from "../constants/RoutePaths";
 import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
 import DassboardPage from "../pages/DassboardPage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
+import SignUpContainer from "../components/signUp/SignUpContainer";
 
 export const router = createBrowserRouter([
   {
@@ -35,4 +37,8 @@ export const router = createBrowserRouter([
     path: LOGIN_PATH,
     element: <LoginContainer />,
   },
+  {
+    path: SIGNUP_PATH,
+    element: <SignUpContainer/>,
+  }
 ]);
