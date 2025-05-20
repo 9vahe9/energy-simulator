@@ -3,26 +3,27 @@ import { useState } from 'react';
 import './login.css';
 import { auth } from '../../firebaseConfig/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
 
 const { Title } = Typography;
 
 export const LoginContainer = () => {
-
+    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
-
+    const [userToken, setUserToken] = useState(null);
+    const navigate = useNavigate();
 
    async function handleSignIn(){
 
         try{
             const signInAttempt = await signInWithEmailAndPassword(auth, email, password);
-            alert("Sign in worked");
+            navigate(DASHBOARD_PATH)
         }
         catch(err){
             alert("Sorry, check either your email or password");
         }
-
-
     }
     
 
@@ -64,7 +65,7 @@ export const LoginContainer = () => {
                 <Form.Item>
                     <Row gutter={8}>
                         <Col span={8}>
-                        <Button type='link' block>
+                        <Button onClick={() => navigate(HOME_PATH) } type='link' block>
                             Back to Home
                         </Button>
                         </Col>
@@ -74,7 +75,7 @@ export const LoginContainer = () => {
                         </Button>
                         </Col>
                         <Col span={8}>
-                        <Button type='link' block>
+                        <Button onClick={() => navigate(SIGNUP_PATH)} type='link' block>
                             Sign up
                         </Button>
                         </Col>
