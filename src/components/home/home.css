@@ -1,0 +1,59 @@
+body {
+    background-color: #e0f2f1;
+}
+
+.innerBox{
+  width: 70%;
+  height: 80vh;
+  margin: 0 auto; 
+  margin-top: 50px;  
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding-left: 100px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+h1{
+   color: rgb(19 78 74 / var(--tw-text-opacity, 1));
+    font-weight: bold;
+    font-size: 1.875rem;
+}
+
+.loginButton{
+        background-color:  #26a69a;
+       color: rgb(255 255 255);
+}
+
+.registrationButton{
+    background-color: #5c6bc0;
+    color: rgb(255 255 255);
+}
+
+.wordBoxes{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.wordBoxes span{
+    border: 1px solid;
+    border-radius: 25px;
+    padding: 3px;
+    border-color: #e5e7eb;
+}
+
+.wordBoxes h3{
+    height: 5px;
+}
+
+.tryButton{
+   background-color:  rgb(17 94 89);
+   color: rgb(255 255 255);
+}
+
+.buttons{
+    display: flex;
+    flex-flow: row;
+    gap: 20px;
+}
