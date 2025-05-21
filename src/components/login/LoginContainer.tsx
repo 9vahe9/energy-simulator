@@ -5,20 +5,27 @@ import { auth } from '../../firebaseConfig/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { useDispatch, useSelector } from 'react-redux';
+import type {RootState} from "../../store/store"
+import {setEmail, setPassword} from "../../store/authenticationSlice/Authslice"
+
 
 const { Title } = Typography;
 
 export const LoginContainer = () => {
-    
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState(""); 
-    const [userToken, setUserToken] = useState(null);
+
+    const email = useSelector((state: RootState) => state.auth.email);
+    const password = useSelector((state: RootState )=> state.auth.password);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
    async function handleSignIn(){
 
         try{
             const signInAttempt = await signInWithEmailAndPassword(auth, email, password);
+            dispatch(setEmail(""));
+            dispatch(setPassword(""));
             navigate(DASHBOARD_PATH)
         }
         catch(err){
@@ -47,7 +54,7 @@ export const LoginContainer = () => {
                     rules={[{required: true, message: "Enter your username"}]}
                 >
                     <Input placeholder='myUsername' value ={email} 
-                    onChange={(e) => setEmail(e.target.value)}/>
+                    onChange={(e) => dispatch(setEmail(e.target.value))}/>
                 </Form.Item>
                 <Form.Item
                     label="Password"
@@ -55,7 +62,7 @@ export const LoginContainer = () => {
                     rules={[{required: true, message: "Enter your password"}]}
                 >
                     <Input type="password" placeholder='myPassword' value={password}
-                    onChange={(e) => setPassword(e.target.value)}/>
+                    onChange={(e) => dispatch(setPassword(e.target.value))}/>
                 </Form.Item>
                 <Form.Item className='login-button-form'>
                     <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignIn}>
