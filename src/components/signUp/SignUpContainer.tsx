@@ -1,22 +1,30 @@
 import { Input, Button, Form, Typography, Row, Col, Card} from 'antd';
-import { useState } from 'react';
 import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
 import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_PATH, LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
 import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
+import { setEmail, setPassword } from '../../store/authenticationSlice/Authslice';
+import { useSelector, useDispatch } from 'react-redux';
+import  type {RootState}  from '../../store/store';
+
 
 function SignUpContainer(){
     const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState(""); 
+    const email = useSelector((state: RootState) => state.auth.email )
+    const password = useSelector((state: RootState) => state.auth.password )
+    const dispatch = useDispatch();
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState(""); 
 
 
   async function handleSignUp(){
 
         try{
             const userSignUpAttempt = await createUserWithEmailAndPassword(auth, email, password);
+            dispatch(setEmail(""));
+            dispatch(setPassword(""));
             alert("Everything works fine");
         }
         
@@ -46,7 +54,7 @@ function SignUpContainer(){
                     rules={[{required: true, message: "Enter your username"}]}
                 >
                     <Input placeholder='Enter your Email' value ={email} 
-                    onChange={(e) => setEmail(e.target.value)}/>
+                    onChange={(e) => dispatch(setEmail(e.target.value))}/>
                 </Form.Item>
                 <Form.Item
                     label="Password"
@@ -54,7 +62,7 @@ function SignUpContainer(){
                     rules={[{required: true, message: "Enter your password"}]}
                 >
                     <Input type="password" placeholder='myPassword' value={password}
-                    onChange={(e) => setPassword(e.target.value)}/>
+                    onChange={(e) => dispatch(setPassword(e.target.value))}/>
                 </Form.Item>
                 <Form.Item className='login-button-form'>
                     <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
