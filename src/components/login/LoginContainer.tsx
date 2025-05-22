@@ -1,9 +1,33 @@
 import { Input, Button, Form, Typography, Row, Col, Card} from 'antd';
+import { useState } from 'react';
 import './login.css';
+import { auth } from '../../firebaseConfig/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const { Title } = Typography;
 
 export const LoginContainer = () => {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState(""); 
+
+
+   async function handleSignIn(){
+
+        try{
+            const signInAttempt = await signInWithEmailAndPassword(auth, email, password);
+            alert("Sign in worked");
+        }
+        catch(err){
+            alert("Sorry, check either your email or password");
+        }
+
+
+    }
+    
+
+
+
     return (
         <div>
         <Card 
@@ -21,17 +45,19 @@ export const LoginContainer = () => {
                     name="username"
                     rules={[{required: true, message: "Enter your username"}]}
                 >
-                    <Input placeholder='myUsername' />
+                    <Input placeholder='myUsername' value ={email} 
+                    onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
                 <Form.Item
                     label="Password"
                     name="password"
                     rules={[{required: true, message: "Enter your password"}]}
                 >
-                    <Input type="password" placeholder='myPassword' />
+                    <Input type="password" placeholder='myPassword' value={password}
+                    onChange={(e) => setPassword(e.target.value)}/>
                 </Form.Item>
                 <Form.Item className='login-button-form'>
-                    <Button className='login-button' type="primary" htmlType="submit" size='large'>
+                    <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignIn}>
                         Log In
                     </Button>
                 </Form.Item>
