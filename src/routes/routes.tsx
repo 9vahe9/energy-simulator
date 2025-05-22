@@ -13,6 +13,7 @@ import DassboardPage from "../pages/DassboardPage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
+import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 
 export const router = createBrowserRouter([
   {
@@ -25,11 +26,19 @@ export const router = createBrowserRouter([
       },
       {
         path: DASHBOARD_PATH,
-        element: <DassboardPage />,
+        element: (
+          <ProtectedRoutes>
+            <DassboardPage />
+          </ProtectedRoutes>
+        ),
       },
       {
         path: ROOM_PATH,
-        element: <RoomPage />,
+        element: (
+          <ProtectedRoutes>
+            <RoomPage />
+          </ProtectedRoutes>
+        ),
       },
     ],
   },
@@ -39,6 +48,6 @@ export const router = createBrowserRouter([
   },
   {
     path: SIGNUP_PATH,
-    element: <SignUpContainer/>,
+    element: <SignUpContainer />,
   }
 ]);
