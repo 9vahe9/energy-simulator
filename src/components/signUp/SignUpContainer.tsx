@@ -1,97 +1,106 @@
-import { Input, Button, Form, Typography, Row, Col, Card} from 'antd';
+import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
 import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
-import { useNavigate } from 'react-router-dom';
-import { DASHBOARD_PATH, LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { data, useNavigate } from 'react-router-dom';
+import { LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
 import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
-import { setEmail, setPassword } from '../../store/authenticationSlice/Authslice';
+import { setEmail, setPassword } from '../../store/authentication/Authslice';
 import { useSelector, useDispatch } from 'react-redux';
-import  type {RootState}  from '../../store/store';
+import type { RootState } from '../../store/store';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { dataBase } from "../../firebaseConfig/firebase";
+import { setAge } from '../../store/user/userSlice';
 
+const randomNumber = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
 
-function SignUpContainer(){
+function SignUpContainer() {
     const navigate = useNavigate();
-    const email = useSelector((state: RootState) => state.auth.email )
-    const password = useSelector((state: RootState) => state.auth.password )
+    const email = useSelector((state: RootState) => state.auth.email);
+    const password = useSelector((state: RootState) => state.auth.password);
     const dispatch = useDispatch();
-    // const [email, setEmail] = useState("");
-    // const [password, setPassword] = useState(""); 
 
 
-  async function handleSignUp(){
+    async function handleSignUp() {
 
-        try{
+        try {
             const userSignUpAttempt = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(dataBase, "users", userSignUpAttempt.user.uid), {
+                age: randomNumber,
+            })
+            const snap = await getDoc(doc(dataBase, "users", userSignUpAttempt.user.uid))
+            const data = snap.data();
+            dispatch(setAge(data?.age));
+
             dispatch(setEmail(""));
             dispatch(setPassword(""));
             alert("Everything works fine");
         }
-        
-        catch(err) {
+
+        catch (err) {
             alert("something went wrong");
         }
 
     }
 
-   
+
 
     return (
         <div>
-        <Card 
-            className='login-card'
-            variant='outlined'
-        >
-            <Title level={2} className="main-title" >Energy Emulator</Title>
-            <Title level={3} className="login-title" >Sign Up </Title> 
-            <Form 
-                name="login"
-                layout="vertical"
+            <Card
+                className='login-card'
+                variant='outlined'
             >
-                <Form.Item 
-                    label="Username"
-                    name="username"
-                    rules={[{required: true, message: "Enter your username"}]}
+                <Title level={2} className="main-title" >Energy Emulator</Title>
+                <Title level={3} className="login-title" >Sign Up </Title>
+                <Form
+                    name="login"
+                    layout="vertical"
                 >
-                    <Input placeholder='Enter your Email' value ={email} 
-                    onChange={(e) => dispatch(setEmail(e.target.value))}/>
-                </Form.Item>
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{required: true, message: "Enter your password"}]}
-                >
-                    <Input type="password" placeholder='myPassword' value={password}
-                    onChange={(e) => dispatch(setPassword(e.target.value))}/>
-                </Form.Item>
-                <Form.Item className='login-button-form'>
-                    <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
-                        Create An Account
-                    </Button>
-                </Form.Item>
-                <Form.Item>
-                    <Row gutter={8}>
-                        <Col span={8}>
-                        <Button onClick={() => navigate(HOME_PATH)} type='link' block>
-                            Back to Home
+                    <Form.Item
+                        label="Username"
+                        name="username"
+                        rules={[{ required: true, message: "Enter your username" }]}
+                    >
+                        <Input placeholder='Enter your Email' value={email}
+                            onChange={(e) => dispatch(setEmail(e.target.value))} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[{ required: true, message: "Enter your password" }]}
+                    >
+                        <Input type="password" placeholder='myPassword' value={password}
+                            onChange={(e) => dispatch(setPassword(e.target.value))} />
+                    </Form.Item>
+                    <Form.Item className='login-button-form'>
+                        <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
+                            Create An Account
                         </Button>
-                        </Col>
-                        <Col span={8}>
-                        <Button type='link' block>
-                            Try without auth.
-                        </Button>
-                        </Col>
-                        <Col span={8}>
-                        <Button onClick={() => navigate(LOGIN_PATH)} type='link' block>
-                            Log In
-                        </Button>
-                        </Col>
-                    </Row>
-                </Form.Item>
+                    </Form.Item>
+                    <Form.Item>
+                        <Row gutter={8}>
+                            <Col span={8}>
+                                <Button onClick={() => navigate(HOME_PATH)} type='link' block>
+                                    Back to Home
+                                </Button>
+                            </Col>
+                            <Col span={8}>
+                                <Button type='link' block>
+                                    Try without auth.
+                                </Button>
+                            </Col>
+                            <Col span={8}>
+                                <Button onClick={() => navigate(LOGIN_PATH)} type='link' block>
+                                    Log In
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form.Item>
 
-            </Form>
-        </Card>
-    </div>
+                </Form>
+            </Card>
+        </div>
     )
 
 
