@@ -1,11 +1,11 @@
 import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
 import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
 import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
-import { setEmail, setPassword } from '../../store/authentication/Authslice';
+import { setEmail, setPassword } from '../../store/authentication/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -26,12 +26,8 @@ function SignUpContainer() {
         try {
             const userSignUpAttempt = await createUserWithEmailAndPassword(auth, email, password);
             await setDoc(doc(dataBase, "users", userSignUpAttempt.user.uid), {
-                age: randomNumber,
+                rooms: [],
             })
-            const snap = await getDoc(doc(dataBase, "users", userSignUpAttempt.user.uid))
-            const data = snap.data();
-            dispatch(setAge(data?.age));
-
             dispatch(setEmail(""));
             dispatch(setPassword(""));
             alert("Everything works fine");

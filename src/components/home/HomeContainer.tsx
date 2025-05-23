@@ -1,6 +1,6 @@
-import { Button, Space, DatePicker, version } from 'antd';
+import { Button, Space, DatePicker, version, Card, Typography } from 'antd';
 import "./home.css"
-import { Navigate, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { LOGIN_PATH } from '../../constants/RoutePaths';
 import { SIGNUP_PATH } from '../../constants/RoutePaths';
 
@@ -10,8 +10,9 @@ export const HomeContainer = () => {
 
 
   return (
-    <div className="innerBox">
-
+    <div >
+      
+      <Card  className="innerBox">
       <h1>Energy Emulator</h1>
       <h2> Simulate & control Systems</h2>
       <p>
@@ -69,6 +70,7 @@ export const HomeContainer = () => {
     <Button className='tryButton'> Try it now </Button>
     
     </div>
+    </Card>
     </div>
   
 );
