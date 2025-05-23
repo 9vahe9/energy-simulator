@@ -3,10 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 // import { createUserWithEmailAndPassword } from "firebase/auth"
 // import { signInWithEmailAndPassword } from "firebase/auth";
 
+
+
+const token = sessionStorage.getItem("userToken");
+
+
 const initialState = {
     email: "",
     password: "",
-    userToken: null,
+    userToken: token,
 }
 
 

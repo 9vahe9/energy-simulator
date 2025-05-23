@@ -1,12 +1,12 @@
 import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
 import './login.css';
 import { auth } from '../../firebaseConfig/firebase';
-import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence, browserLocalPersistence, inMemoryPersistence } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from "../../store/store"
-import { setEmail, setPassword, setCurrentUser } from "../../store/authentication/Authslice"
+import { setEmail, setPassword, setCurrentUser } from "../../store/authentication/authSlice"
 
 
 const { Title } = Typography;
@@ -23,12 +23,12 @@ export const LoginContainer = () => {
 
         try {
 
-            const persistance = await setPersistence(auth, browserLocalPersistence);
 
             const signInAttempt = await signInWithEmailAndPassword(auth, email, password);
             dispatch(setEmail(""));
             dispatch(setPassword(""));
-            dispatch(setCurrentUser(signInAttempt.user.uid));
+            sessionStorage.setItem("userToken", signInAttempt.user.uid )
+            dispatch(setCurrentUser(sessionStorage.getItem('userToken')));
             console.log(signInAttempt.user.uid);
 
             navigate(DASHBOARD_PATH)

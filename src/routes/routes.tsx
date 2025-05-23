@@ -9,7 +9,7 @@ import {
 } from "../constants/RoutePaths";
 import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
-import DassboardPage from "../pages/DassboardPage";
+import DassboardPage from "../pages/DashBoardPage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";

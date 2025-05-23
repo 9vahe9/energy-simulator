@@ -1,29 +1,26 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { RouterProvider } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebaseConfig/firebase";
-import { setCurrentUser } from "./store/authentication/Authslice";
-import { router } from "./routes/routes";
+  import { useEffect } from "react";
+  import { useDispatch } from "react-redux";
+  import { RouterProvider } from "react-router-dom";
+  import { onAuthStateChanged } from "firebase/auth";
+  import { auth } from "./firebaseConfig/firebase";
+  import { setCurrentUser } from "./store/authentication/authSlice";
+  import { router } from "./routes/routes";
 
 
-function App() {
+  function App() {
 
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+    useEffect(() => {
+      const token = sessionStorage.getItem("userToken");
 
-        dispatch(setCurrentUser(user.uid));
+      if(token){
+        dispatch(setCurrentUser(token));
       }
-    });
 
-    return () => unsubscribe();
-  }, [dispatch]);
+    }, [dispatch])
 
+    return <RouterProvider router={router} />;
+  }
 
-  return <RouterProvider router={router} />;
-}
-
-export default App;
+  export default App;
