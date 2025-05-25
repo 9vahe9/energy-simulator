@@ -1,0 +1,149 @@
+.header {
+  border: 1px solid;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+
+.rightSide {
+  display: flex;
+  flex-flow: column;
+}
+
+.rightSide div {
+  display: flex;
+  flex-flow: row;
+  gap: 10px;
+}
+
+/* src/components/dashboard/dashboard.css */
+.dashboard-container {
+  background-color: #f0f8f5;
+  padding: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #b2dfdb;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.header-summary {
+  text-align: right;
+}
+
+.header-search .ant-input {
+  min-width: 200px;
+}
+
+/* Компоненты карточек */
+.room-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.room-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f0f8f5;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.room-card:hover {
+  transform: translateY(-10px) scale(1.04);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .header-right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-summary {
+    width: 100%;
+    text-align: left;
+    font-size: 0.95em;
+  }
+
+  .header-search .ant-input {
+    width: 100% !important;
+  }
+
+  .room-cards {
+    gap: 24px;
+  }
+
+  .room-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-left .ant-typography {
+    font-size: 1.25em !important;
+  }
+
+  .header-summary .ant-typography {
+    display: block;
+    line-height: 1.2;
+  }
+
+  .room-card .card-header h4 {
+    font-size: 1.1em;
+  }
+
+  .room-card .priority-tag-high,
+  .room-card .priority-tag-medium,
+  .room-card .priority-tag-low {
+    font-size: 0.75em;
+    padding: 0 6px;
+  }
+
+  .room-card .card-body {
+    height: 120px;
+  }
+}
