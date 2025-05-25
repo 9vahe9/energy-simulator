@@ -1,3 +1,24 @@
+.header {
+  border: 1px solid;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+
+.rightSide {
+  display: flex;
+  flex-flow: column;
+}
+
+.rightSide div {
+  display: flex;
+  flex-flow: row;
+  gap: 10px;
+}
+
 /* src/components/dashboard/dashboard.css */
 .dashboard-container {
   background-color: #f0f8f5;
