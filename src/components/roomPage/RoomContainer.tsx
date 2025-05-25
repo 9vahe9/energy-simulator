@@ -1,7 +1,7 @@
 import { Select, Button } from "antd";
 import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
-import { addRoom } from "../../store/user/userSlice";
+//import { addRoom } from "../../store/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
@@ -34,7 +34,7 @@ const RoomContainer = () => {
           ))}
         </Select>
       </div>
-      <Button onClick = {handleAddingRoom}>Add the Room</Button>
+    {/* <Button onClick = {handleAddingRoom}>Add the Room</Button> */}
     </div>
   );
 };
