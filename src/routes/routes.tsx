@@ -14,7 +14,7 @@ import HomePage from "../pages/HomePage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../pages/DashBoardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 
 export const router = createBrowserRouter([
