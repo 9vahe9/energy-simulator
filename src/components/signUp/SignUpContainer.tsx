@@ -61,9 +61,12 @@ function SignUpContainer() {
                     layout="vertical"
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
-                        rules={[{ required: true, message: "Enter your username" }]}
+                        label="Email"
+                        name="email"
+                        rules={[
+                            { required: true, message: "Enter your email" },
+                            { type: "email", message: "Email is invalid"}
+                        ]}
                     >
                         <Input placeholder='Enter your Email' value={email}
                             onChange={(e) => dispatch(setEmail(e.target.value))} />
