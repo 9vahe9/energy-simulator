@@ -7,12 +7,14 @@ import {
   LOGIN_PATH,
   SIGNUP_PATH,
 } from "../constants/RoutePaths";
+
 import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
-import DassboardPage from "../pages/DashBoardPage";
+
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
+import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 
 export const router = createBrowserRouter([
@@ -28,9 +30,10 @@ export const router = createBrowserRouter([
         path: DASHBOARD_PATH,
         element: (
           <ProtectedRoutes>
-            <DassboardPage />
+            <DashboardPage />
           </ProtectedRoutes>
         ),
+
       },
       {
         path: ROOM_PATH,
