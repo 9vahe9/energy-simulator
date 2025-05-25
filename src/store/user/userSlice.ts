@@ -53,12 +53,12 @@ export const userSlice = createAppSlice({
         //     state.rooms.push(action.payload);
         // }),
 
-        addRoom: create.asyncThunk(
-            async (room: Room[]) => {
+        // addRoom: create.asyncThunk(
+        //     async (room: Room[]) => {
 
-                await setDoc(doc(dataBase, ))
-            }
-        )
+        //         await setDoc(doc(dataBase, ))
+        //     }
+        // )
 
         fetchRooms: create.asyncThunk(
             async (userId:string, thunkAPI) =>{
