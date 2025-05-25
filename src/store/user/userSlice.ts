@@ -53,12 +53,12 @@ export const userSlice = createAppSlice({
         //     state.rooms.push(action.payload);
         // }),
 
-        addRoom: create.asyncThunk(
-            async (room: Room[]) => {
+        // addRoom: create.asyncThunk(
+        //     async (room: Room[]) => {
 
-                await setDoc(doc(dataBase, ))
-            }
-        )
+        //         await setDoc(doc(dataBase, ))
+        //     }
+        // )
 
         fetchRooms: create.asyncThunk(
             async (userId:string, thunkAPI) =>{
@@ -103,7 +103,7 @@ export const userSlice = createAppSlice({
 })
 
 export const userReducer = userSlice.reducer;
-export const { addRoom, fetchRooms } = userSlice.actions;
+export const {  fetchRooms } = userSlice.actions;
 export const { selectRooms, selectStatus } = userSlice.selectors;
 
 // const initialState: { age: number; room: Room, rooms: Array<Room> } = {
