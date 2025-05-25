@@ -11,16 +11,16 @@ const RoomContainer = () => {
   //const roomsArray = useSelector((state:RootState) => state.user.rooms);
   const navigate = useNavigate();
 
-  function handleAddingRoom(){
-      dispatch(addRoom({
-        name: "kitchen",
-        description: "Place where we eat stuff",
-        levelOfEnergyConsumption: "Red",
-        monthlyCost: "1000 usd",
-        energyConsumption: "1000 watts",
-      }))
-      navigate(DASHBOARD_PATH);
-  }
+  // function handleAddingRoom(){
+  //     dispatch(addRoom({
+  //       name: "kitchen",
+  //       description: "Place where we eat stuff",
+  //       levelOfEnergyConsumption: "Red",
+  //       monthlyCost: "1000 usd",
+  //       energyConsumption: "1000 watts",
+  //     }))
+  //     navigate(DASHBOARD_PATH);
+  // }
 
   return (
     <div>

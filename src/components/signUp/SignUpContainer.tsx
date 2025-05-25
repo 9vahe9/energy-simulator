@@ -10,9 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { dataBase } from "../../firebaseConfig/firebase";
-import { setAge } from '../../store/user/userSlice';
-
-const randomNumber = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+import type { Room } from '../../store/user/userSlice';
 
 function SignUpContainer() {
     const navigate = useNavigate();
@@ -21,12 +19,21 @@ function SignUpContainer() {
     const dispatch = useDispatch();
 
 
-    async function handleSignUp() {
+    
 
+    async function handleSignUp() {
+        const rooms: Room[] =  [{
+            name: "kitchen",
+            description: "Place where people munch",
+            levelOfEnergyConsumption: "green",
+            monthlyCost: "1000usd",
+            energyConsumption: "100watts",
+            devices: [{name: "toaster", wattage: "15"}],
+        }];
         try {
             const userSignUpAttempt = await createUserWithEmailAndPassword(auth, email, password);
             await setDoc(doc(dataBase, "users", userSignUpAttempt.user.uid), {
-                rooms: [],
+                userRooms: rooms,
             })
             dispatch(setEmail(""));
             dispatch(setPassword(""));
