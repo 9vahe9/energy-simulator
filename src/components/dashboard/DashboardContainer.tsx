@@ -1,27 +1,32 @@
 import "./dashboard.css"
 import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
-import type { RootState } from "../../store/store";
+import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
 import { useNavigate } from "react-router-dom";
 import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-
-
+import { fetchRooms } from "../../store/user/userSlice";
+import { useEffect } from "react";
 
 export const DashboardContainer = () => {
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const userID = useSelector((state: RootState) => state.auth.userToken)
-  const userAge = useSelector((state: RootState) => state.user.age)
   const roomsArray = useSelector((state: RootState) => state.user.rooms);
 
-
-  console.log(userAge);
   console.log(userID);
+
+  useEffect(() => {
+    if (userID) {
+      dispatch(fetchRooms(userID));
+    }
+  }, [dispatch, userID])
+
+  console.log(roomsArray);
 
   function handleLogOut() {
     signOut(auth)
@@ -35,14 +40,14 @@ export const DashboardContainer = () => {
   }
 
 
-
+  console.log(roomsArray);
   return (
 
     <div>
       <div className="header">
         <div className="leftSide">
           <h1>Room Energy Management</h1>
-                <Button onClick={() => navigate(ROOM_PATH)}> + Add New Room</Button>
+          <Button onClick={() => navigate(ROOM_PATH)}> + Add New Room</Button>
           <Button>  Sort Rooms </Button>
         </div>
 
@@ -71,7 +76,7 @@ export const DashboardContainer = () => {
       </div>
 
       <Button onClick={handleLogOut}>Logout</Button>
-
+      {/* 
       {roomsArray.map((room) => (
         <>
           {room.name}
@@ -87,7 +92,7 @@ export const DashboardContainer = () => {
           <Button>Delete Room</Button>
           <br />
         </>
-        ))}
+      ))} */}
 
 
     </div>
