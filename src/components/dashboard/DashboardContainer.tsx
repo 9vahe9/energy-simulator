@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { fetchRooms } from "../../store/user/userSlice";
 import { useEffect } from "react";
 import React from "react";
 import {
@@ -19,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import "./dashboard.css";
 import type { IRoom } from "../../types/room";
-
+import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 
 
 
@@ -79,16 +78,18 @@ const roomsData: IRoom[] = [
 ];
 
 export const DashboardContainer: React.FC = () => {
-  // Считаем общие показатели
-  const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
-  const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
+
+  // const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
+  // const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
-  
+
+  const roomsArray = useSelector((state: RootState) => state.user.rooms);
+
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const userID = useSelector((state: RootState) => state.auth.userToken)
-  const roomsArray = useSelector((state: RootState) => state.user.rooms);
 
   console.log(userID);
 
@@ -96,9 +97,7 @@ export const DashboardContainer: React.FC = () => {
     if (userID) {
       dispatch(fetchRooms(userID));
     }
-  }, [dispatch, userID])
-
-  console.log(roomsArray);
+  }, [dispatch, userID]);
 
   function handleLogOut() {
     signOut(auth)
@@ -111,8 +110,15 @@ export const DashboardContainer: React.FC = () => {
 
   }
 
+  function handleDelete(id: string) {
 
-  console.log(roomsArray);
+    dispatch(deleteRoom(id))
+
+  }
+
+  function handleEditRoom(id: string){
+    navigate(`${ROOM_PATH}/${id}`)
+  }
 
 
   return (
@@ -127,6 +133,7 @@ export const DashboardContainer: React.FC = () => {
             type="primary"
             icon={<PlusOutlined />}
             style={{ marginLeft: 16 }}
+            onClick={() => navigate(ROOM_PATH)}
           >
             Add New Room
           </Button>
@@ -139,11 +146,11 @@ export const DashboardContainer: React.FC = () => {
           <div className="header-summary">
             <Text>Total Energy Consumption</Text>
             <Title level={4} style={{ margin: 0 }}>
-              {totalEnergy.toLocaleString()} kWh
+              {/* {totalEnergy.toLocaleString()} kWh */}
             </Title>
             <Text>Monthly Cost</Text>
             <Title level={4} style={{ margin: 0 }}>
-              ${totalCost.toFixed(2)}
+              {/* ${totalCost.toFixed(2)} */}
             </Title>
           </div>
           <div className="header-search">
@@ -171,8 +178,8 @@ export const DashboardContainer: React.FC = () => {
                   room.priority === "High"
                     ? "priority-tag-high"
                     : room.priority === "Medium"
-                    ? "priority-tag-medium"
-                    : "priority-tag-low"
+                      ? "priority-tag-medium"
+                      : "priority-tag-low"
                 }
               >
                 {room.priority}
@@ -220,10 +227,22 @@ export const DashboardContainer: React.FC = () => {
               Edit Room
             </Button>
           </div>
-        
+
         ))}
-          <Button onClick = {handleLogOut}>Log out</Button>
+
       </div>
+      <div>
+        {roomsArray.length > 0 && roomsArray.map((room) => (
+          <>
+            <p>{room.name}</p>
+            <p>{room.description}</p>
+            <button onClick={() => handleDelete(room.id)}> DeleteRoom </button>
+            <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
+          </>
+        ))}
+      </div>
+      <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
 };
+

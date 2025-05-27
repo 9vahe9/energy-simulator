@@ -8,33 +8,26 @@ const { Title } = Typography;
 import { setEmail, setPassword } from '../../store/authentication/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { dataBase } from "../../firebaseConfig/firebase";
-import type { Room } from '../../store/user/userSlice';
+//import type { Room } from '../../store/user/userSlice';
+import { createRoom } from '../../store/user/userSlice';
+import type { AppDispatch } from '../../store/store';
 
 function SignUpContainer() {
     const navigate = useNavigate();
     const email = useSelector((state: RootState) => state.auth.email);
     const password = useSelector((state: RootState) => state.auth.password);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
 
-    
+
 
     async function handleSignUp() {
-        const rooms: Room[] =  [{
-            name: "kitchen",
-            description: "Place where people munch",
-            levelOfEnergyConsumption: "green",
-            monthlyCost: "1000usd",
-            energyConsumption: "100watts",
-            devices: [{name: "toaster", wattage: "15"}],
-        }];
+
         try {
-            const userSignUpAttempt = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(dataBase, "users", userSignUpAttempt.user.uid), {
-                userRooms: rooms,
-            })
+            const createAnAccount =  await createUserWithEmailAndPassword(auth, email, password);
+            const id = createAnAccount.user.uid
+
+            dispatch(createRoom(id));
             dispatch(setEmail(""));
             dispatch(setPassword(""));
             alert("Everything works fine");
