@@ -3,18 +3,16 @@ body {
 }
 
 .innerBox{
-  width: 70%;
-  height: 80%;
+  width: 800px;
   margin: 0 auto; 
   margin-top: 50px;  
   background-color:  rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   padding-left: 100px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);  
 }
 
-h1{
+.main-title{
    color: rgb(19 78 74 / var(--tw-text-opacity, 1));
     font-weight: bold;
     font-size: 1.875rem;
@@ -37,11 +35,17 @@ h1{
     gap: 10px;
 }
 
-.wordBoxes span{
+.emojis {
     border: 1px solid;
     border-radius: 25px;
     padding: 3px;
     border-color: #e5e7eb;
+}
+
+
+.cardtext {
+    flex: 1;
+    max-width: 60%;
 }
 
 .wordBoxes h3{
