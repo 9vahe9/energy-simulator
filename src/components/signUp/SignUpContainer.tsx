@@ -68,7 +68,7 @@ function SignUpContainer() {
                             { type: "email", message: "Email is invalid"}
                         ]}
                     >
-                        <Input placeholder='Enter your Email' value={email}
+                        <Input placeholder='somemail@smt.com' value={email}
                             onChange={(e) => dispatch(setEmail(e.target.value))} />
                     </Form.Item>
                     <Form.Item
