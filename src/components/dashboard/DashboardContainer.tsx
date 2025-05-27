@@ -126,7 +126,7 @@ export const DashboardContainer: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            style={{ marginLeft: 16 }}
+            className="add-room-button"
           >
             Add New Room
           </Button>
@@ -174,6 +174,13 @@ export const DashboardContainer: React.FC = () => {
                     ? "priority-tag-medium"
                     : "priority-tag-low"
                 }
+                color={
+                  room.priority === "High"
+                    ? "red"
+                    : room.priority === "Medium"
+                    ? "yellow"
+                    : "green"
+                }
               >
                 {room.priority}
               </Tag>
@@ -192,6 +199,13 @@ export const DashboardContainer: React.FC = () => {
                   <Progress
                     percent={Math.round((room.energy / 500) * 100)}
                     showInfo={false}
+                    strokeColor={
+                      room.priority === "High"
+                    ? "#C70039"
+                    : room.priority === "Medium"
+                    ? "#FFDE2B"
+                    : "green"
+                    }
                   />
                   <Text strong>{room.energy} kWh</Text>
                 </div>
