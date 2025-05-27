@@ -147,3 +147,12 @@
     height: 120px;
   }
 }
+
+.ant-btn-edit {
+  background-color: #26a69a;
+}
+
+.add-room-button {
+  background-color: #26a69a;
+  margin-left: 16;
+}
