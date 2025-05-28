@@ -7,14 +7,19 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import { addRoom, type Room, updateRoom } from "../../store/user/userSlice";
 
-const randomNumber = Math.random();
+
 
 const RoomContainer = () => {
-  const navigate = useNavigate();
+
+  
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
-  const [description, setDecription] = useState("");
+  const [randomId] = useState(() => Math.random().toString());
+  const [description, setDescription] = useState("");
+  
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  
   const userId: string = useSelector((state: RootState) => state.auth.userToken);
 
 
@@ -27,14 +32,14 @@ const RoomContainer = () => {
   useEffect(() => {
     if (existingRoom) {
       setRoomName(existingRoom.name);
-      setDecription(existingRoom.description);
+      setDescription(existingRoom.description);
     }
   }, [existingRoom])
 
   const room: Room = {
     name: roomName,
     description: description,
-    id: `${randomNumber}`,
+    id: roomId ? existingRoom?.id || "" : randomId,
     levelOfEnergyConsumption: "15w",
     monthlyCost: "12$",
     energyConsumption: "15135w",
@@ -43,21 +48,20 @@ const RoomContainer = () => {
       wattage: "12142",
     }]
   }
+  const handleAddingRoom = async () => {
+    if (!userId) return;
 
-  function handleAddingRoom() {
-
-    if(roomId){
-      dispatch(updateRoom({userId, 
-        roomObject: {...room }
-      }))
+    try {
+      if (roomId) {
+        await dispatch(updateRoom({ userId, roomObject: room }));
+      } else {
+        await dispatch(addRoom({ userId, roomObject: room }));
+      }
+      navigate(DASHBOARD_PATH);
+    } catch (err) {
+      console.error("Operation failed:", err);
     }
-    else{
-      dispatch(addRoom({userId, roomObject:{...room}}))
-    }
-
-    navigate(DASHBOARD_PATH)
-
-  }
+  };
 
   return (
     <div>
@@ -81,7 +85,7 @@ const RoomContainer = () => {
         <input
           type="text"
           value={description}
-          onChange={(e) => setDecription(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter the rooms description"
         />
 

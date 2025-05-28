@@ -33,15 +33,7 @@ interface UserState {
 
 
 const initialState: UserState = {
-    // room: {
-    //     name: " ",
-    //     description: " ",
-    //     levelOfEnergyConsumption: " ",
-    //     monthlyCost: " ",
-    //     id: " ",
-    //     energyConsumption: " ",
-    //     devices: [],
-    // },
+
     rooms: [{
         name: " ",
         description: " ",
@@ -198,43 +190,46 @@ export const userSlice = createAppSlice({
             }
         ),
 
-        updateRoom: create.asyncThunk(
-            async ({ userId, roomObject }: { userId: string, roomObject: Room }, thunkAPI) => {
+        updateRoom: create.asyncThunk<Room, {userId: string; roomObject: Room}>(
+            async ({ userId, roomObject }, thunkAPI) => {
 
-                if(!userId) {
+                try {
+
+                if (!userId) {
                     return thunkAPI.rejectWithValue("No userId");
                 }
 
-                const userDocRef = doc(dataBase, "users", userId);
-
-                try{
-
+                    const userDocRef = doc(dataBase, "users", userId);
                     const snap = await getDoc(userDocRef);
-                    const current: Room[] = snap.exists() 
-                    ? (snap.data().rooms): []
+                    
+                    if(!snap.exists()){
+                        return thunkAPI.rejectWithValue("user document not found");
+                    }
 
-                    const updatedRooms = current.map(r => {
-                        r.id === roomObject.id ? roomObject: r;
+                    
+                    const current: Room[] = snap.data()?.rooms || []
+                    const updatedRooms = current.map((r) => {
+                       return r.id === roomObject.id ? roomObject : r;
                     })
 
-                    await setDoc(userDocRef, 
-                        {room: updatedRooms},
-                        {merge: true}
+                    await setDoc(userDocRef,
+                        { rooms: updatedRooms },
+                        { merge: true }
                     )
                     return roomObject;
                 }
-                catch(err){
+                catch (err) {
                     console.log("something went wrong", err);
                     return thunkAPI.rejectWithValue("Firestore error");
                 }
             },
 
             {
-                pending: state => {state.status = "loading"},
+                pending: state => { state.status = "loading" },
                 fulfilled: (state, action) => {
-                    state.rooms.map((room) => {
-                        room.id === action.payload.id ? 
-                        room = action.payload: room;
+                    state.rooms = state.rooms.map((room) => {
+                        return room.id === action.payload.id ?
+                            room = action.payload : room;
                     })
                     state.status = "idle";
                 },
