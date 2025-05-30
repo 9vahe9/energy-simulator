@@ -124,8 +124,9 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-          {userName}
+
       {/* header */}
+      {userName}
       <div className="dashboard-header">
         <div className="header-left">
           <Title level={3} style={{ margin: 0 }}>
@@ -228,7 +229,7 @@ export const DashboardContainer: React.FC = () => {
             >
               Edit Room
             </Button>
-        
+
           </div>
 
         ))}

@@ -129,7 +129,7 @@ export const userSlice = createAppSlice({
                         return [];
                     }
                     const data = response.data();
-                    return data?.rooms;
+                    return [data?.rooms, data?.userName];
                 }
                 catch (err) {
                     console.log("Something went wrong");
@@ -142,7 +142,8 @@ export const userSlice = createAppSlice({
                 },
 
                 fulfilled: (state, action) => {
-                    state.rooms = action.payload;
+                    state.rooms = action.payload[0];
+                    state.userName = action.payload[1];
                 },
 
                 rejected: (state) => { state.status = "failed"; }
