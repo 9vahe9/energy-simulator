@@ -84,7 +84,8 @@ export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
 
   const roomsArray = useSelector((state: RootState) => state.user.rooms);
-
+ 
+  
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -233,12 +234,12 @@ export const DashboardContainer: React.FC = () => {
       </div>
       <div>
         {roomsArray.length > 0 && roomsArray.map((room) => (
-          <>
+         room.name !== " " && <div>
             <p>{room.name}</p>
             <p>{room.description}</p>
             <button onClick={() => handleDelete(room.id)}> DeleteRoom </button>
             <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
-          </>
+          </div>
         ))}
       </div>
       <Button onClick={handleLogOut}>Log out</Button>
