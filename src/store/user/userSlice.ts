@@ -11,6 +11,7 @@ import type { Reducer } from "redux";
 export interface Device {
     name: string,
     wattage: string,
+    deviceId: string
 }
 
 export interface Room {
@@ -41,7 +42,7 @@ const initialState: UserState = {
         monthlyCost: " ",
         energyConsumption: " ",
         id: " ",
-        devices: [{ name: " ", wattage: " " }],
+        devices: [{ name: " ", wattage: " ", deviceId: " " }],
     }],
     status: "idle",
 }

@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import { addRoom, type Room, updateRoom } from "../../store/user/userSlice";
+import { addRoom, type Device, type Room, updateRoom } from "../../store/user/userSlice";
 
 
 
@@ -15,7 +15,9 @@ const RoomContainer = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  
+  const [devices, setDevices] = useState<Device[]>([]);
+
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   
@@ -43,6 +45,7 @@ const randomId = (() => {
     if (existingRoom) {
       setRoomName(existingRoom.name);
       setDescription(existingRoom.description);
+      setDevices(existingRoom.devices);
     }
   }, [existingRoom])
 
@@ -53,16 +56,25 @@ const randomId = (() => {
     monthlyCost: "12$",
     id: " ",
     energyConsumption: "15135w",
-    devices: [{
-      name: "microwave",
-      wattage: "12142",
-    }]
+    devices: devices,
   }
+
+
+  function handleDeletingDevice(id: string){
+    
+    setDevices(devices.filter((device) => device.deviceId !== id))
+  
+  }
+
+  function handleAddingDevice(device: Device) {
+      setDevices([...devices, device]);
+  }
+
   const handleAddingRoom = async () => {
     if (!userId) return;
   const finalRoom = {
     ...room,
-    id: roomId ? (existingRoom?.id || "") : randomId,
+    id: roomId ? (existingRoom?.id || "") : randomId, devices,
   };
 
     try {
