@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import {
   PlusOutlined,
@@ -84,8 +84,8 @@ export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
 
   const roomsArray = useSelector((state: RootState) => state.user.rooms);
-
-
+  const userName = useSelector((state: RootState) => state.user.userName);
+  const [userSearch, setUserSearch] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -124,6 +124,7 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+          {userName}
       {/* header */}
       <div className="dashboard-header">
         <div className="header-left">
@@ -158,8 +159,8 @@ export const DashboardContainer: React.FC = () => {
             <Input
               placeholder="Search rooms..."
               prefix={<SearchOutlined />}
-              allowClear
             />
+            <Button>Search</Button>
           </div>
         </div>
       </div>
@@ -227,6 +228,7 @@ export const DashboardContainer: React.FC = () => {
             >
               Edit Room
             </Button>
+        
           </div>
 
         ))}

@@ -26,7 +26,7 @@ export interface Room {
 
 
 interface UserState {
-    //room: Room;
+    userName: string,
     rooms: Room[];
     status: "idle" | "loading" | "failed";
 }
@@ -34,7 +34,7 @@ interface UserState {
 
 
 const initialState: UserState = {
-
+    userName: "",
     rooms: [{
         name: " ",
         description: " ",
@@ -55,6 +55,39 @@ export const userSlice = createAppSlice({
     initialState,
 
     reducers: create => ({
+
+        createUserName: create.asyncThunk<string, { userId: string; newName: string }>(
+
+            async ({ userId, newName }, thunkAPI) => {
+
+                if (!userId) {
+                    return thunkAPI.rejectWithValue("No userId");
+                }
+                try {
+                    await setDoc(
+                        doc(dataBase, "users", userId),
+                        { userName: newName },
+                        { merge: true },
+                    )
+                    return newName;
+                }
+                catch (err) {
+                    console.log("There was an error creating a userName", err);
+                     return thunkAPI.rejectWithValue("Api error");
+                }
+            },
+            {
+                pending: state => { state.status = "loading" },
+
+                fulfilled: (state, action) => {
+                    state.userName = action.payload;
+                    state.status = "idle";
+                },
+
+                rejected: state => { state.status = "failed" },
+            }
+        ),
+
 
         createRoom: create.asyncThunk<void, string>(
             async (userId, thunkAPI) => {
@@ -191,26 +224,26 @@ export const userSlice = createAppSlice({
             }
         ),
 
-        updateRoom: create.asyncThunk<Room, {userId: string; roomObject: Room}>(
+        updateRoom: create.asyncThunk<Room, { userId: string; roomObject: Room }>(
             async ({ userId, roomObject }, thunkAPI) => {
 
                 try {
 
-                if (!userId) {
-                    return thunkAPI.rejectWithValue("No userId");
-                }
+                    if (!userId) {
+                        return thunkAPI.rejectWithValue("No userId");
+                    }
 
                     const userDocRef = doc(dataBase, "users", userId);
                     const snap = await getDoc(userDocRef);
-                    
-                    if(!snap.exists()){
+
+                    if (!snap.exists()) {
                         return thunkAPI.rejectWithValue("user document not found");
                     }
 
-                    
+
                     const current: Room[] = snap.data()?.rooms || []
                     const updatedRooms = current.map((r) => {
-                       return r.id === roomObject.id ? roomObject : r;
+                        return r.id === roomObject.id ? roomObject : r;
                     })
 
                     await setDoc(userDocRef,
@@ -245,9 +278,10 @@ export const userSlice = createAppSlice({
         selectRooms: user => user.rooms,
         selectStatus: user => user.status,
     }
-})
+},
+)
 
 export const userReducer: Reducer<UserState> = userSlice.reducer;
-export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom } = userSlice.actions;
+export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom, createUserName } = userSlice.actions;
 export const { selectRooms, selectStatus } = userSlice.selectors;
 

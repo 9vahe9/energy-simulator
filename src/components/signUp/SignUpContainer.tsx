@@ -9,13 +9,16 @@ import { setEmail, setPassword } from '../../store/authentication/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 //import type { Room } from '../../store/user/userSlice';
-import { createRoom } from '../../store/user/userSlice';
+import { createRoom, createUserName } from '../../store/user/userSlice';
 import type { AppDispatch } from '../../store/store';
+import { useState } from 'react';
+
 
 function SignUpContainer() {
     const navigate = useNavigate();
     const email = useSelector((state: RootState) => state.auth.email);
     const password = useSelector((state: RootState) => state.auth.password);
+    const [userName, setUsername] = useState("");
     const dispatch = useDispatch<AppDispatch>();
 
 
@@ -27,9 +30,11 @@ function SignUpContainer() {
             const createAnAccount =  await createUserWithEmailAndPassword(auth, email, password);
             const id = createAnAccount.user.uid
 
+      
             dispatch(createRoom(id));
             dispatch(setEmail(""));
             dispatch(setPassword(""));
+            dispatch(createUserName({ userId: id, newName: userName }));
             alert("Everything works fine");
         }
 
@@ -69,6 +74,17 @@ function SignUpContainer() {
                         <Input type="password" placeholder='myPassword' value={password}
                             onChange={(e) => dispatch(setPassword(e.target.value))} />
                     </Form.Item>
+
+                     <Form.Item
+                        label="userName"
+                        name="userName"
+                        rules={[{ required: true, message: "Enter your password" }]}
+                    >
+                        <Input type="text" placeholder='Enter your userName' value={userName}
+                            onChange={(e) => setUsername(e.target.value)} />
+                    </Form.Item>
+
+
                     <Form.Item className='login-button-form'>
                         <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
                             Create An Account
