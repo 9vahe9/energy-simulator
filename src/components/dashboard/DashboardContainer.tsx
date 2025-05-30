@@ -1,5 +1,5 @@
 import "./dashboard.css"
-import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress } from 'antd';
+import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress, Popconfirm } from 'antd';
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -84,8 +84,8 @@ export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
 
   const roomsArray = useSelector((state: RootState) => state.user.rooms);
- 
-  
+
+
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -117,7 +117,7 @@ export const DashboardContainer: React.FC = () => {
 
   }
 
-  function handleEditRoom(id: string){
+  function handleEditRoom(id: string) {
     navigate(`${ROOM_PATH}/${id}`)
   }
 
@@ -234,10 +234,19 @@ export const DashboardContainer: React.FC = () => {
       </div>
       <div>
         {roomsArray.length > 0 && roomsArray.map((room) => (
-         room.name !== " " && <div>
+          room.name !== " " && <div>
             <p>{room.name}</p>
             <p>{room.description}</p>
-            <button onClick={() => handleDelete(room.id)}> DeleteRoom </button>
+            <Popconfirm
+              title="Do you really want to delete this room?"
+              onConfirm={() => handleDelete(room.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger>Delete Room</Button>
+            </Popconfirm>
+            {/* <button onClick={() => handleDelete(room.id)}> DeleteRoom </button> */}
+
             <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
           </div>
         ))}

@@ -14,7 +14,6 @@ const RoomContainer = () => {
   
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
-  const [randomId] = useState(() => Math.random().toString());
   const [description, setDescription] = useState("");
   
   const navigate = useNavigate();
@@ -22,7 +21,18 @@ const RoomContainer = () => {
   
   const userId: string = useSelector((state: RootState) => state.auth.userToken);
 
-
+const randomId = (() => {
+  const now = new Date();
+  return [
+    now.getDate(),
+    now.getMonth() + 1,
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+  ]
+    .map(n => String(n).padStart(2, "0"))
+    .join("_");
+})();
 
 
   const existingRoom = useSelector((state: RootState) => {
@@ -39,9 +49,9 @@ const RoomContainer = () => {
   const room: Room = {
     name: roomName,
     description: description,
-    id: roomId ? existingRoom?.id || "" : randomId,
     levelOfEnergyConsumption: "15w",
     monthlyCost: "12$",
+    id: " ",
     energyConsumption: "15135w",
     devices: [{
       name: "microwave",
@@ -50,12 +60,16 @@ const RoomContainer = () => {
   }
   const handleAddingRoom = async () => {
     if (!userId) return;
+  const finalRoom = {
+    ...room,
+    id: roomId ? (existingRoom?.id || "") : randomId,
+  };
 
     try {
       if (roomId) {
-        await dispatch(updateRoom({ userId, roomObject: room }));
+        await dispatch(updateRoom({ userId,  roomObject: finalRoom }));
       } else {
-        await dispatch(addRoom({ userId, roomObject: room }));
+        await dispatch(addRoom({ userId, roomObject: finalRoom }));
       }
       navigate(DASHBOARD_PATH);
     } catch (err) {
@@ -66,7 +80,7 @@ const RoomContainer = () => {
   return (
     <div>
       <div>
-        <h1> add new device</h1>
+        <h1> Add new device</h1>
         <Select placeholder="select a device">
           {DEVICE_SELECT_OPTONS.map((device) => (
             <Select.Option key={device.type} value={device.type}>
