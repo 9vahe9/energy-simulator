@@ -1,4 +1,4 @@
-import { Button, Typography, Tag, Space, Progress } from 'antd';
+import { Button, Typography, Tag, Space, Progress, Modal } from 'antd';
 import {
     EditOutlined,
     ThunderboltFilled,
@@ -12,6 +12,26 @@ const ICON_MAP: Record<string, string> = {
     Humidifier: "❄️",
     Magnifier: "🔍",
     Fire: "🔥",
+};
+
+const confirmModal = (name) => {
+  Modal.confirm({
+    title: "Delete room",
+    content: `Are you sure tou want to delete ${name}`,
+    okText: "Yes",
+    cancelText: "No",
+    okButtonProps: {
+      style: {
+        backgroundColor: "#26a69a",
+      }
+    },
+    onOk() {
+      console.log(`${name} deleted successfully!`);
+    }, 
+    onCancel() {
+      console.log("Cancel");
+    },
+  });
 };
 
 export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
@@ -90,6 +110,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
           >
             Edit Room
           </Button>
+          <Button onClick={() => confirmModal(name)}>Delete room</Button>
         </div>
       
       )   
