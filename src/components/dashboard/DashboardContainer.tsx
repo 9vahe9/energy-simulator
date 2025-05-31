@@ -1,5 +1,5 @@
 import "./dashboard.css"
-import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress } from 'antd';
+import { Input, Button, Typography } from 'antd';
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -14,23 +14,10 @@ import {
   PlusOutlined,
   SortAscendingOutlined,
   SearchOutlined,
-  EditOutlined,
-  ThunderboltFilled,
 } from "@ant-design/icons";
 import "./dashboard.css";
 import type { IRoom } from "../../types/room";
-
-
-
-
-// Маппинг «тип устройства» → эмодзи
-const ICON_MAP: Record<string, string> = {
-  TV: "📺",
-  Lighting: "💡",
-  Humidifier: "❄️",
-  Magnifier: "🔍",
-  Fire: "🔥",
-};
+import { RoomCards } from "../roomCards/RoomCards";
 
 // Заглушка данных — позже заменим на Firebase
 const roomsData: IRoom[] = [
@@ -126,7 +113,7 @@ export const DashboardContainer: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            style={{ marginLeft: 16 }}
+            className="add-room-button"
           >
             Add New Room
           </Button>
@@ -158,70 +145,14 @@ export const DashboardContainer: React.FC = () => {
 
       {/* Room card */}
       <div className="room-cards">
-        {roomsData.map((room) => (
-          <div key={room.id} className="room-card">
-            {/* Название и приоритет */}
-            <div className="card-header">
-              <Title level={4} style={{ margin: 0 }}>
-                {room.name}
-              </Title>
-              <Tag
-                icon={<ThunderboltFilled />}
-                className={
-                  room.priority === "High"
-                    ? "priority-tag-high"
-                    : room.priority === "Medium"
-                    ? "priority-tag-medium"
-                    : "priority-tag-low"
-                }
-              >
-                {room.priority}
-              </Tag>
-            </div>
-
-            {/* Card body */}
-            <div className="card-body"></div>
-
-            {/* Statics */}
-            <div className="card-stats">
-              <Space direction="vertical" style={{ width: "100%" }}>
-                <Text>Energy Consumption</Text>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <Progress
-                    percent={Math.round((room.energy / 500) * 100)}
-                    showInfo={false}
-                  />
-                  <Text strong>{room.energy} kWh</Text>
-                </div>
-
-                <Text>Monthly Cost</Text>
-                <Text strong>${room.cost.toFixed(2)}</Text>
-              </Space>
-            </div>
-
-            {/* Icon Device */}
-            <div className="device-icons">
-              {room.icons.map((ic) => (
-                <Space key={ic.type}>
-                  <span>{ICON_MAP[ic.type] || "🔌"}</span>
-                  <Text>{ic.count}</Text>
-                </Space>
-              ))}
-            </div>
-
-            {/* Button edit */}
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              className="ant-btn-edit"
-            >
-              Edit Room
-            </Button>
-          </div>
-        
-        ))}
+        {roomsData.map((room) => {return <RoomCards 
+                                          id={room.id}
+                                          name={room.name}
+                                          priority={room.priority}
+                                          energy={room.energy}
+                                          cost={room.cost}
+                                          icons={room.icons}
+                                          />})}
           <Button onClick = {handleLogOut}>Log out</Button>
       </div>
     </div>
