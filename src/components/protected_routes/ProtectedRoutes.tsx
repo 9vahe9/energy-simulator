@@ -11,8 +11,7 @@ function ProtectedRoutes({children} : {children: ReactNode}){
     
     
     if(!user) { 
-        return ( <Navigate to = {LOGIN_PATH} 
-        replace 
+        return ( <Navigate to = {LOGIN_PATH}  
         state = {{from: location}} />
         )
     };
