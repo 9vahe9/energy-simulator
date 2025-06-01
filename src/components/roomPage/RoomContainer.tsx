@@ -53,7 +53,7 @@ const randomId = (() => {
     name: roomName,
     description: description,
     levelOfEnergyConsumption: "15w",
-    monthlyCost: "12$",
+    monthlyCost: 12,
     id: " ",
     energyConsumption: "15135w",
     devices: devices,
