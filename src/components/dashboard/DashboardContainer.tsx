@@ -32,6 +32,7 @@ import "./dashboard.css";
 
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
+import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
@@ -49,7 +50,21 @@ export const DashboardContainer: React.FC = () => {
 
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
-  });
+
+  })
+
+  const totalEnergy = roomsArray.reduce((acc, curr) => {
+      console.log(curr.energyConsumption);
+      acc += +curr.energyConsumption;
+      return acc;
+  }, 0);
+
+  const totalCost = roomsArray.reduce((acc, curr) => {
+    console.log(curr.monthlyCost);
+    acc += +curr.monthlyCost;
+    return acc;
+}, 0);
+
 
   useEffect(() => {
     if (userID) {
@@ -76,68 +91,83 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      {userName}
-      <div className="dashboard-header">
-        <div className="header-left">
-          <Title level={3} style={{ margin: 0 }}>
-            Room Energy Management
-          </Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            style={{ marginLeft: 16 }}
-            onClick={() => navigate(ROOM_PATH)}
-            className="add-room-button"
-          >
-            Add New Room
-          </Button>
-          <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
-            Sort Rooms
-          </Button>
-        </div>
 
-        <div className="header-right">
-          <div className="header-summary">
-            <Text>Total Energy Consumption</Text>
-            <Title level={4} style={{ margin: 0 }}>
-              {/* {totalEnergy.toLocaleString()} kWh */}
-            </Title>
-            <Text>Monthly Cost</Text>
-            <Title level={4} style={{ margin: 0 }}>
-              {/* ${totalCost.toFixed(2)} */}
-            </Title>
-          </div>
-          <div className="header-search">
-            <Input
-              placeholder="Search rooms..."
-              prefix={<SearchOutlined />}
-              value={userSearch}
-              onChange={(e) => setUserSearch(e.target.value)}
-            />
+        <Title level={2}>
+          Room Energy Management
+        </Title>
+        <div className="wrapper">
+          <Row className="dashboard-header" justify="space-between">
+            <Col className="header-left">
+              <Space>
+              <Text italic style={{ margin: 0 }}>
+                {userName}
+              </Text>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                style={{ marginLeft: 16 }}
+                onClick={() => navigate(ROOM_PATH)}
 
-            <Button>Search</Button>
-          </div>
-        </div>
-      </div>
+                className="add-room-button"
 
-      <div>
-        {filteredRooms.length > 0 &&
-          filteredRooms.map(
-            (room) =>
-              room.name !== " " && (
-                <RoomCards
-                  key={room.id}
-                  name={room.name}
-                  id={room.id}
-                  priority={room.energyConsumption}
-                  energy={room.levelOfEnergyConsumption}
-                  icons={room.devices}
-                  cost={room.monthlyCost}
-                  deleteFunction={handleDelete}
-                  editRoomFunction={handleEditRoom}
+              >
+                Add New Room
+              </Button>
+              <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
+                Sort Rooms
+              </Button>
+              </Space>
+            </Col>
+
+            
+              <Col className="header-summary">
+                <Space>
+                <Text>Total Energy Consumption։</Text>
+                <Title level={4} style={{ margin: 0 }}>
+                  {totalEnergy}
+                </Title>
+                <Text>Monthly Cost։</Text>
+                <Title level={4} style={{ margin: 0 }}>
+                  {totalCost}
+                </Title>
+                </Space>
+              </Col>
+              <Col className="header-right">
+                <Search
+                  placeholder="Search rooms..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
                 />
-              )
-          )}
+              </Col>
+          </Row >
+
+      </div>
+      
+      <div className="wrapper">
+        <Row gutter={[24, 24]}>
+        {filteredRooms.length > 0 && filteredRooms.map((room) => (
+          room.name !== " " &&
+          <Col 
+            xs={24}
+            sm={12}
+            xl={6}
+          >
+            <RoomCards
+              key={room.id}
+              name={room.name}
+              id={room.id}
+              priority={room.energyConsumption}
+              energy={room.levelOfEnergyConsumption}
+              icons={room.devices}
+              cost={room.monthlyCost}
+              deleteFunction={handleDelete}
+              editRoomFunction={handleEditRoom}
+
+            />
+          </Col>
+        ))}
+      </Row>
+
       </div>
 
       <Button onClick={handleLogOut}>Log out</Button>

@@ -17,10 +17,10 @@ export interface Device {
 export interface Room {
     name: string,
     description: string,
-    levelOfEnergyConsumption: string, // The icon that's either red yellow or green
+    levelOfEnergyConsumption: number, // The icon that's either red yellow or green
     monthlyCost: number,
     id: string,
-    energyConsumption: string,
+    energyConsumption: number,
     devices: Device[],
 }
 
@@ -38,9 +38,9 @@ const initialState: UserState = {
     rooms: [{
         name: " ",
         description: " ",
-        levelOfEnergyConsumption: " ",
+        levelOfEnergyConsumption: 0,
         monthlyCost: 0,
-        energyConsumption: " ",
+        energyConsumption: 0,
         id: " ",
         devices: [{ name: " ", wattage: " ", deviceId: " " }],
     }],
