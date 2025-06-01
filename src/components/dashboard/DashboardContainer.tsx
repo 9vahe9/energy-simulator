@@ -1,9 +1,6 @@
 import "./dashboard.css"
-<<<<<<< HEAD
 import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress, Popconfirm } from 'antd';
-=======
-import { Input, Button, Typography } from 'antd';
->>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
+
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -17,11 +14,17 @@ import {
   PlusOutlined,
   SortAscendingOutlined,
   SearchOutlined,
+  EditOutlined,
+  ThunderboltFilled,
 } from "@ant-design/icons";
 import "./dashboard.css";
 import type { IRoom } from "../../types/room";
-<<<<<<< HEAD
+
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
+
+
+
+import { RoomCards } from "../roomCards/RoomCards";
 
 
 
@@ -33,9 +36,6 @@ const ICON_MAP: Record<string, string> = {
   Magnifier: "🔍",
   Fire: "🔥",
 };
-=======
-import { RoomCards } from "../roomCards/RoomCards";
->>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
 
 // Заглушка данных — позже заменим на Firebase
 const roomsData: IRoom[] = [
@@ -153,12 +153,11 @@ export const DashboardContainer: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-<<<<<<< HEAD
             style={{ marginLeft: 16 }}
             onClick={() => navigate(ROOM_PATH)}
-=======
+
             className="add-room-button"
->>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
+
           >
             Add New Room
           </Button>
@@ -193,105 +192,98 @@ export const DashboardContainer: React.FC = () => {
 
       {/* Room card */}
       <div className="room-cards">
-<<<<<<< HEAD
-        {roomsData.map((room) => (
-          <div key={room.id} className="room-card">
-            {/* Название и приоритет */}
-            <div className="card-header">
-              <Title level={4} style={{ margin: 0 }}>
-                {room.name}
-              </Title>
-              <Tag
-                icon={<ThunderboltFilled />}
-                className={
-                  room.priority === "High"
-                    ? "priority-tag-high"
-                    : room.priority === "Medium"
-                      ? "priority-tag-medium"
-                      : "priority-tag-low"
-                }
-              >
-                {room.priority}
-              </Tag>
-            </div>
 
-            {/* Card body */}
-            <div className="card-body"></div>
-
-            {/* Statics */}
-            <div className="card-stats">
-              <Space direction="vertical" style={{ width: "100%" }}>
-                <Text>Energy Consumption</Text>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
+        {
+          roomsData.map((room) => (
+            <div key={room.id} className="room-card">
+              {/* Название и приоритет */}
+              <div className="card-header">
+                <Title level={4} style={{ margin: 0 }}>
+                  {room.name}
+                </Title>
+                <Tag
+                  icon={<ThunderboltFilled />}
+                  className={
+                    room.priority === "High"
+                      ? "priority-tag-high"
+                      : room.priority === "Medium"
+                        ? "priority-tag-medium"
+                        : "priority-tag-low"
+                  }
                 >
-                  <Progress
-                    percent={Math.round((room.energy / 500) * 100)}
-                    showInfo={false}
-                  />
-                  <Text strong>{room.energy} kWh</Text>
-                </div>
+                  {room.priority}
+                </Tag>
+              </div>
 
-                <Text>Monthly Cost</Text>
-                <Text strong>${room.cost.toFixed(2)}</Text>
-              </Space>
-            </div>
+              {/* Card body */}
+              <div className="card-body"></div>
 
-            {/* Icon Device */}
-            <div className="device-icons">
-              {room.icons.map((ic) => (
-                <Space key={ic.type}>
-                  <span>{ICON_MAP[ic.type] || "🔌"}</span>
-                  <Text>{ic.count}</Text>
+              {/* Statics */}
+              <div className="card-stats">
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <Text>Energy Consumption</Text>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Progress
+                      percent={Math.round((room.energy / 500) * 100)}
+                      showInfo={false}
+                    />
+                    <Text strong>{room.energy} kWh</Text>
+                  </div>
+
+                  <Text>Monthly Cost</Text>
+                  <Text strong>${room.cost.toFixed(2)}</Text>
                 </Space>
-              ))}
+              </div>
+
+              {/* Icon Device */}
+              <div className="device-icons">
+                {room.icons.map((ic) => (
+                  <Space key={ic.type}>
+                    <span>{ICON_MAP[ic.type] || "🔌"}</span>
+                    <Text>{ic.count}</Text>
+                  </Space>
+                ))}
+              </div>
+
+              {/* Button edit */}
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                className="ant-btn-edit"
+              >
+                Edit Room
+              </Button>
+
             </div>
 
-            {/* Button edit */}
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              className="ant-btn-edit"
-            >
-              Edit Room
-            </Button>
+          ))
+        }
 
-          </div>
-
-        ))}
-
-=======
-        {roomsData.map((room) => {return <RoomCards 
-                                          id={room.id}
-                                          name={room.name}
-                                          priority={room.priority}
-                                          energy={room.energy}
-                                          cost={room.cost}
-                                          icons={room.icons}
-                                          />})}
-          <Button onClick = {handleLogOut}>Log out</Button>
->>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
-      </div>
+      </div >
       <div>
         {filteredRooms.length > 0 && filteredRooms.map((room) => (
-          room.name !== " " && <div key={room.id}>
-            <p>{room.name}</p>
-            <p>{room.description}</p>
-            <Popconfirm
-              title="Do you really want to delete this room?"
-              onConfirm={() => handleDelete(room.id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button danger>Delete Room</Button>
-            </Popconfirm>
-            <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
-          </div>
+          room.name !== " " &&
+
+          <RoomCards
+            key={room.id}
+            name={room.name}
+            id={room.id}
+            priority={room.energyConsumption}
+            energy={room.levelOfEnergyConsumption}
+            icons={room.devices}
+            cost={room.monthlyCost}
+            deleteFunction={handleDelete}
+            editRoomFunction={handleEditRoom}
+
+          />
         ))}
 
       </div>
+
       <Button onClick={handleLogOut}>Log out</Button>
-    </div>
+    </div >
   );
 };
 
