@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig/firebase";
 import { setCurrentUser } from "./store/authentication/authSlice";
 import { router } from "./routes/routes";
+//import ThreeScene from "./components/ThreeScene/SceneContainer";
 
 
 

@@ -1,5 +1,17 @@
-import "./dashboard.css"
-import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress, Popconfirm } from 'antd'; 
+import "./dashboard.css";
+import {
+  Input,
+  Button,
+  Form,
+  Typography,
+  Row,
+  Col,
+  Card,
+  Tag,
+  Space,
+  Progress,
+  Popconfirm,
+} from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -23,9 +35,6 @@ import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
-
-  // const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
-  // const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
@@ -35,13 +44,13 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const userID = useSelector((state: RootState) => state.auth.userToken)
+  const userID = useSelector((state: RootState) => state.auth.userToken);
 
   console.log(userID);
 
-
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
+
   })
 
   const totalEnergy = roomsArray.reduce((acc, curr) => {
@@ -56,6 +65,7 @@ export const DashboardContainer: React.FC = () => {
     return acc;
 }, 0);
 
+
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
@@ -63,30 +73,25 @@ export const DashboardContainer: React.FC = () => {
   }, [dispatch, userID]);
 
   function handleLogOut() {
-    signOut(auth)
-      .then(() => {
-        dispatch(setCurrentUser(null));
-        sessionStorage.setItem("userToken", "");
-        navigate(HOME_PATH);
-        console.log(userID);
-      })
-
+    signOut(auth).then(() => {
+      dispatch(setCurrentUser(null));
+      sessionStorage.setItem("userToken", "");
+      navigate(HOME_PATH);
+      console.log(userID);
+    });
   }
 
   function handleDelete(id: string) {
-
-    dispatch(deleteRoom(id))
-
+    dispatch(deleteRoom(id));
   }
 
   function handleEditRoom(id: string) {
-    navigate(`${ROOM_PATH}/${id}`)
+    navigate(`${ROOM_PATH}/${id}`);
   }
-
-
 
   return (
     <div className="dashboard-container">
+
         <Title level={2}>
           Room Energy Management
         </Title>
@@ -162,10 +167,10 @@ export const DashboardContainer: React.FC = () => {
           </Col>
         ))}
       </Row>
+
       </div>
 
       <Button onClick={handleLogOut}>Log out</Button>
-    </div >
+    </div>
   );
 };
-
