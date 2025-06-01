@@ -1,4 +1,4 @@
-import { Button, Typography, Tag, Space, Progress, Modal } from 'antd';
+import { Button, Typography, Tag, Space, Progress, Modal, Card } from 'antd';
 import {
     EditOutlined,
     ThunderboltFilled,
@@ -45,7 +45,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
     
     
     return (
-        <div key={id} className="room-card">
+        <Card key={id} className="room-card">
           {/* Название и приоритет */}
           <div className="card-header">
             <Title level={4} style={{ margin: 0 }}>
@@ -83,7 +83,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <Progress
-                  percent={Math.round((Number(energy) / 500) * 100)}
+                  percent={Math.round((Number(energy) / 1000) * 100)}
                   showInfo={false}
                   strokeColor={
                     priority >= 1000
@@ -122,7 +122,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
           </Button>
           <Button onClick={() => {confirmModal(name)}
           }>Delete room</Button>
-        </div>
+        </Card>
       
       )   
 }
