@@ -123,6 +123,12 @@
 }
 
 @media (max-width: 400px) {
+  .wrapper {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
   .header-left .ant-typography {
     font-size: 1.25em !important;
   }
@@ -146,4 +152,13 @@
   .room-card .card-body {
     height: 120px;
   }
+}
+
+.ant-btn-edit {
+  background-color: #26a69a;
+}
+
+.add-room-button {
+  background-color: #26a69a;
+  margin-left: 16;
 }

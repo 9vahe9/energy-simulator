@@ -13,4 +13,5 @@ export interface IRoomDevice {
 export interface IDeviceSelectOption {
   type: DeviceType;
   label: string;
+  icon?: React.ReactNode;
 }
