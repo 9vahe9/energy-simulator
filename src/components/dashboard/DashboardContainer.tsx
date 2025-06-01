@@ -1,5 +1,17 @@
-import "./dashboard.css"
-import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress, Popconfirm } from 'antd'; 
+import "./dashboard.css";
+import {
+  Input,
+  Button,
+  Form,
+  Typography,
+  Row,
+  Col,
+  Card,
+  Tag,
+  Space,
+  Progress,
+  Popconfirm,
+} from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -22,9 +34,6 @@ import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 
 export const DashboardContainer: React.FC = () => {
-
-  // const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
-  // const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
@@ -34,16 +43,13 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const userID = useSelector((state: RootState) => state.auth.userToken)
+  const userID = useSelector((state: RootState) => state.auth.userToken);
 
   console.log(userID);
 
-
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
-  })
-
-
+  });
 
   useEffect(() => {
     if (userID) {
@@ -52,32 +58,24 @@ export const DashboardContainer: React.FC = () => {
   }, [dispatch, userID]);
 
   function handleLogOut() {
-    signOut(auth)
-      .then(() => {
-        dispatch(setCurrentUser(null));
-        sessionStorage.setItem("userToken", "");
-        navigate(HOME_PATH);
-        console.log(userID);
-      })
-
+    signOut(auth).then(() => {
+      dispatch(setCurrentUser(null));
+      sessionStorage.setItem("userToken", "");
+      navigate(HOME_PATH);
+      console.log(userID);
+    });
   }
 
   function handleDelete(id: string) {
-
-    dispatch(deleteRoom(id))
-
+    dispatch(deleteRoom(id));
   }
 
   function handleEditRoom(id: string) {
-    navigate(`${ROOM_PATH}/${id}`)
+    navigate(`${ROOM_PATH}/${id}`);
   }
-
-
 
   return (
     <div className="dashboard-container">
-
-  
       {userName}
       <div className="dashboard-header">
         <div className="header-left">
@@ -89,9 +87,7 @@ export const DashboardContainer: React.FC = () => {
             icon={<PlusOutlined />}
             style={{ marginLeft: 16 }}
             onClick={() => navigate(ROOM_PATH)}
-
             className="add-room-button"
-
           >
             Add New Room
           </Button>
@@ -122,30 +118,29 @@ export const DashboardContainer: React.FC = () => {
             <Button>Search</Button>
           </div>
         </div>
-      </div >
-      
+      </div>
+
       <div>
-        {filteredRooms.length > 0 && filteredRooms.map((room) => (
-          room.name !== " " &&
-
-          <RoomCards
-            key={room.id}
-            name={room.name}
-            id={room.id}
-            priority={room.energyConsumption}
-            energy={room.levelOfEnergyConsumption}
-            icons={room.devices}
-            cost={room.monthlyCost}
-            deleteFunction={handleDelete}
-            editRoomFunction={handleEditRoom}
-
-          />
-        ))}
-
+        {filteredRooms.length > 0 &&
+          filteredRooms.map(
+            (room) =>
+              room.name !== " " && (
+                <RoomCards
+                  key={room.id}
+                  name={room.name}
+                  id={room.id}
+                  priority={room.energyConsumption}
+                  energy={room.levelOfEnergyConsumption}
+                  icons={room.devices}
+                  cost={room.monthlyCost}
+                  deleteFunction={handleDelete}
+                  editRoomFunction={handleEditRoom}
+                />
+              )
+          )}
       </div>
 
       <Button onClick={handleLogOut}>Log out</Button>
-    </div >
+    </div>
   );
 };
-
