@@ -1,46 +1,45 @@
 import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
-import './login.css';
+import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
-//import { useDispatch, useSelector } from 'react-redux';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from "../../store/store"
-import { setEmail, setPassword, setCurrentUser } from "../../store/authentication/authSlice"
-
-
+import { LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
+import { setEmail, setPassword } from '../../store/authentication/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../../store/store';
+//import type { Room } from '../../store/user/userSlice';
+import { createRoom, createUserName } from '../../store/user/userSlice';
+import type { AppDispatch } from '../../store/store';
+import { useState } from 'react';
 
-export const LoginContainer = () => {
 
+function SignUpContainer() {
+    const navigate = useNavigate();
     const email = useSelector((state: RootState) => state.auth.email);
     const password = useSelector((state: RootState) => state.auth.password);
-    const dispatch = useDispatch();
+    const [userName, setUsername] = useState("");
+    const dispatch = useDispatch<AppDispatch>();
 
-    const navigate = useNavigate();
-
-    async function handleSignIn() {
+    async function handleSignUp() {
 
         try {
+            const createAnAccount =  await createUserWithEmailAndPassword(auth, email, password);
+            const id = createAnAccount.user.uid
 
-
-            const signInAttempt = await signInWithEmailAndPassword(auth, email, password);
+      
+            dispatch(createRoom(id));
             dispatch(setEmail(""));
             dispatch(setPassword(""));
-            sessionStorage.setItem("userToken", signInAttempt.user.uid )
-            dispatch(setCurrentUser(sessionStorage.getItem('userToken')));
-            console.log(signInAttempt.user.uid);
-
-            navigate(DASHBOARD_PATH)
-
+            dispatch(createUserName({ userId: id, newName: userName }));
+            alert("Everything works fine");
         }
+
         catch (err) {
-            alert("Sorry, check either your email or password");
+            alert("something went wrong");
         }
 
     }
-
 
 
 
@@ -51,7 +50,7 @@ export const LoginContainer = () => {
                 variant='outlined'
             >
                 <Title level={2} className="main-title" >Energy Emulator</Title>
-                <Title level={3} className="login-title" >Login</Title>
+                <Title level={3} className="login-title" >Sign Up </Title>
                 <Form
                     name="login"
                     layout="vertical"
@@ -60,9 +59,9 @@ export const LoginContainer = () => {
                         label="Email"
                         name="email"
                         rules={[
-                                { required: true, message: "Enter your email" },
-                                {type: "email", message: "Email is invalid"}
-                            ]}
+                            { required: true, message: "Enter your email" },
+                            { type: "email", message: "Email is invalid"}
+                        ]}
                     >
                         <Input placeholder='somemail@smt.com' value={email}
                             onChange={(e) => dispatch(setEmail(e.target.value))} />
@@ -75,9 +74,20 @@ export const LoginContainer = () => {
                         <Input type="password" placeholder='myPassword' value={password}
                             onChange={(e) => dispatch(setPassword(e.target.value))} />
                     </Form.Item>
+
+                     <Form.Item
+                        label="userName"
+                        name="userName"
+                        rules={[{ required: true, message: "Enter your password" }]}
+                    >
+                        <Input type="text" placeholder='Enter your userName' value={userName}
+                            onChange={(e) => setUsername(e.target.value)} />
+                    </Form.Item>
+
+
                     <Form.Item className='login-button-form'>
-                        <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignIn}>
-                            Log In
+                        <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
+                            Create An Account
                         </Button>
                     </Form.Item>
                     <Form.Item>
@@ -93,8 +103,8 @@ export const LoginContainer = () => {
                                 </Button>
                             </Col>
                             <Col span={8}>
-                                <Button onClick={() => navigate(SIGNUP_PATH)} type='link' block>
-                                    Sign up
+                                <Button onClick={() => navigate(LOGIN_PATH)} type='link' block>
+                                    Log In
                                 </Button>
                             </Col>
                         </Row>
@@ -104,4 +114,10 @@ export const LoginContainer = () => {
             </Card>
         </div>
     )
+
+
 }
+
+
+
+export default SignUpContainer

@@ -5,12 +5,16 @@ import {
   HOME_PATH,
   ROOM_PATH,
   LOGIN_PATH,
+  SIGNUP_PATH,
 } from "../constants/RoutePaths";
+
 import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
-import DassboardPage from "../pages/DassboardPage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
+import SignUpContainer from "../components/signUp/SignUpContainer";
+import DashboardPage from "../pages/DashBoardPage";
+import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 
 export const router = createBrowserRouter([
   {
@@ -23,11 +27,20 @@ export const router = createBrowserRouter([
       },
       {
         path: DASHBOARD_PATH,
-        element: <DassboardPage />,
+        element: (
+          <ProtectedRoutes>
+            <DashboardPage />
+          </ProtectedRoutes>
+        ),
+
       },
       {
-        path: ROOM_PATH,
-        element: <RoomPage />,
+        path: `${ROOM_PATH}/:roomId?`, 
+        element: (
+          <ProtectedRoutes>
+            <RoomPage />
+          </ProtectedRoutes>
+        ),
       },
     ],
   },
@@ -35,4 +48,8 @@ export const router = createBrowserRouter([
     path: LOGIN_PATH,
     element: <LoginContainer />,
   },
+  {
+    path: SIGNUP_PATH,
+    element: <SignUpContainer />,
+  }
 ]);

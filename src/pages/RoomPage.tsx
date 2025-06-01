@@ -143,5 +143,10 @@ const RoomPage: React.FC = () => {
     </Layout>
   );
 };
+// import RoomContainer from "../components/roomPage/RoomContainer";
+
+// const RoomPage = () => {
+//     return <RoomContainer />
+// };
 
 export default RoomPage;
