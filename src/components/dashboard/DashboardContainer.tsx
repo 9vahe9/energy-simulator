@@ -1,5 +1,5 @@
-import "./dashboard.css"
-import { Input, Button, Typography } from 'antd';
+import "./dashboard.css";
+import { Input, Button, Typography } from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -18,6 +18,8 @@ import {
 import "./dashboard.css";
 import type { IRoom } from "../../types/room";
 import { RoomCards } from "../roomCards/RoomCards";
+
+import GptSearch from "../dashboard/GptSearch";
 
 // Заглушка данных — позже заменим на Firebase
 const roomsData: IRoom[] = [
@@ -70,11 +72,11 @@ export const DashboardContainer: React.FC = () => {
   const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
   const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
-  
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const userID = useSelector((state: RootState) => state.auth.userToken)
+  const userID = useSelector((state: RootState) => state.auth.userToken);
   const roomsArray = useSelector((state: RootState) => state.user.rooms);
 
   console.log(userID);
@@ -83,24 +85,20 @@ export const DashboardContainer: React.FC = () => {
     if (userID) {
       dispatch(fetchRooms(userID));
     }
-  }, [dispatch, userID])
+  }, [dispatch, userID]);
 
   console.log(roomsArray);
 
   function handleLogOut() {
-    signOut(auth)
-      .then(() => {
-        dispatch(setCurrentUser(null));
-        sessionStorage.setItem("userToken", "");
-        navigate(HOME_PATH);
-        console.log(userID);
-      })
-
+    signOut(auth).then(() => {
+      dispatch(setCurrentUser(null));
+      sessionStorage.setItem("userToken", "");
+      navigate(HOME_PATH);
+      console.log(userID);
+    });
   }
 
-
   console.log(roomsArray);
-
 
   return (
     <div className="dashboard-container">
@@ -142,19 +140,28 @@ export const DashboardContainer: React.FC = () => {
           </div>
         </div>
       </div>
-
+      {/* Секция с GPT-поиском */}
+      <div className="gpt-search-section" style={{ margin: "20px 0" }}>
+        <GptSearch />
+      </div>
       {/* Room card */}
       <div className="room-cards">
-        {roomsData.map((room) => {return <RoomCards 
-                                          id={room.id}
-                                          name={room.name}
-                                          priority={room.priority}
-                                          energy={room.energy}
-                                          cost={room.cost}
-                                          icons={room.icons}
-                                          />})}
-          <Button onClick = {handleLogOut}>Log out</Button>
+        {roomsData.map((room) => {
+          return (
+            <RoomCards
+              id={room.id}
+              name={room.name}
+              priority={room.priority}
+              energy={room.energy}
+              cost={room.cost}
+              icons={room.icons}
+            />
+          );
+        })}
+        <Button onClick={handleLogOut}>Log out</Button>
       </div>
     </div>
   );
 };
+
+export default DashboardContainer;

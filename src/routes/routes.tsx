@@ -14,7 +14,7 @@ import HomePage from "../pages/HomePage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
-import DashboardPage from "../pages/DashBoardPage";
+import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 
 export const router = createBrowserRouter([
@@ -33,7 +33,6 @@ export const router = createBrowserRouter([
             <DashboardPage />
           </ProtectedRoutes>
         ),
-
       },
       {
         path: ROOM_PATH,
@@ -52,5 +51,5 @@ export const router = createBrowserRouter([
   {
     path: SIGNUP_PATH,
     element: <SignUpContainer />,
-  }
+  },
 ]);
