@@ -3,6 +3,7 @@ import {
     EditOutlined,
     ThunderboltFilled,
 } from "@ant-design/icons";
+import type { Device } from '../../store/user/userSlice';
 
 const { Title, Text } = Typography;
 
@@ -14,7 +15,12 @@ const ICON_MAP: Record<string, string> = {
     Fire: "🔥",
 };
 
-const confirmModal = (name) => {
+
+
+export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunction, editRoomFunction} : 
+  {id: string, name: string, priority: string, energy: string, cost: number, icons: Device[], deleteFunction: Function, editRoomFunction: Function}) => {
+    
+    const confirmModal = (name: string) => {
   Modal.confirm({
     title: "Delete room",
     content: `Are you sure tou want to delete ${name}`,
@@ -26,6 +32,7 @@ const confirmModal = (name) => {
       }
     },
     onOk() {
+      deleteFunction(id);
       console.log(`${name} deleted successfully!`);
     }, 
     onCancel() {
@@ -33,8 +40,10 @@ const confirmModal = (name) => {
     },
   });
 };
-
-export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
+    
+    
+    
+    
     return (
         <div key={id} className="room-card">
           {/* Название и приоритет */}
@@ -74,7 +83,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <Progress
-                  percent={Math.round((energy / 500) * 100)}
+                  percent={Math.round((Number(energy) / 500) * 100)}
                   showInfo={false}
                   strokeColor={
                     priority === "High"
@@ -88,16 +97,16 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
               </div>
 
               <Text>Monthly Cost</Text>
-              <Text strong>${cost.toFixed(2)}</Text>
+              <Text strong>${cost}</Text>
             </Space>
           </div>
 
           {/* Icon Device */}
           <div className="device-icons">
             {icons.map((ic) => (
-              <Space key={ic.type}>
-                <span>{ICON_MAP[ic.type] || "🔌"}</span>
-                <Text>{ic.count}</Text>
+              <Space key={ic.name}>
+                <span>{ICON_MAP[ic.name] || "🔌"}</span>
+              
               </Space>
             ))}
           </div>
@@ -107,10 +116,12 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons}) => {
             type="primary"
             icon={<EditOutlined />}
             className="ant-btn-edit"
+            onClick={() => editRoomFunction(id)}
           >
             Edit Room
           </Button>
-          <Button onClick={() => confirmModal(name)}>Delete room</Button>
+          <Button onClick={() => {confirmModal(name)}
+          }>Delete room</Button>
         </div>
       
       )   
