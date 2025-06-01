@@ -4,6 +4,7 @@ import { auth } from '../../firebaseConfig/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
+//import { useDispatch, useSelector } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from "../../store/store"
 import { setEmail, setPassword, setCurrentUser } from "../../store/authentication/authSlice"
@@ -56,11 +57,14 @@ export const LoginContainer = () => {
                     layout="vertical"
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
-                        rules={[{ required: true, message: "Enter your username" }]}
+                        label="Email"
+                        name="email"
+                        rules={[
+                                { required: true, message: "Enter your email" },
+                                {type: "email", message: "Email is invalid"}
+                            ]}
                     >
-                        <Input placeholder='myUsername' value={email}
+                        <Input placeholder='somemail@smt.com' value={email}
                             onChange={(e) => dispatch(setEmail(e.target.value))} />
                     </Form.Item>
                     <Form.Item
