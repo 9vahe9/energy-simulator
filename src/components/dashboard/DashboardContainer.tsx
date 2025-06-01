@@ -11,6 +11,8 @@ import {
   Space,
   Progress,
   Popconfirm,
+  Modal,
+  InputNumber,
 } from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +22,7 @@ import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
 import { useEffect, useState } from "react";
+import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
 import {
   PlusOutlined,
@@ -36,11 +39,13 @@ import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
+  const { singleRoomPage, handleAddingRoom } = useAddRooms();
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -51,20 +56,20 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
 
-  })
+  });
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  const handleOk = () => {
+    handleAddingRoom();
+    setModalVisible(false);
+    form.resetFields();
+  };
 
-  const totalEnergy = roomsArray.reduce((acc, curr) => {
-      console.log(curr.energyConsumption);
-      acc += +curr.energyConsumption;
-      return acc;
-  }, 0);
-
-  const totalCost = roomsArray.reduce((acc, curr) => {
-    console.log(curr.monthlyCost);
-    acc += +curr.monthlyCost;
-    return acc;
-}, 0);
-
+  const handleCancel = () => {
+    setModalVisible(false);
+    form.resetFields();
+  };
 
   useEffect(() => {
     if (userID) {
@@ -91,6 +96,71 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+
+      {userName}
+      <div className="dashboard-header">
+        <div className="header-left">
+          <Title level={3} style={{ margin: 0 }}>
+            Room Energy Management
+          </Title>
+          <Button type="primary" onClick={() => showModal()}>
+            Add new room
+          </Button>
+          <Modal
+            title="add device"
+            open={modalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            okText="Add"
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[
+                  { required: true, message: "Please enter room name" },
+                  { min: 3, message: "min 3 charachter" },
+                ]}
+              >
+                <Input minLength={3} maxLength={15} />
+              </Form.Item>
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  { required: false, message: "Please enter room description" },
+                  { min: 3, message: "min 150 charachter" },
+                ]}
+              >
+                <Input minLength={3} maxLength={150} />
+              </Form.Item>
+            </Form>
+          </Modal>
+          <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
+            Sort Rooms
+          </Button>
+        </div>
+
+        <div className="header-right">
+          <div className="header-summary">
+            <Text>Total Energy Consumption</Text>
+            <Title level={4} style={{ margin: 0 }}>
+              {/* {totalEnergy.toLocaleString()} kWh */}
+            </Title>
+            <Text>Monthly Cost</Text>
+            <Title level={4} style={{ margin: 0 }}>
+              {/* ${totalCost.toFixed(2)} */}
+            </Title>
+          </div>
+          <div className="header-search">
+            <Input
+              placeholder="Search rooms..."
+              prefix={<SearchOutlined />}
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
+            />
+
+
 
         <Title level={2}>
           Room Energy Management
