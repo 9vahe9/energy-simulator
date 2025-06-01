@@ -10,7 +10,6 @@ import {
 
 import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
-
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
@@ -36,7 +35,7 @@ export const router = createBrowserRouter([
 
       },
       {
-        path: ROOM_PATH,
+        path: `${ROOM_PATH}/:roomId?`, 
         element: (
           <ProtectedRoutes>
             <RoomPage />

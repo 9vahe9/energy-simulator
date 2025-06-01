@@ -1,5 +1,9 @@
 import "./dashboard.css"
+<<<<<<< HEAD
+import { Input, Button, Form, Typography, Row, Col, Card, Tag, Space, Progress, Popconfirm } from 'antd';
+=======
 import { Input, Button, Typography } from 'antd';
+>>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -7,8 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { fetchRooms } from "../../store/user/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import {
   PlusOutlined,
@@ -17,7 +20,22 @@ import {
 } from "@ant-design/icons";
 import "./dashboard.css";
 import type { IRoom } from "../../types/room";
+<<<<<<< HEAD
+import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
+
+
+
+// Маппинг «тип устройства» → эмодзи
+const ICON_MAP: Record<string, string> = {
+  TV: "📺",
+  Lighting: "💡",
+  Humidifier: "❄️",
+  Magnifier: "🔍",
+  Fire: "🔥",
+};
+=======
 import { RoomCards } from "../roomCards/RoomCards";
+>>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
 
 // Заглушка данных — позже заменим на Firebase
 const roomsData: IRoom[] = [
@@ -66,26 +84,34 @@ const roomsData: IRoom[] = [
 ];
 
 export const DashboardContainer: React.FC = () => {
-  // Считаем общие показатели
-  const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
-  const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
+
+  // const totalEnergy = roomsData.reduce((sum, r) => sum + r.energy, 0);
+  // const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
-  
+
+  let roomsArray = useSelector((state: RootState) => state.user.rooms);
+  const userName = useSelector((state: RootState) => state.user.userName);
+  const [userSearch, setUserSearch] = useState("");
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const userID = useSelector((state: RootState) => state.auth.userToken)
-  const roomsArray = useSelector((state: RootState) => state.user.rooms);
 
   console.log(userID);
+
+
+  const filteredRooms = roomsArray.filter((room) => {
+    return room.name.toLowerCase().includes(userSearch.toLowerCase());
+  })
+
+
 
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
     }
-  }, [dispatch, userID])
-
-  console.log(roomsArray);
+  }, [dispatch, userID]);
 
   function handleLogOut() {
     signOut(auth)
@@ -99,12 +125,26 @@ export const DashboardContainer: React.FC = () => {
   }
 
 
-  console.log(roomsArray);
+
+
+
+  function handleDelete(id: string) {
+
+    dispatch(deleteRoom(id))
+
+  }
+
+  function handleEditRoom(id: string) {
+    navigate(`${ROOM_PATH}/${id}`)
+  }
+
 
 
   return (
     <div className="dashboard-container">
+
       {/* header */}
+      {userName}
       <div className="dashboard-header">
         <div className="header-left">
           <Title level={3} style={{ margin: 0 }}>
@@ -113,7 +153,12 @@ export const DashboardContainer: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
+<<<<<<< HEAD
+            style={{ marginLeft: 16 }}
+            onClick={() => navigate(ROOM_PATH)}
+=======
             className="add-room-button"
+>>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
           >
             Add New Room
           </Button>
@@ -126,25 +171,96 @@ export const DashboardContainer: React.FC = () => {
           <div className="header-summary">
             <Text>Total Energy Consumption</Text>
             <Title level={4} style={{ margin: 0 }}>
-              {totalEnergy.toLocaleString()} kWh
+              {/* {totalEnergy.toLocaleString()} kWh */}
             </Title>
             <Text>Monthly Cost</Text>
             <Title level={4} style={{ margin: 0 }}>
-              ${totalCost.toFixed(2)}
+              {/* ${totalCost.toFixed(2)} */}
             </Title>
           </div>
           <div className="header-search">
             <Input
               placeholder="Search rooms..."
               prefix={<SearchOutlined />}
-              allowClear
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
             />
+
+            <Button>Search</Button>
           </div>
         </div>
       </div>
 
       {/* Room card */}
       <div className="room-cards">
+<<<<<<< HEAD
+        {roomsData.map((room) => (
+          <div key={room.id} className="room-card">
+            {/* Название и приоритет */}
+            <div className="card-header">
+              <Title level={4} style={{ margin: 0 }}>
+                {room.name}
+              </Title>
+              <Tag
+                icon={<ThunderboltFilled />}
+                className={
+                  room.priority === "High"
+                    ? "priority-tag-high"
+                    : room.priority === "Medium"
+                      ? "priority-tag-medium"
+                      : "priority-tag-low"
+                }
+              >
+                {room.priority}
+              </Tag>
+            </div>
+
+            {/* Card body */}
+            <div className="card-body"></div>
+
+            {/* Statics */}
+            <div className="card-stats">
+              <Space direction="vertical" style={{ width: "100%" }}>
+                <Text>Energy Consumption</Text>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Progress
+                    percent={Math.round((room.energy / 500) * 100)}
+                    showInfo={false}
+                  />
+                  <Text strong>{room.energy} kWh</Text>
+                </div>
+
+                <Text>Monthly Cost</Text>
+                <Text strong>${room.cost.toFixed(2)}</Text>
+              </Space>
+            </div>
+
+            {/* Icon Device */}
+            <div className="device-icons">
+              {room.icons.map((ic) => (
+                <Space key={ic.type}>
+                  <span>{ICON_MAP[ic.type] || "🔌"}</span>
+                  <Text>{ic.count}</Text>
+                </Space>
+              ))}
+            </div>
+
+            {/* Button edit */}
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              className="ant-btn-edit"
+            >
+              Edit Room
+            </Button>
+
+          </div>
+
+        ))}
+
+=======
         {roomsData.map((room) => {return <RoomCards 
                                           id={room.id}
                                           name={room.name}
@@ -154,7 +270,28 @@ export const DashboardContainer: React.FC = () => {
                                           icons={room.icons}
                                           />})}
           <Button onClick = {handleLogOut}>Log out</Button>
+>>>>>>> 5db251c882b14fcf0798a791bbe28720df6bfaff
       </div>
+      <div>
+        {filteredRooms.length > 0 && filteredRooms.map((room) => (
+          room.name !== " " && <div key={room.id}>
+            <p>{room.name}</p>
+            <p>{room.description}</p>
+            <Popconfirm
+              title="Do you really want to delete this room?"
+              onConfirm={() => handleDelete(room.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger>Delete Room</Button>
+            </Popconfirm>
+            <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
+          </div>
+        ))}
+
+      </div>
+      <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
 };
+

@@ -8,7 +8,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const token = sessionStorage.getItem("userToken");
 
 
-const initialState = {
+interface AuthState  {
+    email: string,
+    password: string,
+    userToken: any,
+}
+
+const initialState: AuthState = {
     email: "",
     password: "",
     userToken: token,

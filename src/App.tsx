@@ -10,16 +10,16 @@ import { router } from "./routes/routes";
 
 function App() {
 
-  const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("userToken");
+    // useEffect(() => {
+    //   const token = sessionStorage.getItem("userToken");
 
-    if (token) {
-      dispatch(setCurrentUser(token));
-    }
+    //   if (token) {
+    //     dispatch(setCurrentUser(token));
+    //   }
 
-  }, [dispatch])
+    // }, [dispatch])
 
   return <RouterProvider router={router} />;
 }
