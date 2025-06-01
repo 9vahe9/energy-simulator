@@ -1,4 +1,4 @@
-import { Button, Typography, Tag, Space, Progress, Modal } from 'antd';
+import { Button, Typography, Tag, Space, Progress, Modal, Card } from 'antd';
 import {
     EditOutlined,
     ThunderboltFilled,
@@ -18,7 +18,7 @@ const ICON_MAP: Record<string, string> = {
 
 
 export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunction, editRoomFunction} : 
-  {id: string, name: string, priority: string, energy: string, cost: number, icons: Device[], deleteFunction: Function, editRoomFunction: Function}) => {
+  {id: string, name: string, priority: number, energy: number, cost: number, icons: Device[], deleteFunction: Function, editRoomFunction: Function}) => {
     
     const confirmModal = (name: string) => {
   Modal.confirm({
@@ -45,7 +45,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
     
     
     return (
-        <div key={id} className="room-card">
+        <Card key={id} className="room-card">
           {/* Название и приоритет */}
           <div className="card-header">
             <Title level={4} style={{ margin: 0 }}>
@@ -54,16 +54,16 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
             <Tag
               icon={<ThunderboltFilled />}
               className={
-                priority === "High"
+                priority >= 1000
                   ? "priority-tag-high"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000 
                   ? "priority-tag-medium"
                   : "priority-tag-low"
               }
               color={
-                priority === "High"
+                priority >= 1000
                   ? "red"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000
                   ? "yellow"
                   : "green"
               }
@@ -83,12 +83,12 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <Progress
-                  percent={Math.round((Number(energy) / 500) * 100)}
+                  percent={Math.round((Number(energy) / 1000) * 100)}
                   showInfo={false}
                   strokeColor={
-                    priority === "High"
+                    priority >= 1000
                   ? "#C70039"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000
                   ? "#FFDE2B"
                   : "green"
                   }
@@ -122,7 +122,7 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
           </Button>
           <Button onClick={() => {confirmModal(name)}
           }>Delete room</Button>
-        </div>
+        </Card>
       
       )   
 }
