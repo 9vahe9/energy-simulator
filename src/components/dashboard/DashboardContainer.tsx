@@ -83,7 +83,7 @@ export const DashboardContainer: React.FC = () => {
   // const totalCost = roomsData.reduce((sum, r) => sum + r.cost, 0);
   const { Title, Text } = Typography;
 
-  const roomsArray = useSelector((state: RootState) => state.user.rooms);
+  let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
 
@@ -93,6 +93,13 @@ export const DashboardContainer: React.FC = () => {
   const userID = useSelector((state: RootState) => state.auth.userToken)
 
   console.log(userID);
+
+
+  const filteredRooms = roomsArray.filter((room) => {
+    return room.name.toLowerCase().includes(userSearch.toLowerCase());
+  })
+
+
 
   useEffect(() => {
     if (userID) {
@@ -111,6 +118,10 @@ export const DashboardContainer: React.FC = () => {
 
   }
 
+
+
+
+
   function handleDelete(id: string) {
 
     dispatch(deleteRoom(id))
@@ -120,6 +131,7 @@ export const DashboardContainer: React.FC = () => {
   function handleEditRoom(id: string) {
     navigate(`${ROOM_PATH}/${id}`)
   }
+
 
 
   return (
@@ -160,7 +172,10 @@ export const DashboardContainer: React.FC = () => {
             <Input
               placeholder="Search rooms..."
               prefix={<SearchOutlined />}
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
             />
+
             <Button>Search</Button>
           </div>
         </div>
@@ -236,8 +251,8 @@ export const DashboardContainer: React.FC = () => {
 
       </div>
       <div>
-        {roomsArray.length > 0 && roomsArray.map((room) => (
-          room.name !== " " && <div>
+        {filteredRooms.length > 0 && filteredRooms.map((room) => (
+          room.name !== " " && <div key={room.id}>
             <p>{room.name}</p>
             <p>{room.description}</p>
             <Popconfirm
@@ -248,11 +263,10 @@ export const DashboardContainer: React.FC = () => {
             >
               <Button danger>Delete Room</Button>
             </Popconfirm>
-            {/* <button onClick={() => handleDelete(room.id)}> DeleteRoom </button> */}
-
             <button onClick={() => handleEditRoom(room.id)}> Edit Room </button>
           </div>
         ))}
+
       </div>
       <Button onClick={handleLogOut}>Log out</Button>
     </div>

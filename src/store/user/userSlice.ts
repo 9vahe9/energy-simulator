@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+// import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+// import type { PayloadAction } from "@reduxjs/toolkit";
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { dataBase } from '../../firebaseConfig/firebase';
 import { createAppSlice } from "../../app/CreateAppSlice";

@@ -21,9 +21,6 @@ function SignUpContainer() {
     const [userName, setUsername] = useState("");
     const dispatch = useDispatch<AppDispatch>();
 
-
-
-
     async function handleSignUp() {
 
         try {
