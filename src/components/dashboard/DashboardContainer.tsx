@@ -11,6 +11,8 @@ import {
   Space,
   Progress,
   Popconfirm,
+  Modal,
+  InputNumber,
 } from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +22,7 @@ import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
 import { useEffect, useState } from "react";
+import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
 import {
   PlusOutlined,
@@ -35,11 +38,13 @@ import { RoomCards } from "../roomCards/RoomCards";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
+  const { singleRoomPage, handleAddingRoom } = useAddRooms();
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -50,7 +55,19 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
+  const showModal = () => {
+    setModalVisible(true);
+  };
+  const handleOk = () => {
+    handleAddingRoom();
+    setModalVisible(false);
+    form.resetFields();
+  };
 
+  const handleCancel = () => {
+    setModalVisible(false);
+    form.resetFields();
+  };
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
@@ -82,15 +99,39 @@ export const DashboardContainer: React.FC = () => {
           <Title level={3} style={{ margin: 0 }}>
             Room Energy Management
           </Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            style={{ marginLeft: 16 }}
-            onClick={() => navigate(ROOM_PATH)}
-            className="add-room-button"
-          >
-            Add New Room
+          <Button type="primary" onClick={() => showModal()}>
+            Add new room
           </Button>
+          <Modal
+            title="add device"
+            open={modalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            okText="Add"
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[
+                  { required: true, message: "Please enter room name" },
+                  { min: 3, message: "min 3 charachter" },
+                ]}
+              >
+                <Input minLength={3} maxLength={15} />
+              </Form.Item>
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  { required: false, message: "Please enter room description" },
+                  { min: 3, message: "min 150 charachter" },
+                ]}
+              >
+                <Input minLength={3} maxLength={150} />
+              </Form.Item>
+            </Form>
+          </Modal>
           <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
             Sort Rooms
           </Button>

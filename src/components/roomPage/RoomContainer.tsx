@@ -1,44 +1,49 @@
-import { Select, Button } from "antd";
+import {
+  Layout,
+  List,
+  Button,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+} from "antd";
 import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
+import useThreeScene from "../../hooks/useThreeScene.tsx";
+import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import { addRoom, type Device, type Room, updateRoom } from "../../store/user/userSlice";
-
-
-
+import {
+  addRoom,
+  type Device,
+  type Room,
+  updateRoom,
+} from "../../store/user/userSlice";
+const { Content, Sider } = Layout;
+const { Option } = Select;
 const RoomContainer = () => {
+  const { threeScene, handleAddDevice } = useThreeScene();
 
-  
+  const [selectedType, setSelectedType] = useState<number | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [devices, setDevices] = useState<Device[]>([]);
 
-
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  
-  const userId: string = useSelector((state: RootState) => state.auth.userToken);
 
-const randomId = (() => {
-  const now = new Date();
-  return [
-    now.getDate(),
-    now.getMonth() + 1,
-    now.getHours(),
-    now.getMinutes(),
-    now.getSeconds(),
-  ]
-    .map(n => String(n).padStart(2, "0"))
-    .join("_");
-})();
-
+  const userId: string = useSelector(
+    (state: RootState) => state.auth.userToken
+  );
 
   const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined
+    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
 
   useEffect(() => {
@@ -47,77 +52,112 @@ const randomId = (() => {
       setDescription(existingRoom.description);
       setDevices(existingRoom.devices);
     }
-  }, [existingRoom])
+  }, [existingRoom]);
+  const showModal = (type: number) => {
+    setSelectedType(type);
+    setModalVisible(true);
+  };
 
-  const room: Room = {
-    name: roomName,
-    description: description,
-    levelOfEnergyConsumption: "15w",
-    monthlyCost: 12,
-    id: " ",
-    energyConsumption: "15135w",
-    devices: devices,
-  }
+  const handleOk = () => {
+    form.validateFields().then((values) => {
+      // create  IRoomDevice obj
+      const device = {
+        type: selectedType!,
+        name: values.name,
+        power: values.power,
+        uptime: values.uptime,
+        workingDayTime: values.workingDayTime,
+      };
+      handleAddDevice(device);
+      setModalVisible(false);
+      form.resetFields();
+    });
+  };
 
+  const handleCancel = () => {
+    setModalVisible(false);
+    form.resetFields();
+  };
 
-  function handleDeletingDevice(id: string){
-    
-    setDevices(devices.filter((device) => device.deviceId !== id))
-  
+  function handleDeletingDevice(id: string) {
+    setDevices(devices.filter((device) => device.deviceId !== id));
   }
 
   function handleAddingDevice(device: Device) {
-      setDevices([...devices, device]);
+    setDevices([...devices, device]);
   }
 
-  const handleAddingRoom = async () => {
-    if (!userId) return;
-  const finalRoom = {
-    ...room,
-    id: roomId ? (existingRoom?.id || "") : randomId, devices,
-  };
-
-    try {
-      if (roomId) {
-        await dispatch(updateRoom({ userId,  roomObject: finalRoom }));
-      } else {
-        await dispatch(addRoom({ userId, roomObject: finalRoom }));
-      }
-      navigate(DASHBOARD_PATH);
-    } catch (err) {
-      console.error("Operation failed:", err);
-    }
-  };
-
   return (
-    <div>
-      <div>
-        <h1> Add new device</h1>
-        <Select placeholder="select a device">
-          {DEVICE_SELECT_OPTONS.map((device) => (
-            <Select.Option key={device.type} value={device.type}>
-              {device.label}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <input
-          type="text"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Enter the room name"
+    <Layout style={{ height: "100vh" }}>
+      <Content className="kkkkkk" style={{ flex: 1 }}>
+        {threeScene}
+      </Content>
+      <Sider width={400} style={{ background: "#fff", padding: 16 }}>
+        <h3>Devices</h3>
+        <List
+          dataSource={DEVICE_SELECT_OPTONS}
+          renderItem={(item) => (
+            <List.Item>
+              <Button type="primary" onClick={() => showModal(item.type)}>
+                {item.icon} {item.label}
+              </Button>
+            </List.Item>
+          )}
         />
+      </Sider>
 
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter the rooms description"
-        />
+      <Modal
+        title="add device"
+        open={modalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Add"
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{ workingDayTime: DayTime.Day }}
+        >
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              { required: true, message: "Please enter device name" },
+              { min: 3, message: "min 3 charachter" },
+            ]}
+          >
+            <Input minLength={3} maxLength={15} />
+          </Form.Item>
 
-      </div>
-      {<Button onClick={handleAddingRoom}>Add the Room</Button>}
-    </div>
+          <Form.Item
+            name="power"
+            label="Power"
+            rules={[{ required: true, message: "Please enter device power" }]}
+          >
+            <InputNumber min={0} style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item
+            name="uptime"
+            label="Uptime (minute)"
+            rules={[{ required: true, message: "please enter uptime " }]}
+          >
+            <InputNumber min={0} max={1440} style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item
+            name="workingDayTime"
+            label="Working on Day"
+            rules={[{ required: true, message: "please choose time on day" }]}
+          >
+            <Select>
+              <Option value={DayTime.Day}>Day</Option>
+              <Option value={DayTime.Night}>Night</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Layout>
   );
 };
 
