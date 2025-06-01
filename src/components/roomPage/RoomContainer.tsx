@@ -52,10 +52,10 @@ const randomId = (() => {
   const room: Room = {
     name: roomName,
     description: description,
-    levelOfEnergyConsumption: "15w",
+    levelOfEnergyConsumption: 15,
     monthlyCost: 12,
     id: " ",
-    energyConsumption: "15135w",
+    energyConsumption: 15135,
     devices: devices,
   }
 

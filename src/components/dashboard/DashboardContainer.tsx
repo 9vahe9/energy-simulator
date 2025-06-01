@@ -20,6 +20,7 @@ import "./dashboard.css";
 
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
+import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
 
@@ -43,7 +44,11 @@ export const DashboardContainer: React.FC = () => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   })
 
-
+  const totalEnergy = roomsArray.reduce((acc, curr) => {
+      console.log(curr.energyConsumption);
+      acc += +curr.energyConsumption;
+      return acc;
+  }, 0);
 
   useEffect(() => {
     if (userID) {
@@ -76,53 +81,53 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+        <Title level={2}>
+          Room Energy Management
+        </Title>
+        <Row className="dashboard-header" justify="space-between">
+          <Col className="header-left">
+            <Space>
+            <Text italic style={{ margin: 0 }}>
+              {userName}
+            </Text>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginLeft: 16 }}
+              onClick={() => navigate(ROOM_PATH)}
 
-  
-      {userName}
-      <div className="dashboard-header">
-        <div className="header-left">
-          <Title level={3} style={{ margin: 0 }}>
-            Room Energy Management
-          </Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            style={{ marginLeft: 16 }}
-            onClick={() => navigate(ROOM_PATH)}
+              className="add-room-button"
 
-            className="add-room-button"
+            >
+              Add New Room
+            </Button>
+            <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
+              Sort Rooms
+            </Button>
+            </Space>
+          </Col>
 
-          >
-            Add New Room
-          </Button>
-          <Button icon={<SortAscendingOutlined />} style={{ marginLeft: 12 }}>
-            Sort Rooms
-          </Button>
-        </div>
-
-        <div className="header-right">
-          <div className="header-summary">
-            <Text>Total Energy Consumption</Text>
-            <Title level={4} style={{ margin: 0 }}>
-              {/* {totalEnergy.toLocaleString()} kWh */}
-            </Title>
-            <Text>Monthly Cost</Text>
-            <Title level={4} style={{ margin: 0 }}>
-              {/* ${totalCost.toFixed(2)} */}
-            </Title>
-          </div>
-          <div className="header-search">
-            <Input
-              placeholder="Search rooms..."
-              prefix={<SearchOutlined />}
-              value={userSearch}
-              onChange={(e) => setUserSearch(e.target.value)}
-            />
-
-            <Button>Search</Button>
-          </div>
-        </div>
-      </div >
+          
+            <Col className="header-summary">
+              <Space>
+              <Text>Total Energy Consumption։</Text>
+              <Title level={4} style={{ margin: 0 }}>
+                {totalEnergy}
+              </Title>
+              <Text>Monthly Cost։</Text>
+              <Title level={4} style={{ margin: 0 }}>
+                {/* ${totalCost.toFixed(2)} */}
+              </Title>
+              </Space>
+            </Col>
+            <Col className="header-right">
+              <Search
+                placeholder="Search rooms..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+              />
+            </Col>
+        </Row >
       
       <div>
         {filteredRooms.length > 0 && filteredRooms.map((room) => (

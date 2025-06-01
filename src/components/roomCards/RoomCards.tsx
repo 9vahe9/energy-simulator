@@ -18,7 +18,7 @@ const ICON_MAP: Record<string, string> = {
 
 
 export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunction, editRoomFunction} : 
-  {id: string, name: string, priority: string, energy: string, cost: number, icons: Device[], deleteFunction: Function, editRoomFunction: Function}) => {
+  {id: string, name: string, priority: number, energy: number, cost: number, icons: Device[], deleteFunction: Function, editRoomFunction: Function}) => {
     
     const confirmModal = (name: string) => {
   Modal.confirm({
@@ -54,16 +54,16 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
             <Tag
               icon={<ThunderboltFilled />}
               className={
-                priority === "High"
+                priority >= 1000
                   ? "priority-tag-high"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000 
                   ? "priority-tag-medium"
                   : "priority-tag-low"
               }
               color={
-                priority === "High"
+                priority >= 1000
                   ? "red"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000
                   ? "yellow"
                   : "green"
               }
@@ -86,9 +86,9 @@ export const RoomCards = ({ id, name, priority, energy, cost, icons, deleteFunct
                   percent={Math.round((Number(energy) / 500) * 100)}
                   showInfo={false}
                   strokeColor={
-                    priority === "High"
+                    priority >= 1000
                   ? "#C70039"
-                  : priority === "Medium"
+                  : priority >= 500 && priority < 1000
                   ? "#FFDE2B"
                   : "green"
                   }
