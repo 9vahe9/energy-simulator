@@ -194,11 +194,11 @@ export const DashboardContainer: React.FC = () => {
                 <Space>
                 <Text>Total Energy Consumption։</Text>
                 <Title level={4} style={{ margin: 0 }}>
-                  {totalEnergy}
+                  {/* {totalEnergy} */}
                 </Title>
                 <Text>Monthly Cost։</Text>
                 <Title level={4} style={{ margin: 0 }}>
-                  {totalCost}
+                  {/* {totalCost} */}
                 </Title>
                 </Space>
               </Col>
@@ -241,6 +241,9 @@ export const DashboardContainer: React.FC = () => {
       </div>
 
       <Button onClick={handleLogOut}>Log out</Button>
+      </div>
     </div>
+  </div>
+  </div>
   );
 };
