@@ -123,6 +123,12 @@
 }
 
 @media (max-width: 400px) {
+  .wrapper {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
   .header-left .ant-typography {
     font-size: 1.25em !important;
   }
