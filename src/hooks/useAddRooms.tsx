@@ -63,7 +63,10 @@ const useAddRooms = () => {
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
-
+  const setRoomData = (name: string, description: string) => {
+    setRoomName(name);
+    setDescription(description);
+  };
   const room: Room = {
     name: roomName,
     description: description,
@@ -79,19 +82,8 @@ const useAddRooms = () => {
   };
 
   const handleOk = () => {
-    // form.validateFields().then((values) => {
-    //   // create  IRoomDevice obj
-    //   const device = {
-    //     type: selectedType!,
-    //     name: values.name,
-    //     power: values.power,
-    //     uptime: values.uptime,
-    //     workingDayTime: values.workingDayTime,
-    //   };
-    //   handleAddDevice(device);
     setModalVisible(false);
     form.resetFields();
-    // });
   };
 
   const handleCancel = () => {
@@ -134,82 +126,12 @@ const useAddRooms = () => {
 
   return {
     handleAddingRoom,
+    setRoomData,
     singleRoomPage: (
       <div
         className="single-room"
         style={{ width: "100vh", height: "100vh" }}
       />
-
-      //   <Layout style={{ height: "100vh" }}>
-      //     {/* <Content className="kkkkkk" style={{ flex: 1 }}>
-      //       {threeScene}
-      //     </Content> */}
-      //     <Sider width={400} style={{ background: "#fff", padding: 16 }}>
-      //       <h3>Devices</h3>
-      //       <List
-      //         dataSource={DEVICE_SELECT_OPTONS}
-      //         renderItem={(item) => (
-      //           <List.Item>
-      //             <Button type="primary" onClick={() => showModal(item.type)}>
-      //               {item.icon} {item.label}
-      //             </Button>
-      //           </List.Item>
-      //         )}
-      //       />
-      //     </Sider>
-
-      //     <Modal
-      //       title="add device"
-      //       open={modalVisible}
-      //       onOk={handleOk}
-      //       onCancel={handleCancel}
-      //       okText="Add"
-      //     >
-      //       <Form
-      //         form={form}
-      //         layout="vertical"
-      //         initialValues={{ workingDayTime: DayTime.Day }}
-      //       >
-      //         <Form.Item
-      //           name="name"
-      //           label="Name"
-      //           rules={[
-      //             { required: true, message: "Please enter device name" },
-      //             { min: 3, message: "min 3 charachter" },
-      //           ]}
-      //         >
-      //           <Input minLength={3} maxLength={15} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="power"
-      //           label="Power"
-      //           rules={[{ required: true, message: "Please enter device power" }]}
-      //         >
-      //           <InputNumber min={0} style={{ width: "100%" }} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="uptime"
-      //           label="Uptime (minute)"
-      //           rules={[{ required: true, message: "please enter uptime " }]}
-      //         >
-      //           <InputNumber min={0} max={1440} style={{ width: "100%" }} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="workingDayTime"
-      //           label="Working on Day"
-      //           rules={[{ required: true, message: "please choose time on day" }]}
-      //         >
-      //           <Select>
-      //             <Option value={DayTime.Day}>Day</Option>
-      //             <Option value={DayTime.Night}>Night</Option>
-      //           </Select>
-      //         </Form.Item>
-      //       </Form>
-      //     </Modal>
-      //   </Layout>
     ),
   };
 };
