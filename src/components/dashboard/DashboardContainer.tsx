@@ -11,8 +11,10 @@ import {
   Space,
   Progress,
   Popconfirm,
+
   Modal,
   InputNumber,
+
 } from "antd";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
@@ -56,6 +58,7 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
+ dev
   const showModal = () => {
     setModalVisible(true);
   };
@@ -75,6 +78,8 @@ export const DashboardContainer: React.FC = () => {
     setModalVisible(false);
     form.resetFields();
   };
+
+
 
   useEffect(() => {
     if (userID) {
@@ -101,6 +106,7 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+
       <Title level={2}>Room Energy Management</Title>
       <div className="wrapper">
         <Row className="dashboard-header" justify="space-between">
@@ -203,8 +209,6 @@ export const DashboardContainer: React.FC = () => {
             )}
         </Row>
       </div>
-
-      <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
 };
