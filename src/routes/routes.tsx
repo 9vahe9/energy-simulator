@@ -15,11 +15,12 @@ import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
 import DashboardPage from "../pages/DashBoardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
+import { AppLayout } from "../components/AppLayout";
 
 export const router = createBrowserRouter([
   {
     path: HOME_PATH,
-    element: <ContentContainer />,
+    element: <AppLayout />,
     children: [
       {
         index: true,
@@ -42,14 +43,14 @@ export const router = createBrowserRouter([
           </ProtectedRoutes>
         ),
       },
+      {
+        path: LOGIN_PATH,
+        element: <LoginContainer />
+      },
+      {
+        path: SIGNUP_PATH,
+        element: <SignUpContainer />
+      }
     ],
   },
-  {
-    path: LOGIN_PATH,
-    element: <LoginContainer />,
-  },
-  {
-    path: SIGNUP_PATH,
-    element: <SignUpContainer />,
-  }
 ]);
