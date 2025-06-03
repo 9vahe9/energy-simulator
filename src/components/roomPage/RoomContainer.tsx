@@ -16,16 +16,16 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import {
-  addRoom,
-  type Device,
+import {addRoom, type Device, updateRoom,} from "../../store/user/userSlice";
+import useAddRooms from "../../hooks/useAddRooms.tsx";
+import type { IRoomDevice } from "../../types/device.ts";
 
-  updateRoom,
-} from "../../store/user/userSlice";
-const { Content, Sider } = Layout;
+
 const { Option } = Select;
-const RoomContainer = () => {
+const { Content, Sider } = Layout;
+  const RoomContainer = () => {
   const { threeScene, handleAddDevice } = useThreeScene();
+  const { handleAddingRoom, setRoomData, singleRoomPage } = useAddRooms();
 
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,7 +33,7 @@ const RoomContainer = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -59,6 +59,15 @@ const RoomContainer = () => {
   };
 
 
+//   (alias) interface IRoomDevice {
+//     type: DeviceType;
+//     name: string;
+//     power: number;
+//     uptime: number;
+//     workingDayTime: DayTime;
+//     deviceId: number;
+// }
+
   const handleOk = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
@@ -68,6 +77,7 @@ const RoomContainer = () => {
         power: values.power,
         uptime: values.uptime,
         workingDayTime: values.workingDayTime,
+        deviceId: values.id,
       };
       handleAddDevice(device);
       setModalVisible(false);
@@ -80,11 +90,11 @@ const RoomContainer = () => {
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: string) {
+  function handleDeletingDevice(id: number) {
     setDevices(devices.filter((device) => device.deviceId !== id));
   }
 
-  function handleAddingDevice(device: Device) {
+  function handleAddingDevice(device: IRoomDevice) {
     setDevices([...devices, device]);
   }
 
@@ -158,6 +168,7 @@ const RoomContainer = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <Button onClick={() => {handleAddingRoom();}}>Save Room</Button>
     </Layout>
   );
 };

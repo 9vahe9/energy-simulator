@@ -95,9 +95,9 @@ import type { IRoom } from "../types/room.ts";
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.id !== id));
-  }
+  // function handleDeletingDevice(id: string) {
+  //   setDevices(devices.filter((device) => device.id !== id));
+  // }
 
   function handleAddingDevice(device: IRoomDevice) {
     setDevices([...devices, device]);
@@ -117,12 +117,13 @@ import type { IRoom } from "../types/room.ts";
       if (roomId) {
         console.log("roomId=", roomId);
         await dispatch(updateRoom({ userId, roomObject: finalRoom }));
+         navigate(DASHBOARD_PATH); 
       } else {
-        console.log("else", finalRoom);
         await dispatch(addRoom({ userId, roomObject: finalRoom }));
+        navigate(`${ROOM_PATH}/${randomId}`);
       }
 
-      navigate(`${ROOM_PATH}/${randomId}`);
+      
     } catch (err) {
       console.error("Operation failed:", err);
     }
