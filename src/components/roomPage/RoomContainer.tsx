@@ -88,6 +88,9 @@ const RoomContainer = () => {
     setDevices([...devices, device]);
   }
 
+
+  
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Content className="kkkkkk" style={{ flex: 1 }}>
