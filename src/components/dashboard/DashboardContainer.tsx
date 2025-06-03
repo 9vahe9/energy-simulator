@@ -42,7 +42,7 @@ import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
-  const { singleRoomPage, handleAddingRoom } = useAddRooms();
+  const { singleRoomPage, handleAddingRoom, setRoomData } = useAddRooms();
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
@@ -59,14 +59,20 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
- 
+ dev
   const showModal = () => {
     setModalVisible(true);
   };
-  const handleOk = () => {
-    handleAddingRoom();
-    setModalVisible(false);
-    form.resetFields();
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      setRoomData(values.name, values.description || "");
+      await handleAddingRoom();
+      setModalVisible(false);
+      form.resetFields();
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
   };
 
   const handleCancel = () => {
