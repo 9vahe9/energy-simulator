@@ -19,7 +19,7 @@ import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import {
   addRoom,
   type Device,
-  type Room,
+
   updateRoom,
 } from "../../store/user/userSlice";
 const { Content, Sider } = Layout;

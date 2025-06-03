@@ -16,20 +16,23 @@ import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
 import {
   addRoom,
-  type Device,
-  type Room,
   updateRoom,
 } from "../store/user/userSlice";
+import type { IRoomDevice } from "../types/device.ts";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
+import type { IRoom } from "../types/room.ts";
 //const { Content } = Layout;
-const { Option } = Select;
-const useAddRooms = () => {
+
+
+
+  const { Option } = Select;
+  const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -67,14 +70,15 @@ const useAddRooms = () => {
     setRoomName(name);
     setDescription(description);
   };
-  const room: Room = {
+  const room: IRoom = {
     name: roomName,
     description: description,
-    levelOfEnergyConsumption: "15w",
-    monthlyCost: 12,
-    id: " ",
-    energyConsumption: "15135w",
+    energy: 0,
+    cost: 12,
+    id: "",
+    priority: "Low",
     devices: devices,
+    icons: [{type: "something", count: 0}]
   };
   const showModal = (type: number) => {
     //setSelectedType(type);
@@ -92,10 +96,10 @@ const useAddRooms = () => {
   };
 
   function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
+    setDevices(devices.filter((device) => device.id !== id));
   }
 
-  function handleAddingDevice(device: Device) {
+  function handleAddingDevice(device: IRoomDevice) {
     setDevices([...devices, device]);
   }
 
