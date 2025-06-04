@@ -16,23 +16,23 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import {addRoom, type Device, updateRoom,} from "../../store/user/userSlice";
+import { addRoom, updateRoom, } from "../../store/user/userSlice";
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 
 
 const { Option } = Select;
 const { Content, Sider } = Layout;
-  
+
 
 const RoomContainer = () => {
 
 
 
- 
-  
-  const {handleAddingRoom} = useAddRooms();  
-  
+
+
+  const { handleAddingRoom } = useAddRooms();
+
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -42,30 +42,30 @@ const RoomContainer = () => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
   const initialDevices: IRoomDevice[] = existingRoom ? existingRoom.devices : [];
-   const { threeScene, handleAddDevice } = useThreeScene(initialDevices);
+  const { threeScene, handleAddDevice } = useThreeScene(initialDevices);
 
 
   useEffect(() => {
     if (existingRoom) {
-      
+
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
- 
+
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
 
 
-//   (alias) interface IRoomDevice {
-//     type: DeviceType;
-//     name: string;
-//     power: number;
-//     uptime: number;
-//     workingDayTime: DayTime;
-//     deviceId: number;
-// }
+  //   (alias) interface IRoomDevice {
+  //     type: DeviceType;
+  //     name: string;
+  //     power: number;
+  //     uptime: number;
+  //     workingDayTime: DayTime;
+  //     deviceId: number;
+  // }
 
   const handleOk = () => {
     form.validateFields().then((values) => {
@@ -91,7 +91,7 @@ const RoomContainer = () => {
   };
 
   const onSaveClick = () => {
-    if(!existingRoom){
+    if (!existingRoom) {
       return;
     }
     handleAddingRoom(existingRoom.name, existingRoom.description, devices);
@@ -100,7 +100,7 @@ const RoomContainer = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-    
+
       <Content className="kkkkkk" style={{ flex: 1 }}>
         {threeScene}
       </Content>
@@ -170,7 +170,7 @@ const RoomContainer = () => {
         </Form>
       </Modal>
       <Button onClick={onSaveClick} >Save Room</Button>
-      <Button onClick = {() => setDevices([])}>Reset Room</Button>
+      <Button onClick={() => setDevices([])}>Reset Room</Button>
     </Layout>
   );
 };

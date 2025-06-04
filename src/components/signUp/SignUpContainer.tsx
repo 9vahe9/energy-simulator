@@ -9,7 +9,7 @@ import { setEmail, setPassword } from '../../store/authentication/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 //import type { Room } from '../../store/user/userSlice';
-import { createRoom, createUserName } from '../../store/user/userSlice';
+import { createUserName, createRoom } from '../../store/user/userSlice';
 import type { AppDispatch } from '../../store/store';
 import { useState } from 'react';
 

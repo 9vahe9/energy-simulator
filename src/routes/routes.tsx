@@ -6,6 +6,7 @@ import {
   ROOM_PATH,
   LOGIN_PATH,
   SIGNUP_PATH,
+  FORGOT_PATH,
 } from "../constants/RoutePaths";
 
 import { ContentContainer } from "../components/ContentContainer";
@@ -13,8 +14,9 @@ import HomePage from "../pages/HomePage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
-import DashboardPage from "../pages/DashBoardPage";
+import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
+import { ForGotPasswordContainer } from "../components/forgotPassword/ForgotPasswordContainer";
 
 export const router = createBrowserRouter([
   {
@@ -51,5 +53,9 @@ export const router = createBrowserRouter([
   {
     path: SIGNUP_PATH,
     element: <SignUpContainer />,
+  },
+  {
+    path: FORGOT_PATH,
+    element: <ForGotPasswordContainer />
   }
 ]);

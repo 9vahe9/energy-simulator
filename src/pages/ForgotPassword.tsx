@@ -1,7 +1,7 @@
-// import { ForGotPasswordContainer } from "../components/home/HomeContainer";
+import { ForGotPasswordContainer } from "../components/forgotPassword/ForgotPasswordContainer";
 
-// const ForGotPasswordContainer = () => {
-//   return <ForGotPasswordContainer />;
-// };
+const ForgotPasswordPage = () => {
+  return <ForGotPasswordContainer />;
+};
 
-// export default ForGotPasswordContainer;
+export default ForgotPasswordPage;

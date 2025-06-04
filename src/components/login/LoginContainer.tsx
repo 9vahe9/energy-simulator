@@ -3,7 +3,7 @@ import './login.css';
 import { auth } from '../../firebaseConfig/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { DASHBOARD_PATH, SIGNUP_PATH, HOME_PATH, FORGOT_PATH } from '../../constants/RoutePaths';
 //import { useDispatch, useSelector } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from "../../store/store"
@@ -96,7 +96,7 @@ export const LoginContainer = () => {
                                 <Button onClick={() => navigate(SIGNUP_PATH)} type='link' block>
                                     Sign up
                                 </Button>
-                                
+                                {/* <Button onClick = {() => navigate(FORGOT_PATH)} type='link' block>Forgot Password</Button> */}
                             </Col>
                         </Row>
                     </Form.Item>
