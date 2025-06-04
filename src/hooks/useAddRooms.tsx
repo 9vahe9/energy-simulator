@@ -16,20 +16,21 @@ import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
 import {
   addRoom,
-  type Device,
-  type Room,
   updateRoom,
 } from "../store/user/userSlice";
+import type { IRoomDevice } from "../types/device.ts";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
+import type { IRoom } from "../types/room.ts";
 //const { Content } = Layout;
-const { Option } = Select;
-const useAddRooms = () => {
+
+  const { Option } = Select;
+  const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -64,6 +65,12 @@ const useAddRooms = () => {
     }
   }, [existingRoom]);
 
+
+  const setRoomData = (name: string, description: string) => {
+    setRoomName(name);
+    setDescription(description);
+  };
+
   const room: Room = {
     name: roomName,
     description: description,
@@ -73,25 +80,16 @@ const useAddRooms = () => {
     energyConsumption: "15135w",
     devices: devices,
   };
+
   const showModal = (type: number) => {
     //setSelectedType(type);
     setModalVisible(true);
   };
 
   const handleOk = () => {
-    // form.validateFields().then((values) => {
-    //   // create  IRoomDevice obj
-    //   const device = {
-    //     type: selectedType!,
-    //     name: values.name,
-    //     power: values.power,
-    //     uptime: values.uptime,
-    //     workingDayTime: values.workingDayTime,
-    //   };
-    //   handleAddDevice(device);
+
     setModalVisible(false);
     form.resetFields();
-    // });
   };
 
   const handleCancel = () => {
@@ -99,17 +97,20 @@ const useAddRooms = () => {
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
-
-  function handleAddingDevice(device: Device) {
-    setDevices([...devices, device]);
-  }
-
-  const handleAddingRoom = async () => {
+  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     console.log("handleAddingRoom", userId);
     if (!userId) return;
+
+     const room: IRoom = {
+    name: name,
+    description: description,
+    energy: 0,
+    cost: 0,
+    id: "",
+    priority: "Low",
+    devices: devices,
+    icons: [{type: "something", count: 0}]
+  };
 
     const finalRoom = {
       ...room,
@@ -121,12 +122,13 @@ const useAddRooms = () => {
       if (roomId) {
         console.log("roomId=", roomId);
         await dispatch(updateRoom({ userId, roomObject: finalRoom }));
+
+         navigate(DASHBOARD_PATH); 
       } else {
-        console.log("else", finalRoom);
         await dispatch(addRoom({ userId, roomObject: finalRoom }));
+        navigate(`${ROOM_PATH}/${randomId}`);
       }
 
-      navigate(`${ROOM_PATH}/${randomId}`);
     } catch (err) {
       console.error("Operation failed:", err);
     }
@@ -134,82 +136,12 @@ const useAddRooms = () => {
 
   return {
     handleAddingRoom,
+    setRoomData,
     singleRoomPage: (
       <div
         className="single-room"
         style={{ width: "100vh", height: "100vh" }}
       />
-
-      //   <Layout style={{ height: "100vh" }}>
-      //     {/* <Content className="kkkkkk" style={{ flex: 1 }}>
-      //       {threeScene}
-      //     </Content> */}
-      //     <Sider width={400} style={{ background: "#fff", padding: 16 }}>
-      //       <h3>Devices</h3>
-      //       <List
-      //         dataSource={DEVICE_SELECT_OPTONS}
-      //         renderItem={(item) => (
-      //           <List.Item>
-      //             <Button type="primary" onClick={() => showModal(item.type)}>
-      //               {item.icon} {item.label}
-      //             </Button>
-      //           </List.Item>
-      //         )}
-      //       />
-      //     </Sider>
-
-      //     <Modal
-      //       title="add device"
-      //       open={modalVisible}
-      //       onOk={handleOk}
-      //       onCancel={handleCancel}
-      //       okText="Add"
-      //     >
-      //       <Form
-      //         form={form}
-      //         layout="vertical"
-      //         initialValues={{ workingDayTime: DayTime.Day }}
-      //       >
-      //         <Form.Item
-      //           name="name"
-      //           label="Name"
-      //           rules={[
-      //             { required: true, message: "Please enter device name" },
-      //             { min: 3, message: "min 3 charachter" },
-      //           ]}
-      //         >
-      //           <Input minLength={3} maxLength={15} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="power"
-      //           label="Power"
-      //           rules={[{ required: true, message: "Please enter device power" }]}
-      //         >
-      //           <InputNumber min={0} style={{ width: "100%" }} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="uptime"
-      //           label="Uptime (minute)"
-      //           rules={[{ required: true, message: "please enter uptime " }]}
-      //         >
-      //           <InputNumber min={0} max={1440} style={{ width: "100%" }} />
-      //         </Form.Item>
-
-      //         <Form.Item
-      //           name="workingDayTime"
-      //           label="Working on Day"
-      //           rules={[{ required: true, message: "please choose time on day" }]}
-      //         >
-      //           <Select>
-      //             <Option value={DayTime.Day}>Day</Option>
-      //             <Option value={DayTime.Night}>Night</Option>
-      //           </Select>
-      //         </Form.Item>
-      //       </Form>
-      //     </Modal>
-      //   </Layout>
     ),
   };
 };
