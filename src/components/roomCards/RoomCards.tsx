@@ -1,7 +1,11 @@
 import { Button, Typography, Tag, Space, Progress, Modal, Card } from "antd";
 import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
+
+import type { IRoomDevice } from "../../types/device";
+
 import type { Device } from "../../store/user/userSlice";
 import { useTranslation } from "react-i18next";
+
 
 const { Title, Text } = Typography;
 
@@ -28,19 +32,24 @@ export const RoomCards = ({
   priority: number;
   energy: number;
   cost: number;
-  icons: Device[];
+
+  icons: IRoomDevice[];
   deleteFunction: Function;
   editRoomFunction: Function;
 }) => {
+
   const { t } = useTranslation();
+
   console.log("RoomCards props:", { id, name, priority, energy, cost, icons });
 
   const confirmModal = (name: string) => {
     Modal.confirm({
+
       title: t("roomCards.Modal.title"),
       content: t("roomCards.Modal.content", {name}),
       okText: t("roomCards.Modal.ok"),
       cancelText: t("roomCards.Modal.cancel"),
+
       okButtonProps: {
         style: {
           backgroundColor: "#26a69a",
@@ -90,7 +99,9 @@ export const RoomCards = ({
       {/* Statics */}
       <div className="card-stats">
         <Space direction="vertical" style={{ width: "100%" }}>
+
           <Text>{t("roomCards.energy")}</Text>
+
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Progress
               percent={Math.round((Number(energy) / 1000) * 100)}
@@ -107,6 +118,7 @@ export const RoomCards = ({
           </div>
 
           <Text>{t("roomCards.cost")}</Text>
+
           <Text strong>${cost}</Text>
         </Space>
       </div>
@@ -127,7 +139,9 @@ export const RoomCards = ({
         className="ant-btn-edit"
         onClick={() => editRoomFunction(id)}
       >
+
         {t("roomCards.edit")}
+
       </Button>
       <Button
         onClick={() => {

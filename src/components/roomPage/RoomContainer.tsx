@@ -16,60 +16,70 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import {
-  addRoom,
-  type Device,
-  type Room,
-  updateRoom,
-} from "../../store/user/userSlice";
-const { Content, Sider } = Layout;
-const { Option } = Select;
-const RoomContainer = () => {
-  const { threeScene, handleAddDevice } = useThreeScene();
+import {addRoom, type Device, updateRoom,} from "../../store/user/userSlice";
+import useAddRooms from "../../hooks/useAddRooms.tsx";
+import type { IRoomDevice } from "../../types/device.ts";
 
+
+const { Option } = Select;
+const { Content, Sider } = Layout;
+  
+
+const RoomContainer = () => {
+
+
+
+ 
+  
+  const {handleAddingRoom} = useAddRooms();  
+  
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const userId: string = useSelector(
-    (state: RootState) => state.auth.userToken
-  );
-
+  const [devices, setDevices] = useState<IRoomDevice[]>([]);
   const existingRoom = useSelector((state: RootState) => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
+  const initialDevices: IRoomDevice[] = existingRoom ? existingRoom.devices : [];
+   const { threeScene, handleAddDevice } = useThreeScene(initialDevices);
+
 
   useEffect(() => {
     if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
+      
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
+ 
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
 
 
+//   (alias) interface IRoomDevice {
+//     type: DeviceType;
+//     name: string;
+//     power: number;
+//     uptime: number;
+//     workingDayTime: DayTime;
+//     deviceId: number;
+// }
+
   const handleOk = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
-      const device = {
+      const newDevice: IRoomDevice = {
         type: selectedType!,
         name: values.name,
         power: values.power,
         uptime: values.uptime,
         workingDayTime: values.workingDayTime,
+        deviceId: Date.now(),
       };
-      handleAddDevice(device);
+      handleAddDevice(newDevice)
+      setDevices([...devices, newDevice])
       setModalVisible(false);
       form.resetFields();
     });
@@ -80,16 +90,17 @@ const RoomContainer = () => {
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
+  const onSaveClick = () => {
+    if(!existingRoom){
+      return;
+    }
+    handleAddingRoom(existingRoom.name, existingRoom.description, devices);
   }
 
-  function handleAddingDevice(device: Device) {
-    setDevices([...devices, device]);
-  }
 
   return (
     <Layout style={{ height: "100vh" }}>
+    
       <Content className="kkkkkk" style={{ flex: 1 }}>
         {threeScene}
       </Content>
@@ -158,6 +169,8 @@ const RoomContainer = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <Button onClick={onSaveClick} >Save Room</Button>
+      <Button onClick = {() => setDevices([])}>Reset Room</Button>
     </Layout>
   );
 };

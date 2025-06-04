@@ -8,6 +8,7 @@ export interface IRoomDevice {
   power: number;
   uptime: number;
   workingDayTime: DayTime;
+  deviceId: number
 }
 
 export interface IDeviceSelectOption {
