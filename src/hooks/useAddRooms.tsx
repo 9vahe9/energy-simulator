@@ -16,20 +16,21 @@ import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
 import {
   addRoom,
-  type Device,
-  type Room,
   updateRoom,
 } from "../store/user/userSlice";
+import type { IRoomDevice } from "../types/device.ts";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
+import type { IRoom } from "../types/room.ts";
 //const { Content } = Layout;
-const { Option } = Select;
-const useAddRooms = () => {
+
+  const { Option } = Select;
+  const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -63,10 +64,13 @@ const useAddRooms = () => {
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
+
+
   const setRoomData = (name: string, description: string) => {
     setRoomName(name);
     setDescription(description);
   };
+
   const room: Room = {
     name: roomName,
     description: description,
@@ -76,12 +80,14 @@ const useAddRooms = () => {
     energyConsumption: "15135w",
     devices: devices,
   };
+
   const showModal = (type: number) => {
     //setSelectedType(type);
     setModalVisible(true);
   };
 
   const handleOk = () => {
+
     setModalVisible(false);
     form.resetFields();
   };
@@ -91,17 +97,20 @@ const useAddRooms = () => {
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
-
-  function handleAddingDevice(device: Device) {
-    setDevices([...devices, device]);
-  }
-
-  const handleAddingRoom = async () => {
+  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     console.log("handleAddingRoom", userId);
     if (!userId) return;
+
+     const room: IRoom = {
+    name: name,
+    description: description,
+    energy: 0,
+    cost: 0,
+    id: "",
+    priority: "Low",
+    devices: devices,
+    icons: [{type: "something", count: 0}]
+  };
 
     const finalRoom = {
       ...room,
@@ -113,12 +122,13 @@ const useAddRooms = () => {
       if (roomId) {
         console.log("roomId=", roomId);
         await dispatch(updateRoom({ userId, roomObject: finalRoom }));
+
+         navigate(DASHBOARD_PATH); 
       } else {
-        console.log("else", finalRoom);
         await dispatch(addRoom({ userId, roomObject: finalRoom }));
+        navigate(`${ROOM_PATH}/${randomId}`);
       }
 
-      navigate(`${ROOM_PATH}/${randomId}`);
     } catch (err) {
       console.error("Operation failed:", err);
     }
