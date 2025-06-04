@@ -11,8 +11,10 @@ import {
   Space,
   Progress,
   Popconfirm,
+
   Modal,
   InputNumber,
+
 } from "antd";
 
 import type { RootState, AppDispatch } from "../../store/store";
@@ -36,6 +38,7 @@ import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -43,8 +46,7 @@ import Search from "antd/es/transfer/search";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
- 
-
+  const { singleRoomPage, handleAddingRoom, setRoomData } = useAddRooms()
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
@@ -52,7 +54,11 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
   const {handleAddingRoom} = useAddRooms()
+
+  const { t } = useTranslation();
+
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
   console.log(userID);
@@ -68,11 +74,13 @@ export const DashboardContainer: React.FC = () => {
     try {
       const values = await form.validateFields();
 
+
       await handleAddingRoom(values.name, values.description, []);
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      console.error("Validation failed:", error);
+      console.error(t("dashboard.valError"), error);
+
     }
   };
 
@@ -80,9 +88,6 @@ export const DashboardContainer: React.FC = () => {
     setModalVisible(false);
     form.resetFields();
   };
-
-
-
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
@@ -109,7 +114,9 @@ export const DashboardContainer: React.FC = () => {
   return (
     <div className="dashboard-container">
 
-      <Title level={2}>Room Energy Management</Title>
+
+      <Title level={2}>{t("dashboard.title")}</Title>
+
       <div className="wrapper">
         <Row className="dashboard-header" justify="space-between">
           <Col className="header-left">
@@ -124,35 +131,41 @@ export const DashboardContainer: React.FC = () => {
                 onClick={() => showModal()}
                 className="add-room-button"
               >
-                Add New Room
+                {t("dashboard.addButton")}
               </Button>
               <Modal
-                title="add device"
+
+                title={t("dashboard.Modal.title")}
                 open={modalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                okText="Add"
+                okText={t("dashboard.Modal.ok")}
+
               >
                 <Form form={form} layout="vertical">
                   <Form.Item
                     name="name"
-                    label="Name"
+
+                    label={t("dashboard.Modal.name")}
                     rules={[
-                      { required: true, message: "Please enter room name" },
-                      { min: 3, message: "min 3 charachter" },
+                      { required: true, message: t("dashboard.Modal.nameMessage") },
+                      { min: 3, message: t("dashboard.Modal.nameVal") },
+
                     ]}
                   >
                     <Input minLength={3} maxLength={15} />
                   </Form.Item>
                   <Form.Item
                     name="description"
-                    label="Description"
+
+                    label={t("dashboard.Modal.description")}
                     rules={[
                       {
                         required: false,
-                        message: "Please enter room description",
+                        message: t("dashboard.Modal.descriptionMessage"),
                       },
-                      { min: 3, message: "min 150 charachter" },
+                      { min: 3, message: t("dashboard.Modal.descrVal") },
+
                     ]}
                   >
                     <Input minLength={3} maxLength={150} />
@@ -163,17 +176,22 @@ export const DashboardContainer: React.FC = () => {
                 icon={<SortAscendingOutlined />}
                 style={{ marginLeft: 12 }}
               >
-                Sort Rooms
+
+
+                {t("dashboard.sortButton")}
+
               </Button>
             </Space>
           </Col>
           <Col className="header-summary">
             <Space>
-              <Text>Total Energy Consumption։</Text>
+
+              <Text>{t("dashboard.totalEnergy")}</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalEnergy} */}
               </Title>
-              <Text>Monthly Cost։</Text>
+              <Text>{t("dashboard.cost")}</Text>
+
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalCost} */}
               </Title>
@@ -181,7 +199,9 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col className="header-right">
             <Search
-              placeholder="Search rooms..."
+
+              placeholder={t("dashboard.search")}
+
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
             />
@@ -199,10 +219,11 @@ export const DashboardContainer: React.FC = () => {
                       key={room.id}
                       name={room.name}
                       id={room.id}
-                      priority={10}
-                      energy={room.energy}
+
+                      priority={room.energyConsumption}
+                      energy={room.levelOfEnergyConsumption}
                       icons={room.devices}
-                      cost={room.cost}
+                      cost={room.monthlyCost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
                     />
@@ -212,7 +233,9 @@ export const DashboardContainer: React.FC = () => {
         </Row>
       </div>
 
+
       <Button onClick={handleLogOut}>Log out</Button>
       </div>
+
   );
 };
