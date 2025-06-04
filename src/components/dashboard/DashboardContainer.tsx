@@ -11,10 +11,8 @@ import {
   Space,
   Progress,
   Popconfirm,
-
   Modal,
   InputNumber,
-
 } from "antd";
 
 import type { RootState, AppDispatch } from "../../store/store";
@@ -41,13 +39,8 @@ import Search from "antd/es/transfer/search";
 
 import { useTranslation } from "react-i18next";
 
-
-
-
-
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
-  const { singleRoomPage, handleAddingRoom, setRoomData } = useAddRooms()
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
@@ -56,7 +49,7 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const {handleAddingRoom} = useAddRooms()
+  const { handleAddingRoom } = useAddRooms();
 
   const { t } = useTranslation();
 
@@ -68,7 +61,6 @@ export const DashboardContainer: React.FC = () => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
 
- 
   const showModal = () => {
     setModalVisible(true);
   };
@@ -81,7 +73,6 @@ export const DashboardContainer: React.FC = () => {
       form.resetFields();
     } catch (error) {
       console.error(t("dashboard.valError"), error);
-
     }
   };
 
@@ -114,11 +105,7 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-
-
-
-      <Title level={2}>{t("dashboard.title")}</Title>
-
+      <Title level={2}>Room Energy Management</Title>
       <div className="wrapper">
         <Row className="dashboard-header" justify="space-between">
           <Col className="header-left">
@@ -133,41 +120,35 @@ export const DashboardContainer: React.FC = () => {
                 onClick={() => showModal()}
                 className="add-room-button"
               >
-                {t("dashboard.addButton")}
+                Add New Room
               </Button>
               <Modal
-
-                title={t("dashboard.Modal.title")}
+                title="add device"
                 open={modalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                okText={t("dashboard.Modal.ok")}
-
+                okText="Add"
               >
                 <Form form={form} layout="vertical">
                   <Form.Item
                     name="name"
-
-                    label={t("dashboard.Modal.name")}
+                    label="Name"
                     rules={[
-                      { required: true, message: t("dashboard.Modal.nameMessage") },
-                      { min: 3, message: t("dashboard.Modal.nameVal") },
-
+                      { required: true, message: "Please enter room name" },
+                      { min: 3, message: "min 3 charachter" },
                     ]}
                   >
                     <Input minLength={3} maxLength={15} />
                   </Form.Item>
                   <Form.Item
                     name="description"
-
-                    label={t("dashboard.Modal.description")}
+                    label="Description"
                     rules={[
                       {
                         required: false,
-                        message: t("dashboard.Modal.descriptionMessage"),
+                        message: "Please enter room description",
                       },
-                      { min: 3, message: t("dashboard.Modal.descrVal") },
-
+                      { min: 3, message: "min 150 charachter" },
                     ]}
                   >
                     <Input minLength={3} maxLength={150} />
@@ -178,22 +159,17 @@ export const DashboardContainer: React.FC = () => {
                 icon={<SortAscendingOutlined />}
                 style={{ marginLeft: 12 }}
               >
-
-
-                {t("dashboard.sortButton")}
-
+                Sort Rooms
               </Button>
             </Space>
           </Col>
           <Col className="header-summary">
             <Space>
-
-              <Text>{t("dashboard.totalEnergy")}</Text>
+              <Text>Total Energy Consumption։</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalEnergy} */}
               </Title>
-              <Text>{t("dashboard.cost")}</Text>
-
+              <Text>Monthly Cost։</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalCost} */}
               </Title>
@@ -201,9 +177,7 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col className="header-right">
             <Search
-
-              placeholder={t("dashboard.search")}
-
+              placeholder="Search rooms..."
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
             />
@@ -221,11 +195,10 @@ export const DashboardContainer: React.FC = () => {
                       key={room.id}
                       name={room.name}
                       id={room.id}
-
-                      priority={room.energyConsumption}
-                      energy={room.levelOfEnergyConsumption}
+                      priority={1}
+                      energy={room.energy}
                       icons={room.devices}
-                      cost={room.monthlyCost}
+                      cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
                     />
@@ -235,8 +208,7 @@ export const DashboardContainer: React.FC = () => {
         </Row>
       </div>
 
-
       <Button onClick={handleLogOut}>Log out</Button>
-      </div>
+    </div>
   );
 };
