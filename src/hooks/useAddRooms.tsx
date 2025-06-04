@@ -25,8 +25,6 @@ import { DayTime } from "../constants/DayTime.ts";
 import type { IRoom } from "../types/room.ts";
 //const { Content } = Layout;
 
-
-
   const { Option } = Select;
   const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
@@ -67,10 +65,12 @@ import type { IRoom } from "../types/room.ts";
     }
   }, [existingRoom]);
 
+
   const setRoomData = (name: string, description: string) => {
     setRoomName(name);
     setDescription(description);
   };
+
   const room: Room = {
     name: roomName,
     description: description,
@@ -87,6 +87,7 @@ import type { IRoom } from "../types/room.ts";
   };
 
   const handleOk = () => {
+
     setModalVisible(false);
     form.resetFields();
   };
@@ -95,10 +96,6 @@ import type { IRoom } from "../types/room.ts";
     setModalVisible(false);
     form.resetFields();
   };
-
-  
-
-  
 
   const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     console.log("handleAddingRoom", userId);
@@ -115,7 +112,6 @@ import type { IRoom } from "../types/room.ts";
     icons: [{type: "something", count: 0}]
   };
 
-
     const finalRoom = {
       ...room,
       id: roomId ? existingRoom?.id || "" : randomId,
@@ -126,13 +122,13 @@ import type { IRoom } from "../types/room.ts";
       if (roomId) {
         console.log("roomId=", roomId);
         await dispatch(updateRoom({ userId, roomObject: finalRoom }));
+
          navigate(DASHBOARD_PATH); 
       } else {
         await dispatch(addRoom({ userId, roomObject: finalRoom }));
         navigate(`${ROOM_PATH}/${randomId}`);
       }
 
-      
     } catch (err) {
       console.error("Operation failed:", err);
     }

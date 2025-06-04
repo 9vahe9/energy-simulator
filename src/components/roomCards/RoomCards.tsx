@@ -1,3 +1,4 @@
+
 import { Button, Typography, Tag, Space, Progress, Modal, Card } from "antd";
 import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
 
@@ -5,7 +6,6 @@ import type { IRoomDevice } from "../../types/device";
 
 import type { Device } from "../../store/user/userSlice";
 import { useTranslation } from "react-i18next";
-
 
 const { Title, Text } = Typography;
 
@@ -37,6 +37,7 @@ export const RoomCards = ({
   deleteFunction: Function;
   editRoomFunction: Function;
 }) => {
+
 
   const { t } = useTranslation();
 

@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
+
 import {addRoom, type Device, updateRoom,} from "../../store/user/userSlice";
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
@@ -24,12 +25,8 @@ import type { IRoomDevice } from "../../types/device.ts";
 const { Option } = Select;
 const { Content, Sider } = Layout;
   
-
 const RoomContainer = () => {
-
-
-
- 
+  const { threeScene, handleAddDevice } = useThreeScene();
   
   const {handleAddingRoom} = useAddRooms();  
   
@@ -38,6 +35,7 @@ const RoomContainer = () => {
   const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
   const [devices, setDevices] = useState<IRoomDevice[]>([]);
+
   const existingRoom = useSelector((state: RootState) => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
@@ -51,11 +49,12 @@ const RoomContainer = () => {
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
- 
+
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
+
 
 
 //   (alias) interface IRoomDevice {
@@ -84,6 +83,7 @@ const RoomContainer = () => {
       form.resetFields();
     });
   };
+
 
   const handleCancel = () => {
     setModalVisible(false);
@@ -169,8 +169,10 @@ const RoomContainer = () => {
           </Form.Item>
         </Form>
       </Modal>
+
       <Button onClick={onSaveClick} >Save Room</Button>
       <Button onClick = {() => setDevices([])}>Reset Room</Button>
+
     </Layout>
   );
 };

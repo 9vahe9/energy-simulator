@@ -38,6 +38,7 @@ import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
+
 import { useTranslation } from "react-i18next";
 
 
@@ -66,6 +67,7 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
+
  
   const showModal = () => {
     setModalVisible(true);
@@ -73,7 +75,6 @@ export const DashboardContainer: React.FC = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-
 
       await handleAddingRoom(values.name, values.description, []);
       setModalVisible(false);
@@ -113,6 +114,7 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+
 
 
       <Title level={2}>{t("dashboard.title")}</Title>
@@ -236,6 +238,5 @@ export const DashboardContainer: React.FC = () => {
 
       <Button onClick={handleLogOut}>Log out</Button>
       </div>
-
   );
 };
