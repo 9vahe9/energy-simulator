@@ -23,24 +23,25 @@ import type { IRoomDevice } from "../../types/device.ts";
 
 const { Option } = Select;
 const { Content, Sider } = Layout;
-  const RoomContainer = () => {
-  const { threeScene, handleAddDevice } = useThreeScene();
-  const { handleAddingRoom, setRoomData, singleRoomPage } = useAddRooms();
+  
 
+const RoomContainer = () => {
+  const { threeScene, handleAddDevice } = useThreeScene();
+  
+  const {handleAddingRoom, handleAddingDevice} = useAddRooms();  
+  
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
+  // const [roomName, setRoomName] = useState("");
+  // const [description, setDescription] = useState("");
   const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const userId: string = useSelector(
-    (state: RootState) => state.auth.userToken
-  );
+ 
+  // const userId: string = useSelector(
+  //   (state: RootState) => state.auth.userToken
+  // );
 
   const existingRoom = useSelector((state: RootState) => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
@@ -48,11 +49,12 @@ const { Content, Sider } = Layout;
 
   useEffect(() => {
     if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
+      // setRoomName(existingRoom.name);
+      // setDescription(existingRoom.description);
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
+ 
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
@@ -71,15 +73,16 @@ const { Content, Sider } = Layout;
   const handleOk = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
-      const device = {
+      const newDevice: IRoomDevice = {
         type: selectedType!,
         name: values.name,
         power: values.power,
         uptime: values.uptime,
         workingDayTime: values.workingDayTime,
-        deviceId: values.id,
+        deviceId: Math.random(),
       };
-      handleAddDevice(device);
+      handleAddDevice(newDevice)
+      setDevices([...devices, newDevice])
       setModalVisible(false);
       form.resetFields();
     });
@@ -90,16 +93,18 @@ const { Content, Sider } = Layout;
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: number) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
+  const onSaveClick = () => {
+    if(!existingRoom){
+      return;
+    }
 
-  function handleAddingDevice(device: IRoomDevice) {
-    setDevices([...devices, device]);
+    handleAddingRoom(existingRoom.name, existingRoom.description, devices);
+
   }
 
   return (
     <Layout style={{ height: "100vh" }}>
+    
       <Content className="kkkkkk" style={{ flex: 1 }}>
         {threeScene}
       </Content>
@@ -168,7 +173,7 @@ const { Content, Sider } = Layout;
           </Form.Item>
         </Form>
       </Modal>
-      <Button onClick={() => {handleAddingRoom();}}>Save Room</Button>
+      <Button onClick={onSaveClick} >Save Room</Button>
     </Layout>
   );
 };

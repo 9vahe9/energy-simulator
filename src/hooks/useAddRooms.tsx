@@ -66,20 +66,9 @@ import type { IRoom } from "../types/room.ts";
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
-  const setRoomData = (name: string, description: string) => {
-    setRoomName(name);
-    setDescription(description);
-  };
-  const room: IRoom = {
-    name: roomName,
-    description: description,
-    energy: 0,
-    cost: 12,
-    id: "",
-    priority: "Low",
-    devices: devices,
-    icons: [{type: "something", count: 0}]
-  };
+ 
+ 
+
   const showModal = (type: number) => {
     //setSelectedType(type);
     setModalVisible(true);
@@ -95,17 +84,29 @@ import type { IRoom } from "../types/room.ts";
     form.resetFields();
   };
 
-  // function handleDeletingDevice(id: string) {
-  //   setDevices(devices.filter((device) => device.id !== id));
-  // }
+  function handleDeletingDevice(id: number) {
+    setDevices(devices.filter((device) => device.deviceId !== id));
+  }
 
   function handleAddingDevice(device: IRoomDevice) {
     setDevices([...devices, device]);
   }
 
-  const handleAddingRoom = async () => {
+  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     console.log("handleAddingRoom", userId);
     if (!userId) return;
+
+     const room: IRoom = {
+    name: name,
+    description: description,
+    energy: 0,
+    cost: 0,
+    id: "",
+    priority: "Low",
+    devices: devices,
+    icons: [{type: "something", count: 0}]
+  };
+
 
     const finalRoom = {
       ...room,
@@ -131,7 +132,8 @@ import type { IRoom } from "../types/room.ts";
 
   return {
     handleAddingRoom,
-    setRoomData,
+    handleAddingDevice,
+    handleDeletingDevice,
     singleRoomPage: (
       <div
         className="single-room"

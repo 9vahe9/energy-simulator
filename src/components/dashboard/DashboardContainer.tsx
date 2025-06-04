@@ -11,11 +11,10 @@ import {
   Space,
   Progress,
   Popconfirm,
-
   Modal,
   InputNumber,
-
 } from "antd";
+
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -34,14 +33,17 @@ import {
   ThunderboltFilled,
 } from "@ant-design/icons";
 import "./dashboard.css";
-
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
 
+
+
+
+
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
-  const { singleRoomPage, handleAddingRoom, setRoomData } = useAddRooms();
+ 
 
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
@@ -50,7 +52,7 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
+  const {handleAddingRoom} = useAddRooms()
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
   console.log(userID);
@@ -65,8 +67,8 @@ export const DashboardContainer: React.FC = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      setRoomData(values.name, values.description || "");
-      await handleAddingRoom();
+
+      await handleAddingRoom(values.name, values.description, []);
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
@@ -197,10 +199,10 @@ export const DashboardContainer: React.FC = () => {
                       key={room.id}
                       name={room.name}
                       id={room.id}
-                      priority={room.energyConsumption}
-                      energy={room.levelOfEnergyConsumption}
+                      priority={10}
+                      energy={room.energy}
                       icons={room.devices}
-                      cost={room.monthlyCost}
+                      cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
                     />

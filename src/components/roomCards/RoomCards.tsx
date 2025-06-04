@@ -1,6 +1,7 @@
 import { Button, Typography, Tag, Space, Progress, Modal, Card } from "antd";
 import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
-import type { Device } from "../../store/user/userSlice";
+
+import type { IRoomDevice } from "../../types/device";
 
 const { Title, Text } = Typography;
 
@@ -27,7 +28,7 @@ export const RoomCards = ({
   priority: number;
   energy: number;
   cost: number;
-  icons: Device[];
+  icons: IRoomDevice[];
   deleteFunction: Function;
   editRoomFunction: Function;
 }) => {
