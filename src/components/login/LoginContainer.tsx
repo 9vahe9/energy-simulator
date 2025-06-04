@@ -96,6 +96,7 @@ export const LoginContainer = () => {
                                 <Button onClick={() => navigate(SIGNUP_PATH)} type='link' block>
                                     Sign up
                                 </Button>
+                                
                             </Col>
                         </Row>
                     </Form.Item>
