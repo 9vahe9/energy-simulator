@@ -26,7 +26,7 @@ const { Option } = Select;
 const { Content, Sider } = Layout;
   
 const RoomContainer = () => {
-  const { threeScene, handleAddDevice } = useThreeScene();
+
   
   const {handleAddingRoom} = useAddRooms();  
   
