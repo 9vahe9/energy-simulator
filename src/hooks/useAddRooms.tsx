@@ -84,13 +84,9 @@ import type { IRoom } from "../types/room.ts";
     form.resetFields();
   };
 
-  function handleDeletingDevice(id: number) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
+  
 
-  function handleAddingDevice(device: IRoomDevice) {
-    setDevices([...devices, device]);
-  }
+  
 
   const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     console.log("handleAddingRoom", userId);
@@ -132,8 +128,6 @@ import type { IRoom } from "../types/room.ts";
 
   return {
     handleAddingRoom,
-    handleAddingDevice,
-    handleDeletingDevice,
     singleRoomPage: (
       <div
         className="single-room"

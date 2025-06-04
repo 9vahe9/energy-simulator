@@ -26,31 +26,28 @@ const { Content, Sider } = Layout;
   
 
 const RoomContainer = () => {
-  const { threeScene, handleAddDevice } = useThreeScene();
+
+
+
+ 
   
-  const {handleAddingRoom, handleAddingDevice} = useAddRooms();  
+  const {handleAddingRoom} = useAddRooms();  
   
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
-  // const [roomName, setRoomName] = useState("");
-  // const [description, setDescription] = useState("");
   const [devices, setDevices] = useState<IRoomDevice[]>([]);
-
- 
-  // const userId: string = useSelector(
-  //   (state: RootState) => state.auth.userToken
-  // );
-
   const existingRoom = useSelector((state: RootState) => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
+  const initialDevices: IRoomDevice[] = existingRoom ? existingRoom.devices : [];
+   const { threeScene, handleAddDevice } = useThreeScene(initialDevices);
+
 
   useEffect(() => {
     if (existingRoom) {
-      // setRoomName(existingRoom.name);
-      // setDescription(existingRoom.description);
+      
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
@@ -79,7 +76,7 @@ const RoomContainer = () => {
         power: values.power,
         uptime: values.uptime,
         workingDayTime: values.workingDayTime,
-        deviceId: Math.random(),
+        deviceId: Date.now(),
       };
       handleAddDevice(newDevice)
       setDevices([...devices, newDevice])
@@ -97,10 +94,9 @@ const RoomContainer = () => {
     if(!existingRoom){
       return;
     }
-
     handleAddingRoom(existingRoom.name, existingRoom.description, devices);
-
   }
+
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -174,6 +170,7 @@ const RoomContainer = () => {
         </Form>
       </Modal>
       <Button onClick={onSaveClick} >Save Room</Button>
+      <Button onClick = {() => setDevices([])}>Reset Room</Button>
     </Layout>
   );
 };
