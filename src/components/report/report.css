@@ -1,0 +1,48 @@
+.report-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #b2dfdb;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.report-container {
+  background-color: #f0f8f5;
+  padding: 24px;
+}
+
+.download-button {
+    background-color: #26a69a;
+}
+
+.tag {
+    color:black !important;
+}
+
+.report-tabs {
+    background-color: #b2dfdb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+
+.rooms-list {
+    background-color: #b2dfdb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+
+.devices-list {
+    background-color: #b2dfdb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    gap: 12px;
+}
