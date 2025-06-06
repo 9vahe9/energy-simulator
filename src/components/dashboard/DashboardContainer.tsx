@@ -12,10 +12,8 @@ import {
   Space,
   Progress,
   Popconfirm,
-
   Modal,
   InputNumber,
-
 } from "antd";
 
 import type { RootState, AppDispatch } from "../../store/store";
@@ -42,10 +40,6 @@ import Search from "antd/es/transfer/search";
 
 import { useTranslation } from "react-i18next";
 
-
-
-
-
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
@@ -56,7 +50,7 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const {handleAddingRoom} = useAddRooms()
+  const { handleAddingRoom } = useAddRooms();
 
   const { t } = useTranslation();
 
@@ -68,7 +62,6 @@ export const DashboardContainer: React.FC = () => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
 
- 
   const showModal = () => {
     setModalVisible(true);
   };
@@ -81,7 +74,6 @@ export const DashboardContainer: React.FC = () => {
       form.resetFields();
     } catch (error) {
       console.error(t("dashboard.valError"), error);
-
     }
   };
 
@@ -114,7 +106,6 @@ export const DashboardContainer: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-
       <Title level={2}>Room Energy Management</Title>
       <div className="wrapper">
         <Row className="dashboard-header" justify="space-between">
@@ -218,8 +209,7 @@ export const DashboardContainer: React.FC = () => {
         </Row>
       </div>
 
-
       <Button onClick={handleLogOut}>Log out</Button>
-      </div>
+    </div>
   );
 };
