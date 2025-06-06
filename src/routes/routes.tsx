@@ -6,6 +6,7 @@ import {
   ROOM_PATH,
   LOGIN_PATH,
   SIGNUP_PATH,
+  REPORT_PATH,
 } from "../constants/RoutePaths";
 
 import { ContentContainer } from "../components/ContentContainer";
@@ -16,6 +17,7 @@ import SignUpContainer from "../components/signUp/SignUpContainer";
 import DashboardPage from "../pages/DashBoardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
 import { AppLayout } from "../components/AppLayout";
+import { ReportPage } from "../pages/ReportPage";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: SIGNUP_PATH,
         element: <SignUpContainer />
+      },
+      {
+        path: REPORT_PATH,
+        element: <ReportPage />
       }
     ],
   },
