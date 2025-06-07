@@ -17,8 +17,6 @@ export interface Device {
     deviceId: string
 }
 
-
-
 // export interface Room {
 //     name: string,
 //     description: string,
@@ -40,14 +38,11 @@ export interface Device {
 //   icons: { type: string; count: number }[]; // плейсхолдер для UI
 // }
 
-
 interface UserState {
     userName: string,
     rooms: IRoom[];
     status: "idle" | "loading" | "failed";
 }
-
-
 
 const initialState: UserState = {
     userName: "",

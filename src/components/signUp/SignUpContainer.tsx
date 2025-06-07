@@ -12,7 +12,7 @@ import type { RootState } from '../../store/store';
 import { createUserName, createRoom } from '../../store/user/userSlice';
 import type { AppDispatch } from '../../store/store';
 import { useState } from 'react';
-
+import { useTranslation } from 'react-i18next';
 
 function SignUpContainer() {
     const navigate = useNavigate();
@@ -20,6 +20,10 @@ function SignUpContainer() {
     const password = useSelector((state: RootState) => state.auth.password);
     const [userName, setUsername] = useState("");
     const dispatch = useDispatch<AppDispatch>();
+    const { t, i18n } = useTranslation();
+
+    console.log(i18n.language);
+    console.log(t("signup.mainTitle"));
 
     async function handleSignUp() {
 
@@ -49,62 +53,62 @@ function SignUpContainer() {
                 className='login-card'
                 variant='outlined'
             >
-                <Title level={2} className="main-title" >Energy Emulator</Title>
-                <Title level={3} className="login-title" >Sign Up </Title>
+                <Title level={2} className="main-title" >{t("signup.mainTitle")}</Title>
+                <Title level={3} className="login-title" >{t("signup.signupTitle")}</Title>
                 <Form
                     name="login"
                     layout="vertical"
                 >
                     <Form.Item
-                        label="Email"
+                        label={t("signup.email")}
                         name="email"
                         rules={[
-                            { required: true, message: "Enter your email" },
-                            { type: "email", message: "Email is invalid"}
+                            { required: true, message: t("signup.emailMessage") },
+                            { type: "email", message: t("signup.emailValidation")}
                         ]}
                     >
                         <Input placeholder='somemail@smt.com' value={email}
                             onChange={(e) => dispatch(setEmail(e.target.value))} />
                     </Form.Item>
                     <Form.Item
-                        label="Password"
+                        label={t("signup.password")}
                         name="password"
-                        rules={[{ required: true, message: "Enter your password" }]}
+                        rules={[{ required: true, message: t("signup.passwordMessage") }]}
                     >
                         <Input type="password" placeholder='myPassword' value={password}
                             onChange={(e) => dispatch(setPassword(e.target.value))} />
                     </Form.Item>
 
                      <Form.Item
-                        label="userName"
+                        label={t("signup.username")}
                         name="userName"
-                        rules={[{ required: true, message: "Enter your password" }]}
+                        rules={[{ required: true, message: t("signup.usernameMessage") }]}
                     >
-                        <Input type="text" placeholder='Enter your userName' value={userName}
+                        <Input type="text" placeholder='someUsername' value={userName}
                             onChange={(e) => setUsername(e.target.value)} />
                     </Form.Item>
 
 
                     <Form.Item className='login-button-form'>
                         <Button className='login-button' type="primary" htmlType="submit" size='large' onClick={handleSignUp}>
-                            Create An Account
+                            {t("signup.signupButton")}
                         </Button>
                     </Form.Item>
                     <Form.Item>
                         <Row gutter={8}>
                             <Col span={8}>
                                 <Button onClick={() => navigate(HOME_PATH)} type='link' block>
-                                    Back to Home
+                                    {t("signup.homeButton")}
                                 </Button>
                             </Col>
                             <Col span={8}>
                                 <Button type='link' block>
-                                    Try without auth.
+                                    {t("signup.TryButton")}
                                 </Button>
                             </Col>
                             <Col span={8}>
                                 <Button onClick={() => navigate(LOGIN_PATH)} type='link' block>
-                                    Log In
+                                    {t("signup.loginButton")}
                                 </Button>
                             </Col>
                         </Row>

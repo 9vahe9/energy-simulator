@@ -6,7 +6,7 @@ import {
   ROOM_PATH,
   LOGIN_PATH,
   SIGNUP_PATH,
-  FORGOT_PATH,
+  REPORT_PATH,
 } from "../constants/RoutePaths";
 
 import { ContentContainer } from "../components/ContentContainer";
@@ -16,12 +16,13 @@ import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
 import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
-import { ForGotPasswordContainer } from "../components/forgotPassword/ForgotPasswordContainer";
+import { AppLayout } from "../components/AppLayout";
+import { ReportPage } from "../pages/ReportPage";
 
 export const router = createBrowserRouter([
   {
     path: HOME_PATH,
-    element: <ContentContainer />,
+    element: <AppLayout />,
     children: [
       {
         index: true,
@@ -44,18 +45,18 @@ export const router = createBrowserRouter([
           </ProtectedRoutes>
         ),
       },
+      {
+        path: LOGIN_PATH,
+        element: <LoginContainer />
+      },
+      {
+        path: SIGNUP_PATH,
+        element: <SignUpContainer />
+      },
+      {
+        path: REPORT_PATH,
+        element: <ReportPage />
+      }
     ],
   },
-  {
-    path: LOGIN_PATH,
-    element: <LoginContainer />,
-  },
-  {
-    path: SIGNUP_PATH,
-    element: <SignUpContainer />,
-  },
-  {
-    path: FORGOT_PATH,
-    element: <ForGotPasswordContainer />
-  }
 ]);

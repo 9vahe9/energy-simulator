@@ -19,7 +19,7 @@ import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
 import { useNavigate } from "react-router-dom";
-import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
+import { HOME_PATH, REPORT_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
 import { useEffect, useState } from "react";
@@ -31,20 +31,17 @@ import {
   SearchOutlined,
   EditOutlined,
   ThunderboltFilled,
+  AreaChartOutlined
 } from "@ant-design/icons";
 import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
 
-
-
-
+import { useTranslation } from "react-i18next";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
- 
-
   let roomsArray = useSelector((state: RootState) => state.user.rooms);
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
@@ -52,7 +49,11 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const {handleAddingRoom} = useAddRooms()
+
+  const { handleAddingRoom } = useAddRooms();
+
+  const { t } = useTranslation();
+
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
   console.log(userID);
@@ -60,7 +61,7 @@ export const DashboardContainer: React.FC = () => {
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
   });
- 
+
   const showModal = () => {
     setModalVisible(true);
   };
@@ -72,7 +73,7 @@ export const DashboardContainer: React.FC = () => {
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      console.error("Validation failed:", error);
+      console.error(t("dashboard.valError"), error);
     }
   };
 
@@ -80,9 +81,6 @@ export const DashboardContainer: React.FC = () => {
     setModalVisible(false);
     form.resetFields();
   };
-
-
-
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
@@ -106,17 +104,34 @@ export const DashboardContainer: React.FC = () => {
     navigate(`${ROOM_PATH}/${id}`);
   }
 
+  function handleReportButton() {
+    navigate(REPORT_PATH);
+  }
+
   return (
     <div className="dashboard-container">
-
-      <Title level={2}>Room Energy Management</Title>
       <div className="wrapper">
-        <Row className="dashboard-header" justify="space-between">
-          <Col className="header-left">
+        <Row className="dashboard-title" justify="space-between" align="middle">
+          <Col>
+            <Title level={2}>Room Energy Management</Title>
+          </Col>
+          <Col>
             <Space>
+              <Button 
+                type="primary"
+                icon={<AreaChartOutlined />}
+                className="report-button"
+                onClick={handleReportButton}
+              >Report</Button>
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
+            </Space>
+          </Col>
+        </Row>
+        <Row className="dashboard-header" justify="space-between">
+          <Col className="header-left">
+            <Space>
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
@@ -199,7 +214,7 @@ export const DashboardContainer: React.FC = () => {
                       key={room.id}
                       name={room.name}
                       id={room.id}
-                      priority={10}
+                      priority={1}
                       energy={room.energy}
                       icons={room.devices}
                       cost={room.cost}
@@ -213,6 +228,6 @@ export const DashboardContainer: React.FC = () => {
       </div>
 
       <Button onClick={handleLogOut}>Log out</Button>
-      </div>
+    </div>
   );
 };
