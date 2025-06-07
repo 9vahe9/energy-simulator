@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
-const useThreeScene = (initialDevices: IRoomDevice[] = []) => {
+const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: number) => void) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
   const [loadedFlag, setLoadedFlag] = useState(false);

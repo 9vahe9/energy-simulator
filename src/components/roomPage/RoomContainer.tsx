@@ -8,7 +8,7 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
+import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -16,8 +16,8 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-
-import { addRoom, type Device, updateRoom } from "../../store/user/userSlice";
+import EditDevice from "./EditDevice.tsx";
+import { addRoom, updateRoom } from "../../store/user/userSlice";
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 
@@ -39,7 +39,8 @@ const RoomContainer = () => {
   const initialDevices: IRoomDevice[] = existingRoom
     ? existingRoom.devices
     : [];
-  const { threeScene, handleAddDevice } = useThreeScene(initialDevices);
+
+  const { threeScene, handleAddDevice } = useThreeScene(initialDevices, handleDeletingDevice);
 
   useEffect(() => {
     if (existingRoom) {
@@ -52,14 +53,6 @@ const RoomContainer = () => {
     setModalVisible(true);
   };
 
-  //   (alias) interface IRoomDevice {
-  //     type: DeviceType;
-  //     name: string;
-  //     power: number;
-  //     uptime: number;
-  //     workingDayTime: DayTime;
-  //     deviceId: number;
-  // }
 
   const handleOk = () => {
     form.validateFields().then((values) => {
@@ -85,11 +78,24 @@ const RoomContainer = () => {
   };
 
   const onSaveClick = () => {
-    if (!existingRoom) {
-      return;
-    }
-    handleAddingRoom(existingRoom.name, existingRoom.description, devices);
+    const nameToUse = existingRoom?.name ?? "";
+    const descToUse = existingRoom?.description ?? "";
+    handleAddingRoom(nameToUse, descToUse, devices);
   };
+
+  function handleDeletingDevice(id: number) {
+    setDevices((prev) => {
+      return prev.filter((device) => {
+        return device.deviceId !== id;
+      })
+    })
+  }
+
+  function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
+    setDevices(devices.map((device) => {
+      return device.deviceId === id ? { ...device, ...replacementObject } : device
+    }))
+  }
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -137,7 +143,7 @@ const RoomContainer = () => {
             name="power"
             label="Power"
             rules={[{ required: true, message: "Please enter device power" }]}
-          >
+          > 
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
@@ -162,8 +168,21 @@ const RoomContainer = () => {
         </Form>
       </Modal>
 
+      {/* name: string;
+    power: number;
+    uptime: number;
+    workingDayTime: DayTime; */}
+
       <Button onClick={onSaveClick}>Save Room</Button>
       <Button onClick={() => setDevices([])}>Reset Room</Button>
+      <Button onClick={() => EditDevice({
+        name: "toaster",
+        power: 123,
+        uptime: 13134,
+        workingDayTime: DayTime.Night,
+        deviceId: 1,
+        type: DeviceType.Dishwasher,
+      }, () => { console.log("eler") }, () => handleDeletingDevice(1))}>Edit something</Button>
     </Layout>
   );
 };
