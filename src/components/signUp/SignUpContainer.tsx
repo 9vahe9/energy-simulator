@@ -2,7 +2,7 @@ import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
 import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { LOGIN_PATH, HOME_PATH, DASHBOARD_PATH } from '../../constants/RoutePaths';
 import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
 import { setEmail, setPassword } from '../../store/authentication/authSlice';
@@ -37,6 +37,7 @@ function SignUpContainer() {
             dispatch(setPassword(""));
             dispatch(createUserName({ userId: id, newName: userName }));
             alert("Everything works fine");
+          
         }
 
         catch (err) {

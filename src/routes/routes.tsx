@@ -35,7 +35,6 @@ export const router = createBrowserRouter([
             <DashboardPage />
           </ProtectedRoutes>
         ),
-
       },
       {
         path: `${ROOM_PATH}/:roomId?`, 
@@ -46,6 +45,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: REPORT_PATH,
+        element: (
+          <ProtectedRoutes>
+            <ReportPage/>
+          </ProtectedRoutes>
+      )
+      },
+      {
         path: LOGIN_PATH,
         element: <LoginContainer />
       },
@@ -53,10 +60,7 @@ export const router = createBrowserRouter([
         path: SIGNUP_PATH,
         element: <SignUpContainer />
       },
-      {
-        path: REPORT_PATH,
-        element: <ReportPage />
-      }
+      
     ],
   },
 ]);
