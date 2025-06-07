@@ -20,7 +20,7 @@ import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
 import { useNavigate } from "react-router-dom";
-import { HOME_PATH, ROOM_PATH } from "../../constants/RoutePaths";
+import { HOME_PATH, REPORT_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
 import { useEffect, useState } from "react";
@@ -32,6 +32,7 @@ import {
   SearchOutlined,
   EditOutlined,
   ThunderboltFilled,
+  AreaChartOutlined
 } from "@ant-design/icons";
 import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
@@ -104,16 +105,34 @@ export const DashboardContainer: React.FC = () => {
     navigate(`${ROOM_PATH}/${id}`);
   }
 
+  function handleReportButton() {
+    navigate(REPORT_PATH);
+  }
+
   return (
     <div className="dashboard-container">
-      <Title level={2}>Room Energy Management</Title>
       <div className="wrapper">
-        <Row className="dashboard-header" justify="space-between">
-          <Col className="header-left">
+        <Row className="dashboard-title" justify="space-between" align="middle">
+          <Col>
+            <Title level={2}>Room Energy Management</Title>
+          </Col>
+          <Col>
             <Space>
+              <Button 
+                type="primary"
+                icon={<AreaChartOutlined />}
+                className="report-button"
+                onClick={handleReportButton}
+              >Report</Button>
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
+            </Space>
+          </Col>
+        </Row>
+        <Row className="dashboard-header" justify="space-between">
+          <Col className="header-left">
+            <Space>
               <Button
                 type="primary"
                 icon={<PlusOutlined />}

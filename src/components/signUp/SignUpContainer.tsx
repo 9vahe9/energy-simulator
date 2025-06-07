@@ -2,14 +2,14 @@ import { Input, Button, Form, Typography, Row, Col, Card } from 'antd';
 import './signUp.css';
 import { auth } from '../../firebaseConfig/firebase';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_PATH, HOME_PATH } from '../../constants/RoutePaths';
+import { LOGIN_PATH, HOME_PATH, DASHBOARD_PATH } from '../../constants/RoutePaths';
 import { createUserWithEmailAndPassword } from "firebase/auth"
 const { Title } = Typography;
 import { setEmail, setPassword } from '../../store/authentication/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 //import type { Room } from '../../store/user/userSlice';
-import { createRoom, createUserName } from '../../store/user/userSlice';
+import { createUserName, createRoom } from '../../store/user/userSlice';
 import type { AppDispatch } from '../../store/store';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +37,7 @@ function SignUpContainer() {
             dispatch(setPassword(""));
             dispatch(createUserName({ userId: id, newName: userName }));
             alert("Everything works fine");
+          
         }
 
         catch (err) {
