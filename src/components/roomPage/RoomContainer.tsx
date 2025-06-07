@@ -91,11 +91,11 @@ const RoomContainer = () => {
     })
   }
 
-function saveEditedDevice(id:number, replacementObject: IRoomDevice ){
-      setDevices(devices.map((device) => {
-         return  device.deviceId === id ? { ...device, ...replacementObject } : device
-      }))
-}
+  function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
+    setDevices(devices.map((device) => {
+      return device.deviceId === id ? { ...device, ...replacementObject } : device
+    }))
+  }
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -143,7 +143,7 @@ function saveEditedDevice(id:number, replacementObject: IRoomDevice ){
             name="power"
             label="Power"
             rules={[{ required: true, message: "Please enter device power" }]}
-          >
+          > 
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
@@ -168,7 +168,7 @@ function saveEditedDevice(id:number, replacementObject: IRoomDevice ){
         </Form>
       </Modal>
 
-    {/* name: string;
+      {/* name: string;
     power: number;
     uptime: number;
     workingDayTime: DayTime; */}
@@ -182,7 +182,7 @@ function saveEditedDevice(id:number, replacementObject: IRoomDevice ){
         workingDayTime: DayTime.Night,
         deviceId: 1,
         type: DeviceType.Dishwasher,
-      }, () => {console.log("eler")}, () => handleDeletingDevice(1)  )}>Edit something</Button>
+      }, () => { console.log("eler") }, () => handleDeletingDevice(1))}>Edit something</Button>
     </Layout>
   );
 };
