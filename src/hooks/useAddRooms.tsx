@@ -71,15 +71,6 @@ import type { IRoom } from "../types/room.ts";
     setDescription(description);
   };
 
-  const room: Room = {
-    name: roomName,
-    description: description,
-    levelOfEnergyConsumption: "15w",
-    monthlyCost: 12,
-    id: " ",
-    energyConsumption: "15135w",
-    devices: devices,
-  };
 
   const showModal = (type: number) => {
     //setSelectedType(type);
@@ -136,7 +127,7 @@ import type { IRoom } from "../types/room.ts";
 
   return {
     handleAddingRoom,
-    setRoomData,
+  
     singleRoomPage: (
       <div
         className="single-room"
