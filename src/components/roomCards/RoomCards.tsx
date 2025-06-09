@@ -1,5 +1,5 @@
-
-import { Button, Typography, Tag, Space, Progress, Modal, Card } from "antd";
+import "./RoomCards.css"
+import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
 import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
 
 import type { IRoomDevice } from "../../types/device";
@@ -69,88 +69,95 @@ export const RoomCards = ({
   return (
     <Card key={id} className="room-card">
       {/* Название и приоритет */}
-      <div className="card-header">
-        <Title level={4} style={{ margin: 0 }}>
-          {name}
-        </Title>
-        <Tag
-          icon={<ThunderboltFilled />}
-          className={
-            priority >= 1000
-              ? "priority-tag-high"
-              : priority >= 500 && priority < 1000
-              ? "priority-tag-medium"
-              : "priority-tag-low"
-          }
-          color={
-            priority >= 1000
-              ? "red"
-              : priority >= 500 && priority < 1000
-              ? "yellow"
-              : "green"
-          }
-        >
-          {priority}
-        </Tag>
-      </div>
+      <div> 
+      <div className="main-part">
+        <div className="card-header">
+          <Title level={4} style={{ margin: 0 }}>
+            {name}
+          </Title>
+          <Tag
+            icon={<ThunderboltFilled />}
+            className={
+              priority >= 1000
+                ? "priority-tag-high"
+                : priority >= 500 && priority < 1000
+                ? "priority-tag-medium"
+                : "priority-tag-low"
+            }
+            color={
+              priority >= 1000
+                ? "red"
+                : priority >= 500 && priority < 1000
+                ? "yellow"
+                : "green"
+            }
+          >
+            {priority}
+          </Tag>
+        </div>
 
-      {/* Card body */}
-      <div className="card-body"></div>
+        {/* Card body */}
+        <div className="card-body"></div>
 
-      {/* Statics */}
-      <div className="card-stats">
-        <Space direction="vertical" style={{ width: "100%" }}>
+        {/* Statics */}
+        <div className="card-stats">
+          <Space direction="vertical" style={{ width: "100%" }}>
 
-          <Text>{t("roomCards.energy")}</Text>
+            <Text>{t("roomCards.energy")}</Text>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Progress
-              percent={Math.round((Number(energy) / 1000) * 100)}
-              showInfo={false}
-              strokeColor={
-                priority >= 1000
-                  ? "#C70039"
-                  : priority >= 500 && priority < 1000
-                  ? "#FFDE2B"
-                  : "green"
-              }
-            />
-            <Text strong>{energy} kWh</Text>
-          </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Progress
+                percent={Math.round((Number(energy) / 1000) * 100)}
+                showInfo={false}
+                strokeColor={
+                  priority >= 1000
+                    ? "#C70039"
+                    : priority >= 500 && priority < 1000
+                    ? "#FFDE2B"
+                    : "green"
+                }
+              />
+              <Text strong>{energy} kWh</Text>
+            </div>
 
-          <Text>{t("roomCards.cost")}</Text>
+            <Text>{t("roomCards.cost")}</Text>
 
-          <Text strong>${cost}</Text>
-        </Space>
-      </div>
-
-      {/* Icon Device */}
-      <div className="device-icons">
-        {icons.map((ic) => (
-          <Space key={ic.name}>
-            <span>{ICON_MAP[ic.name] || "🔌"}</span>
+            <Text strong>${cost}</Text>
           </Space>
-        ))}
+        </div>
+      
+
+        {/* Icon Device */}
+        <div className="device-icons">
+          {icons.map((ic) => (
+            <Space key={ic.name}>
+              <span>{ICON_MAP[ic.name] || "🔌"}</span>
+            </Space>
+          ))}
+        </div>
       </div>
 
       {/* Button edit */}
-      <Button
-        type="primary"
-        icon={<EditOutlined />}
-        className="ant-btn-edit"
-        onClick={() => editRoomFunction(id)}
-      >
+      <Flex align="center" justify="center" className="card-buttons">
+        <Button
+          type="primary"
+          icon={<EditOutlined />}
+          className="ant-btn-edit"
+          onClick={() => editRoomFunction(id)}
+        >
 
-        {t("roomCards.edit")}
+          {t("roomCards.edit")}
 
-      </Button>
-      <Button
-        onClick={() => {
-          confirmModal(name);
-        }}
-      >
-        {t("roomCards.delete")}
-      </Button>
+        </Button>
+        <Button
+          onClick={() => {
+            confirmModal(name);
+          }}
+        >
+          {t("roomCards.delete")}
+        </Button>
+      </Flex>
+      </div>
     </Card>
   );
 };
