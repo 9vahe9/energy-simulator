@@ -47,9 +47,11 @@
         "title": "Room Energy Management",
         "addButton": "Add New Room",
         "sortButton": "Sort rooms",
+        "reportButton": "Report",
         "Modal": {
             "title": "Add room",
             "ok": "Add",
+            "cancel": "Cancel",
             "name": "Name",
             "nameMessage": "Please enter room name",
             "nameVal": "min 3 characters",
@@ -59,7 +61,8 @@
         },
         "totalEnergy": "Total Energy Consumption։",
         "cost": "Monthly Cost։",
-        "search": "Search rooms..."
+        "search": "Search rooms...",
+        "logout": "Log out"
     },
     "roomCards": {
         "Modal": {
@@ -72,5 +75,16 @@
         "cost": "Monthly Cost",
         "edit": "Edit Room",
         "delete": "Delete room"
+    },
+    "report": {
+        "title": "Reporting",
+        "download": "Download report",
+        "consumers": "Top Energy Consumers",
+        "tabs": {
+            "day": "Daily",
+            "week": "Weekly",
+            "month": "Monthly",
+            "consumption": "Energy Consumption"
+        }
     }
 }
