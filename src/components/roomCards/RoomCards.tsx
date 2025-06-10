@@ -1,6 +1,6 @@
-
-  import { Button, Typography, Tag, Space, Progress, Modal, Card } from "antd";
-  import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
+import "./RoomCards.css"
+import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
+import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
 
   import type { IRoomDevice } from "../../types/device";
 
@@ -68,16 +68,16 @@
       });
     };
 
-    return (
-      <Card key={id} className="room-card">
-        {/* Название и приоритет */}
+
+  return (
+    <Card key={id} className="room-card">
+      {/* Название и приоритет */}
+      <div> 
+      <div className="main-part">
         <div className="card-header">
           <Title level={4} style={{ margin: 0 }}>
             {name}
           </Title>
-        <Text type="secondary" style={{ display: "block", margin: "4px 0 0 0" }}>
-          {description || t("roomCards.noDescription")}
-        </Text>
           <Tag
             icon={<ThunderboltFilled />}
             className={
@@ -128,6 +128,7 @@
             <Text strong>${cost}</Text>
           </Space>
         </div>
+      
 
         {/* Icon Device */}
         <div className="device-icons">
@@ -137,8 +138,10 @@
             </Space>
           ))}
         </div>
+      </div>
 
-        {/* Button edit */}
+      {/* Button edit */}
+      <Flex align="center" justify="center" className="card-buttons">
         <Button
           type="primary"
           icon={<EditOutlined />}
@@ -156,6 +159,8 @@
         >
           {t("roomCards.delete")}
         </Button>
-      </Card>
-    );
-  };
+      </Flex>
+      </div>
+    </Card>
+  );
+};

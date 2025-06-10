@@ -3,10 +3,11 @@ import { DownloadOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store/store";
-import { tabs } from "../../constants/ReportTabs";
+import { useTabs } from "../../constants/ReportTabs";
 import "./report.css"
 import { fetchRooms } from "../../store/user/userSlice";
 import type { AppDispatch } from "../../store/store";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -16,6 +17,9 @@ export const ReportContainer = () => {
     const roomsArray = useSelector((state: RootState) => state.user.rooms);
     const [month, setMonth] = useState("");
     const dispatch = useDispatch<AppDispatch>();
+
+    const { t } = useTranslation();
+    const tabs = useTabs();
 
     useEffect(() => {
         const mnt = new Date().toLocaleString("en-US", { month: "long" });
@@ -38,7 +42,7 @@ export const ReportContainer = () => {
                 <Row justify="space-between" align="middle" style={{ width: "100%" }}>
                     <Col>
                         <Title level={2}>
-                            Reporting
+                            {t("report.title")}
                         </Title>
                     </Col>
                     <Col>
@@ -54,7 +58,7 @@ export const ReportContainer = () => {
                             icon={<DownloadOutlined />}
                             className="download-button"
                         >
-                            Download report
+                            {t("report.download")}
                         </Button>
                     </Col>
                     <Col>
@@ -81,7 +85,7 @@ export const ReportContainer = () => {
                 </Splitter.Panel>
                 <Splitter.Panel resizable={false}>
                     <div className="devices-list">
-                        <Title level={4}>Top Energy Consumers</Title>
+                        <Title level={4}>{t("report.consumers")}</Title>
                     </div>
                 </Splitter.Panel>
             </Splitter>
