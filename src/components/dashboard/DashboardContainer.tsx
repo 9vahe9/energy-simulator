@@ -221,6 +221,7 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
+                      description= {room.description}
                     />
                   </Col>
                 )
