@@ -19,11 +19,23 @@
     background-color: #26a69a;
 }
 
+.dashboard-button {
+    background-color: #26a69a;
+}
+
 .tag {
     color:black !important;
 }
 
 .report-tabs {
+    background-color: #b2dfdb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+
+.splitter {
     background-color: #b2dfdb;
     padding: 16px;
     border-radius: 8px;
