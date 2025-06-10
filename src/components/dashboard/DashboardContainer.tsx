@@ -50,6 +50,8 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [totalEnergy, setTotalEnergy] = useState(0);
+
 
   const { handleAddingRoom } = useAddRooms();
 
@@ -186,7 +188,7 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col className="header-summary">
             <Space>
-              <Text>{t("dashboard.totalEnergy")}</Text>
+              <Text>{t("dashboard.totalEnergy") + `  ${totalEnergy}`}</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalEnergy} */}
               </Title>

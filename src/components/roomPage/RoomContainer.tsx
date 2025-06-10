@@ -28,6 +28,8 @@ const { Option } = Select;
 const { Content, Sider } = Layout;
 
 const RoomContainer = () => {
+
+  
   const { handleAddingRoom } = useAddRooms();
 
 
@@ -37,69 +39,47 @@ const RoomContainer = () => {
   const [form] = Form.useForm();
   const { roomId } = useParams<{ roomId?: string }>();
   const [devices, setDevices] = useState<IRoomDevice[]>([]);
+  const userId = useSelector((state: RootState) => state.auth.userToken);
+  
+
 
   const dispatch = useDispatch<AppDispatch>();
 
   const existingRoom = useSelector((state: RootState) =>
     roomId
       ? state.user.rooms.find(r => r.id === roomId)
-      : undefined
+      : undefined,
   );
 
   const initialDevices: IRoomDevice[] = existingRoom
     ? existingRoom.devices
     : [];
 
-  
+    useEffect(() => {
+    if(existingRoom){
+      setDevices(existingRoom.devices);
+      setNewRoomName(existingRoom.name);
+      setNewRoomDescription(existingRoom.description);
+    }
+  }, [existingRoom])
+
+
   const { threeScene, handleAddDevice } = useThreeScene(initialDevices, handleDeletingDevice);
 
-  const [newRoomName, setNewRoomName] = useState('')
-  const [newRoomDescription, setNewRoomDescription] = useState('')
+  const [newRoomName, setNewRoomName] = useState(existingRoom?.name)
+  const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description);
 
 
   useEffect(() => {
-    if (existingRoom) {
-      setDevices(existingRoom.devices);
-    }
-  }, [existingRoom]);
 
-  useEffect(() => {
-    if (!roomId) return;
-
-    const existingName = localStorage.getItem(`roomName-${roomId}`);
-    const existingDescription = localStorage.getItem(`roomDescription-${roomId}`);
-
-    if (existingName !== null) {
-
-      setNewRoomName(existingName);
-
-    } else if (existingRoom) {
-      setNewRoomName(existingRoom.name);
+    if(userId){
+      dispatch(fetchRooms(userId));
     }
 
-    if (existingDescription !== null) {
-
-      setNewRoomName(existingDescription);
-
-    } else if (existingRoom) {
-      setNewRoomName(existingRoom.description);
-    }
+  }, [dispatch, userId])
 
 
-  }, [roomId, existingRoom])
-
-  useEffect(() => {
-    if (roomId) {
-      localStorage.setItem(`roomName-${roomId}`, newRoomName)
-    }
-  }, [roomId, newRoomName])
-
-  useEffect(() => {
-    if (roomId) {
-      localStorage.setItem(`roomDescription-${roomId}`, newRoomDescription)
-    }
-  }, [roomId, newRoomDescription])
-
+ 
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
@@ -136,7 +116,12 @@ const RoomContainer = () => {
   const onSaveClick = () => {
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
-    handleAddingRoom(nameToUse, descToUse, devices);
+
+    const devicesToSave = existingRoom ? devices.filter((newDevice) =>{
+      !existingRoom.devices.some(existing => existing.deviceId === newDevice.deviceId);
+    } ): devices;
+
+    handleAddingRoom(nameToUse, descToUse, devicesToSave);
   };
 
   function handleDeletingDevice(id: number) {
@@ -166,7 +151,7 @@ const RoomContainer = () => {
           <Form layout="vertical">
             <Form.Item label="Room Name">
               <Input
-                placeholder={newRoomName}
+                placeholder={existingRoom?.name}
                 value={newRoomName}
                 onChange={(e) => setNewRoomName(e.target.value)}
               />
@@ -174,7 +159,7 @@ const RoomContainer = () => {
 
             <Form.Item label="Room Description">
               <Input
-                placeholder={newRoomDescription}
+                placeholder={existingRoom?.description}
                 value={newRoomDescription}
                 onChange={(e) => setNewRoomDescription(e.target.value)}
               />

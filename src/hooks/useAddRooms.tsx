@@ -23,19 +23,14 @@ import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
 import type { IRoom } from "../types/room.ts";
+import { executeQuery } from "firebase/data-connect";
 //const { Content } = Layout;
 
-  const { Option } = Select;
-  const useAddRooms = () => {
-  const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
+const useAddRooms = () => {
+  const { roomId } = useParams<{ roomId?: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [form] = Form.useForm();
   const userId: string = useSelector(
     (state: RootState) => state.auth.userToken
   );
@@ -57,66 +52,44 @@ import type { IRoom } from "../types/room.ts";
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
 
-  useEffect(() => {
-    if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
-      setDevices(existingRoom.devices);
-    }
-  }, [existingRoom]);
 
 
-  const setRoomData = (name: string, description: string) => {
-    setRoomName(name);
-    setDescription(description);
-  };
-
-
-  const showModal = (type: number) => {
-    //setSelectedType(type);
-    setModalVisible(true);
-  };
-
-  const handleOk = () => {
-
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
-    console.log("handleAddingRoom", userId);
+  const handleAddingRoom = async (name: string, description: string, newDevices: IRoomDevice[]) => {
+    
     if (!userId) return;
 
-     const room: IRoom = {
-    name: name,
-    description: description,
-    energy: 0,
-    cost: 0,
-    id: "",
-    priority: "Low",
-    devices: devices,
-    icons: [{type: "something", count: 0}]
-  };
+    const allDevices = existingRoom ? [...existingRoom.devices, ...newDevices.filter((newDevice) => {
+      !existingRoom.devices.some(existing => existing.deviceId === newDevice.deviceId)
+    })]: newDevices; 
 
-    const finalRoom = {
-      ...room,
+
+    const totalEnergy = allDevices.reduce((sum, device) => sum + device.power, 0);
+
+    const room: IRoom = {
+      name: name || existingRoom?.name || " ",
+      description: description || existingRoom?.description || " ",
+      energy: totalEnergy,
+      cost: 0,
       id: roomId ? existingRoom?.id || "" : randomId,
-      devices,
+      priority: "Low",
+      devices: allDevices,
+      icons: [{ type: "something", count: 0 }]
     };
+
+    // const finalRoom = {
+    //   ...room,
+    //   id: roomId ? existingRoom?.id || "" : randomId,
+    //   devices,
+    // };
 
     try {
       if (roomId) {
-        console.log("roomId=", roomId);
-        await dispatch(updateRoom({ userId, roomObject: finalRoom }));
+       
+        await dispatch(updateRoom({ userId, roomObject: room }));
 
-         navigate(DASHBOARD_PATH); 
+        navigate(DASHBOARD_PATH);
       } else {
-        await dispatch(addRoom({ userId, roomObject: finalRoom }));
+        await dispatch(addRoom({ userId, roomObject: room }));
         navigate(`${ROOM_PATH}/${randomId}`);
       }
 
@@ -127,7 +100,7 @@ import type { IRoom } from "../types/room.ts";
 
   return {
     handleAddingRoom,
-  
+
     singleRoomPage: (
       <div
         className="single-room"
