@@ -34,6 +34,9 @@ const useAddRooms = () => {
   const userId: string = useSelector(
     (state: RootState) => state.auth.userToken
   );
+  const existingRoom = useSelector((state: RootState) => {
+    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
+  });
 
   const randomId = (() => {
     const now = new Date();
@@ -48,39 +51,27 @@ const useAddRooms = () => {
       .join("_");
   })();
 
-  const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
-  });
 
 
 
-  const handleAddingRoom = async (name: string, description: string, newDevices: IRoomDevice[]) => {
+  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
     
     if (!userId) return;
 
-    const allDevices = existingRoom ? [...existingRoom.devices, ...newDevices.filter((newDevice) => {
-      !existingRoom.devices.some(existing => existing.deviceId === newDevice.deviceId)
-    })]: newDevices; 
-
-
-    const totalEnergy = allDevices.reduce((sum, device) => sum + device.power, 0);
+    const totalEnergy = devices.reduce((sum, device) => sum + device.power, 0);
 
     const room: IRoom = {
       name: name || existingRoom?.name || " ",
       description: description || existingRoom?.description || " ",
       energy: totalEnergy,
       cost: 0,
-      id: roomId ? existingRoom?.id || "" : randomId,
-      priority: "Low",
-      devices: allDevices,
-      icons: [{ type: "something", count: 0 }]
+      id: roomId || randomId,
+      priority: existingRoom?.priority || 'Low',
+      devices,
+      icons: existingRoom?.icons || [],
     };
 
-    // const finalRoom = {
-    //   ...room,
-    //   id: roomId ? existingRoom?.id || "" : randomId,
-    //   devices,
-    // };
+
 
     try {
       if (roomId) {
@@ -98,16 +89,7 @@ const useAddRooms = () => {
     }
   };
 
-  return {
-    handleAddingRoom,
-
-    singleRoomPage: (
-      <div
-        className="single-room"
-        style={{ width: "100vh", height: "100vh" }}
-      />
-    ),
-  };
+ return {  handleAddingRoom };
 };
 
 export default useAddRooms;

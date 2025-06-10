@@ -29,57 +29,48 @@ const { Content, Sider } = Layout;
 
 const RoomContainer = () => {
 
-  
+ const { roomId } = useParams<{ roomId?: string }>();
   const { handleAddingRoom } = useAddRooms();
-
-
+  const existingRoom = useSelector((state: RootState) =>
+    roomId ? state.user.rooms.find(r => r.id === roomId) : undefined,
+  );
+  const userId = useSelector((state: RootState) => state.auth.userToken);
 
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { roomId } = useParams<{ roomId?: string }>();
-  const [devices, setDevices] = useState<IRoomDevice[]>([]);
-  const userId = useSelector((state: RootState) => state.auth.userToken);
-  
-
-
-  const dispatch = useDispatch<AppDispatch>();
-
-  const existingRoom = useSelector((state: RootState) =>
-    roomId
-      ? state.user.rooms.find(r => r.id === roomId)
-      : undefined,
-  );
-
-  const initialDevices: IRoomDevice[] = existingRoom
-    ? existingRoom.devices
-    : [];
-
-    useEffect(() => {
-    if(existingRoom){
-      setDevices(existingRoom.devices);
+ 
+  const [devices, setDevices] = useState<IRoomDevice[]>(existingRoom.devices);
+  const [newRoomName, setNewRoomName] = useState(existingRoom?.name)
+  const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description);
+  useEffect(() => {
+    if (existingRoom) {
+      // setDevices(existingRoom.devices);
       setNewRoomName(existingRoom.name);
       setNewRoomDescription(existingRoom.description);
     }
   }, [existingRoom])
 
 
-  const { threeScene, handleAddDevice } = useThreeScene(initialDevices, handleDeletingDevice);
 
-  const [newRoomName, setNewRoomName] = useState(existingRoom?.name)
-  const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description);
 
+
+  const dispatch = useDispatch<AppDispatch>();
+
+
+
+  const { threeScene, handleAddDevice } = useThreeScene(roomId,devices, handleDeletingDevice);
 
   useEffect(() => {
 
-    if(userId){
+    if (userId) {
       dispatch(fetchRooms(userId));
     }
 
-  }, [dispatch, userId])
+  }, [dispatch, userId, roomId])
 
 
- 
+
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
@@ -93,16 +84,13 @@ const RoomContainer = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
       const newDevice: IRoomDevice = {
-        type: selectedType!,
-        name: values.name,
-        power: values.power,
-        uptime: values.uptime,
-        workingDayTime: values.workingDayTime,
+        ...values,
+        type: selectedType,
         deviceId: Date.now(),
-        position: { x: 0, y: 0, z: 0 },
+        position: { x:0, y:0, z:0 }
       };
       handleAddDevice(newDevice);
-      setDevices([...devices, newDevice]);
+      setDevices(prev => [...prev, newDevice]);
       setModalVisible(false);
       form.resetFields();
     });
@@ -117,11 +105,11 @@ const RoomContainer = () => {
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
 
-    const devicesToSave = existingRoom ? devices.filter((newDevice) =>{
-      !existingRoom.devices.some(existing => existing.deviceId === newDevice.deviceId);
-    } ): devices;
+    // const devicesToSave = existingRoom ? devices.filter((newDevice) => {
+    //   return !existingRoom.devices.some(existing => existing.deviceId === newDevice.deviceId);
+    // }) : devices;
 
-    handleAddingRoom(nameToUse, descToUse, devicesToSave);
+    handleAddingRoom(nameToUse, descToUse, devices);
   };
 
   function handleDeletingDevice(id: number) {
