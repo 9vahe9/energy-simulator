@@ -74,7 +74,8 @@
         "energy": "Energy Consumption",
         "cost": "Monthly Cost",
         "edit": "Edit Room",
-        "delete": "Delete room"
+        "delete": "Delete room",
+        "description": "This room has no description."
     },
     "report": {
         "title": "Reporting",

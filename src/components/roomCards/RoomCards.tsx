@@ -1,6 +1,6 @@
 import "./RoomCards.css"
 import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
-import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
+import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design/icons";
 
   import type { IRoomDevice } from "../../types/device";
 
@@ -17,46 +17,61 @@ import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
     Fire: "🔥",
   };
 
-  export const RoomCards = ({
-    id,
-    name,
-    priority,
-    energy,
-    cost,
-    icons,
-    deleteFunction,
-    editRoomFunction,
-    description,
-  }: {
-    id: string;
-    name: string;
-    priority: number;
-    energy: number;
-    cost: number;
-    description: string,
 
-    icons: IRoomDevice[];
-    deleteFunction: Function;
-    editRoomFunction: Function;
-  }) => {
+export const RoomCards = ({
+  id,
+  name,
+  priority,
+  energy,
+  cost,
+  icons,
+  deleteFunction,
+  editRoomFunction,
+  description,
+}: {
+  id: string;
+  name: string;
+  priority: number;
+  energy: number;
+  cost: number;
+  description: string;
+
+  icons: IRoomDevice[];
+  deleteFunction: Function;
+  editRoomFunction: Function;
+}) => {
 
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    console.log("RoomCards props:", { id, name, priority, energy, cost, icons });
+  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description });
 
-    const confirmModal = (name: string) => {
-      Modal.confirm({
+  const descriptionModal = () => {
+    Modal.info({
+      title: t("dashboard.Modal.description"),
+      content: description || t("roomCards.description"),
+      okText: "Ok",
 
-        title: t("roomCards.Modal.title"),
-        content: t("roomCards.Modal.content", {name}),
-        okText: t("roomCards.Modal.ok"),
-        cancelText: t("roomCards.Modal.cancel"),
+      okButtonProps: {
+        style: {
+          backgroundColor: "#26a69a",
+        },
+      },
+    });
+  }
 
-        okButtonProps: {
-          style: {
-            backgroundColor: "#26a69a",
-          },
+  const confirmModal = (name: string) => {
+    Modal.confirm({
+
+      title: t("roomCards.Modal.title"),
+      content: t("roomCards.Modal.content", {name}),
+      okText: t("roomCards.Modal.ok"),
+      cancelText: t("roomCards.Modal.cancel"),
+
+      okButtonProps: {
+        style: {
+          backgroundColor: "#26a69a",
+
         },
         onOk() {
           deleteFunction(id);
@@ -75,8 +90,8 @@ import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
       <div> 
       <div className="main-part">
         <div className="card-header">
-          <Title level={4} style={{ margin: 0 }}>
-            {name}
+          <Title level={4} onClick={descriptionModal} style={{ margin: 0, cursor: "pointer" }}>
+            {name} <InfoCircleOutlined style={{ marginLeft: 8, color: "#26a69a" }} />
           </Title>
           <Tag
             icon={<ThunderboltFilled />}

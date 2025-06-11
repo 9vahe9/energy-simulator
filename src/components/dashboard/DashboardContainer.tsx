@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Modal,
   InputNumber,
+  Affix,
 } from "antd";
 
 import type { RootState, AppDispatch } from "../../store/store";
@@ -235,15 +236,18 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
-                      description= {room.description}
+
+                      description={room.description}
                     />
                   </Col>
                 )
             )}
         </Row>
       </div>
-
-      <Button onClick={handleLogOut}>{t("dashboard.logout")}</Button>
+      <Affix offsetBottom={16}>
+        <Button onClick={handleLogOut}>{t("dashboard.logout")}</Button>
+      </Affix>
+      
     </div>
   );
 };
