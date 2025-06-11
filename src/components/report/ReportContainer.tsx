@@ -10,6 +10,7 @@ import type { AppDispatch } from "../../store/store";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { DASHBOARD_PATH } from "../../constants/RoutePaths";
+import { ReportDownloadButton } from "./ReportDownloadButton";
 
 const { Title, Text } = Typography;
 
@@ -59,13 +60,14 @@ export const ReportContainer = () => {
                 </Row>
                 <Row justify="space-between" align="middle" style={{ width: "100%" }}>
                     <Col>
-                        <Button
+                        {/* {<Button
                             type="primary"
                             icon={<DownloadOutlined />}
                             className="download-button"
                         >
                             {t("report.download")}
-                        </Button>
+                        </Button>} */}
+                        <ReportDownloadButton />
                     </Col>
                     <Col>
                         <Tag
@@ -78,42 +80,44 @@ export const ReportContainer = () => {
                     </Col>
                 </Row>
             </div>
-            <Splitter>
-                <Splitter.Panel defaultSize="60%" resizable={false}>
-                    <div className="report-tabs">
-                        <Tabs
-                            className="tab"
-                            defaultActiveKey="1"
-                            items={tabs}
-                            tabBarStyle={{ color: "teal", fontWeight: "bold" }}
-                        />
-                    </div>
-                </Splitter.Panel>
-                <Splitter.Panel resizable={false} className="splitter">
-                    <div className="devices-list">
-                        <Title level={4}>{t("report.consumers")}</Title>
-                    </div>
-                </Splitter.Panel>
-            </Splitter>
-            <div className="rooms-list">
-                <Flex gap="small" vertical>
-                    {roomsArray.map((room) => room.name !== " " && (
-                        <div>
-                            <Text>{room.name}</Text>
-                            <Progress
-                                percent={Math.round((Number(room.energy) / 1000) * 100)}
-                                showInfo={false}
-                                strokeColor={
-                                    room.energy >= 1000
-                                        ? "#C70039"
-                                        : room.energy >= 500 && room.energy < 1000
-                                            ? "#FFDE2B"
-                                            : "green"
-                                }
+            <div id="report-container">
+                <Splitter>
+                    <Splitter.Panel defaultSize="60%" resizable={false}>
+                        <div className="report-tabs">
+                            <Tabs
+                                className="tab"
+                                defaultActiveKey="1"
+                                items={tabs}
+                                tabBarStyle={{ color: "teal", fontWeight: "bold" }}
                             />
                         </div>
-                    ))}
-                </Flex>
+                    </Splitter.Panel>
+                    <Splitter.Panel resizable={false} className="splitter">
+                        <div className="devices-list">
+                            <Title level={4}>{t("report.consumers")}</Title>
+                        </div>
+                    </Splitter.Panel>
+                </Splitter>
+                <div className="rooms-list">
+                    <Flex gap="small" vertical>
+                        {roomsArray.map((room) => room.name !== " " && (
+                            <div>
+                                <Text>{room.name}</Text>
+                                <Progress
+                                    percent={Math.round((Number(room.energy) / 1000) * 100)}
+                                    showInfo={false}
+                                    strokeColor={
+                                        room.energy >= 1000
+                                            ? "#C70039"
+                                            : room.energy >= 500 && room.energy < 1000
+                                                ? "#FFDE2B"
+                                                : "green"
+                                    }
+                                />
+                            </div>
+                        ))}
+                    </Flex>
+                </div>
             </div>
         </div>
     )
