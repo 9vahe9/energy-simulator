@@ -1,6 +1,6 @@
 import "./RoomCards.css"
 import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
-import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
+import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design/icons";
 
 import type { IRoomDevice } from "../../types/device";
 
@@ -26,12 +26,14 @@ export const RoomCards = ({
   icons,
   deleteFunction,
   editRoomFunction,
+  description,
 }: {
   id: string;
   name: string;
   priority: number;
   energy: number;
   cost: number;
+  description: string;
 
   icons: IRoomDevice[];
   deleteFunction: Function;
@@ -41,7 +43,21 @@ export const RoomCards = ({
 
   const { t } = useTranslation();
 
-  console.log("RoomCards props:", { id, name, priority, energy, cost, icons });
+  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description });
+
+  const descriptionModal = () => {
+    Modal.info({
+      title: t("dashboard.Modal.description"),
+      content: description || t("roomCards.description"),
+      okText: "Ok",
+
+      okButtonProps: {
+        style: {
+          backgroundColor: "#26a69a",
+        },
+      },
+    });
+  }
 
   const confirmModal = (name: string) => {
     Modal.confirm({
@@ -72,8 +88,8 @@ export const RoomCards = ({
       <div> 
       <div className="main-part">
         <div className="card-header">
-          <Title level={4} style={{ margin: 0 }}>
-            {name}
+          <Title level={4} onClick={descriptionModal} style={{ margin: 0, cursor: "pointer" }}>
+            {name} <InfoCircleOutlined style={{ marginLeft: 8, color: "#26a69a" }} />
           </Title>
           <Tag
             icon={<ThunderboltFilled />}

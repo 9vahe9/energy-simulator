@@ -8,6 +8,8 @@ import "./report.css"
 import { fetchRooms } from "../../store/user/userSlice";
 import type { AppDispatch } from "../../store/store";
 import { useTranslation } from "react-i18next";
+import { Navigate, useNavigate } from "react-router-dom";
+import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 
 const { Title, Text } = Typography;
 
@@ -17,6 +19,7 @@ export const ReportContainer = () => {
     const roomsArray = useSelector((state: RootState) => state.user.rooms);
     const [month, setMonth] = useState("");
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
 
     const { t } = useTranslation();
     const tabs = useTabs();
@@ -45,11 +48,14 @@ export const ReportContainer = () => {
                             {t("report.title")}
                         </Title>
                     </Col>
-                    <Col>
-                        <Text>
-                            {userName}
-                        </Text>
-                    </Col>
+                    <Space>
+                        <Button className="dashboard-button" type="primary" onClick={() => navigate(DASHBOARD_PATH)}>Dashboard</Button>
+                        <Col>
+                            <Text>
+                                {userName}
+                            </Text>
+                        </Col>
+                    </Space>
                 </Row>
                 <Row justify="space-between" align="middle" style={{ width: "100%" }}>
                     <Col>
@@ -83,7 +89,7 @@ export const ReportContainer = () => {
                         />
                     </div>
                 </Splitter.Panel>
-                <Splitter.Panel resizable={false}>
+                <Splitter.Panel resizable={false} className="splitter">
                     <div className="devices-list">
                         <Title level={4}>{t("report.consumers")}</Title>
                     </div>
