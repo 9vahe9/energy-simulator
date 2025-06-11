@@ -71,8 +71,8 @@ export const RoomCards = ({
       okButtonProps: {
         style: {
           backgroundColor: "#26a69a",
-
         },
+      },
         onOk() {
           deleteFunction(id);
           console.log(`${name} deleted successfully!`);
@@ -81,6 +81,7 @@ export const RoomCards = ({
           console.log("Cancel");
         },
       });
+    
     };
 
 
