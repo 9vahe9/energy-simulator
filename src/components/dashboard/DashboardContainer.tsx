@@ -52,13 +52,28 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [totalEnergy, setTotalEnergy] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
+  useEffect(() => {
 
+    if(roomsArray.length > 0) {
+      let waste = 0;
+      roomsArray.forEach((room) => {
+        waste += room.devices.reduce((acc, curr) => {
+          const e = curr.power/1000 * curr.uptime/60;
+          acc += e;
+          return acc;
+        }, 0);
+      });
+
+      setTotalEnergy(Number(waste.toFixed(2)));
+    }
+  }, [roomsArray]);
 
   useEffect(() => {
 
     if(roomsArray.length > 0){
-      setTotalEnergy(roomsArray.reduce((accum, room) => {
+      setTotalCost(roomsArray.reduce((accum, room) => {
         return accum += room.cost;
       } ,0));
     }
@@ -201,13 +216,7 @@ export const DashboardContainer: React.FC = () => {
           <Col className="header-summary">
             <Space>
               <Text>{t("dashboard.totalEnergy") + `  ${totalEnergy}`}</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalEnergy} */}
-              </Title>
-              <Text>{t("dashboard.cost")}</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalCost} */}
-              </Title>
+              <Text>{t("dashboard.cost") + ` ${totalCost}`}</Text>
             </Space>
           </Col>
           <Col className="header-right">
@@ -236,7 +245,7 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
-
+                      devices={room.devices}
                       description={room.description}
                     />
                   </Col>
