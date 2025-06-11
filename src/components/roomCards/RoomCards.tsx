@@ -2,20 +2,21 @@ import "./RoomCards.css"
 import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
 import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design/icons";
 
-import type { IRoomDevice } from "../../types/device";
+  import type { IRoomDevice } from "../../types/device";
 
-import type { Device } from "../../store/user/userSlice";
-import { useTranslation } from "react-i18next";
+  import type { Device } from "../../store/user/userSlice";
+  import { useTranslation } from "react-i18next";
 
-const { Title, Text } = Typography;
+  const { Title, Text } = Typography;
 
-const ICON_MAP: Record<string, string> = {
-  TV: "📺",
-  Lighting: "💡",
-  Humidifier: "❄️",
-  Magnifier: "🔍",
-  Fire: "🔥",
-};
+  const ICON_MAP: Record<string, string> = {
+    TV: "📺",
+    Lighting: "💡",
+    Humidifier: "❄️",
+    Magnifier: "🔍",
+    Fire: "🔥",
+  };
+
 
 export const RoomCards = ({
   id,
@@ -70,17 +71,18 @@ export const RoomCards = ({
       okButtonProps: {
         style: {
           backgroundColor: "#26a69a",
+
         },
-      },
-      onOk() {
-        deleteFunction(id);
-        console.log(`${name} deleted successfully!`);
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
-  };
+        onOk() {
+          deleteFunction(id);
+          console.log(`${name} deleted successfully!`);
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
+    };
+
 
   return (
     <Card key={id} className="room-card">
@@ -133,7 +135,8 @@ export const RoomCards = ({
                     : "green"
                 }
               />
-              <Text strong>{energy} kWh</Text>
+              <Text strong>{energy}kWh</Text>
+              
             </div>
 
             <Text>{t("roomCards.cost")}</Text>

@@ -51,6 +51,19 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [totalEnergy, setTotalEnergy] = useState(0);
+
+
+
+  useEffect(() => {
+
+    if(roomsArray.length > 0){
+      setTotalEnergy(roomsArray.reduce((accum, room) => {
+        return accum += room.cost;
+      } ,0));
+    }
+
+  }, [roomsArray])
 
   const { handleAddingRoom } = useAddRooms();
 
@@ -187,7 +200,7 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col className="header-summary">
             <Space>
-              <Text>{t("dashboard.totalEnergy")}</Text>
+              <Text>{t("dashboard.totalEnergy") + `  ${totalEnergy}`}</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalEnergy} */}
               </Title>
@@ -223,6 +236,7 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
+
                       description={room.description}
                     />
                   </Col>

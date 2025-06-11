@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
-const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: number) => void) => {
+const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[] = [], deleteFunction: (id: number) => void) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
   const [loadedFlag, setLoadedFlag] = useState(false);
@@ -119,19 +119,8 @@ const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: 
         controls.current!.target.copy(center);
         controls.current!.update();
 
-             if (!hasInitialized.current) {
-          initialDevices.forEach((device) => {
-            handleAddDevice(device);
-          });
-          hasInitialized.current = true;
-        }
-
-
       },
-
-  
-
-      undefined,
+       undefined,
       (error) => console.error("Error loading model:", error)
     );
 
@@ -342,10 +331,22 @@ const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: 
     };
   }, [loadedFlag]);
 
+    useEffect(() => {
+    if (!roomModelRef.current) return;
+    // Clear old
+    interactableObjects.current.forEach(obj => {
+      roomModelRef.current!.remove(obj);
+    });
+    interactableObjects.current = [];
+    // Add new
+    initialDevices.forEach(device => handleAddDevice(device));
+  }, [roomId, initialDevices]);
+
   return {
     handleAddDevice,
     threeScene: (
       <div
+        key = {roomId}
         className="oooo"
         ref={mountRef}
         style={{ width: "70%", height: "500px" }}
