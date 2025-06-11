@@ -55,16 +55,17 @@ const useAddRooms = () => {
 
 
   const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
-    
+
     if (!userId) return;
 
     const totalEnergy = devices.reduce((sum, device) => sum + device.power, 0);
+    const cost = totalEnergy * 0.12;
 
     const room: IRoom = {
       name: name || existingRoom?.name || " ",
       description: description || existingRoom?.description || " ",
       energy: totalEnergy,
-      cost: 0,
+      cost: cost,
       id: roomId || randomId,
       priority: existingRoom?.priority || 'Low',
       devices,
@@ -75,7 +76,7 @@ const useAddRooms = () => {
 
     try {
       if (roomId) {
-       
+
         await dispatch(updateRoom({ userId, roomObject: room }));
 
         navigate(DASHBOARD_PATH);
@@ -89,7 +90,7 @@ const useAddRooms = () => {
     }
   };
 
- return {  handleAddingRoom };
+  return { handleAddingRoom };
 };
 
 export default useAddRooms;

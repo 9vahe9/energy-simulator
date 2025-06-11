@@ -28,7 +28,7 @@ const { Option } = Select;
 const { Content, Sider } = Layout;
 
 const RoomContainer = () => {
-  
+
   const dispatch = useDispatch<AppDispatch>()
   const { roomId } = useParams<{ roomId?: string }>();
   const { handleAddingRoom } = useAddRooms();
@@ -43,7 +43,7 @@ const RoomContainer = () => {
   const [newRoomName, setNewRoomName] = useState(existingRoom?.name ?? "");
   const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description ?? "");
 
-    useEffect(() => {
+  useEffect(() => {
 
     if (userId) {
       dispatch(fetchRooms(userId));
@@ -60,7 +60,7 @@ const RoomContainer = () => {
     setNewRoomDescription(existingRoom.description);
   }, [existingRoom]);
 
-  
+
   const { threeScene, handleAddDevice } = useThreeScene(roomId, devices, handleDeletingDevice);
 
   const showModal = (type: number) => {

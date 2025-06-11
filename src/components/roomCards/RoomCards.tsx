@@ -120,7 +120,8 @@ import { EditOutlined, ThunderboltFilled } from "@ant-design/icons";
                     : "green"
                 }
               />
-              <Text strong>{energy} kWh</Text>
+              <Text strong>{energy}kWh</Text>
+              
             </div>
 
             <Text>{t("roomCards.cost")}</Text>

@@ -53,6 +53,17 @@ export const DashboardContainer: React.FC = () => {
   const [totalEnergy, setTotalEnergy] = useState(0);
 
 
+
+  useEffect(() => {
+
+    if(roomsArray.length > 0){
+      setTotalEnergy(roomsArray.reduce((accum, room) => {
+        return accum += room.cost;
+      } ,0));
+    }
+
+  }, [roomsArray])
+
   const { handleAddingRoom } = useAddRooms();
 
   const { t } = useTranslation();
