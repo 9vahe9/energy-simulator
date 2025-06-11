@@ -119,19 +119,8 @@ const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[]
         controls.current!.target.copy(center);
         controls.current!.update();
 
-             if (!hasInitialized.current) {
-          initialDevices.forEach((device) => {
-            handleAddDevice(device);
-          });
-          hasInitialized.current = true;
-        }
-
-
       },
-
-  
-
-      undefined,
+       undefined,
       (error) => console.error("Error loading model:", error)
     );
 
@@ -341,6 +330,17 @@ const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[]
       document.body.removeChild(tooltip);
     };
   }, [loadedFlag]);
+
+    useEffect(() => {
+    if (!roomModelRef.current) return;
+    // Clear old
+    interactableObjects.current.forEach(obj => {
+      roomModelRef.current!.remove(obj);
+    });
+    interactableObjects.current = [];
+    // Add new
+    initialDevices.forEach(device => handleAddDevice(device));
+  }, [roomId, initialDevices]);
 
   return {
     handleAddDevice,
