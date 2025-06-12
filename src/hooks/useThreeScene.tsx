@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
+
 import { useSelector, useDispatch } from "react-redux";
 
 const useThreeScene = (
@@ -12,6 +13,7 @@ const useThreeScene = (
   roomPath: string = "emptyroom.glb"
 ) => {
   const rooms = [];
+
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
   const [loadedFlag, setLoadedFlag] = useState(false);
@@ -20,6 +22,7 @@ const useThreeScene = (
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
   const [devices, setDevices] = useState(initialDevices);
+
   const interactable = useRef<THREE.Object3D[]>([]);
   const selectedPrev = useRef<THREE.Mesh | null>(null);
   const [selectedModelInfo, setSelectedModelInfo] = useState<{
@@ -29,6 +32,7 @@ const useThreeScene = (
     name: string;
     object: THREE.Object3D;
   } | null>(null);
+
   const hasInitialized = useRef(false);
   console.log(initialDevices, "initialDevices");
   const handleAddDevice = (type: IRoomDevice) => {
@@ -194,6 +198,7 @@ const useThreeScene = (
 
         scene.current.add(room);
         roomModelRef.current = room;
+
 
         roomBoundsRef.current = new THREE.Box3().setFromObject(room);
         const center = roomBoundsRef.current.getCenter(new THREE.Vector3());

@@ -11,14 +11,18 @@ import {
 } from "antd";
 import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
-import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import EditDevice from "./EditDevice.tsx";
+
+
+
 import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+
+
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 
@@ -36,6 +40,7 @@ const RoomContainer = () => {
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+
   const [devices, setDevices] = useState<IRoomDevice[]>(
     existingRoom?.devices ?? []
   );
@@ -90,6 +95,7 @@ const RoomContainer = () => {
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
 
+
     const updateDevice = getUpdatedDevicesPositions();
     const matchingItems = getMatchingItems(devices, updateDevice);
     const updatedDevicetArray = devices.map((item) => {
@@ -121,7 +127,7 @@ const RoomContainer = () => {
         (updateDevice) => updateDevice.name === `device-${deviceId}`
       );
     });
-  };
+
 
   function handleDeletingDevice(id: number) {
     setDevices((prev) => {
@@ -233,10 +239,12 @@ const RoomContainer = () => {
 
           <Form.Item
             name="power"
+
             label="Power (W)"
             rules={[{ required: true }]}
           >
             <InputNumber min={1} style={{ width: "100%" }} />
+
           </Form.Item>
 
           <Form.Item
@@ -264,6 +272,7 @@ const RoomContainer = () => {
     power: number;
     uptime: number;
     workingDayTime: DayTime; */}
+
     </Layout>
   );
 };
