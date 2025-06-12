@@ -8,104 +8,204 @@ import {
   InputNumber,
   Select,
   Space,
-  Upload,
-  message,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import useThreeScene from "../../hooks/useThreeScene";
-import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
-import { DayTime } from "../../constants/DayTime";
-import "./roomContainer.css";
+import type { AppDispatch, RootState } from "../../store/store";
+import useThreeScene from "../../hooks/useThreeScene.tsx";
+import { DayTime } from "../../constants/DayTime.ts";
+import { DASHBOARD_PATH } from "../../constants/RoutePaths";
+import EditDevice from "./EditDevice.tsx";
+import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+import useAddRooms from "../../hooks/useAddRooms.tsx";
+import type { IRoomDevice } from "../../types/device.ts";
 
-/* --------------- */
-
-const { Content, Sider } = Layout;
 const { Option } = Select;
+const { Content, Sider } = Layout;
 
 const RoomContainer = () => {
-  /* === выбор комнаты === */
-  const [selectedRoom, setSelectedRoom] = useState("emptyroom.glb");
-  const [customRoom, setCustomRoom] = useState<string | null>(null);
-
-  const {
-    threeScene,
-    handleAddDevice,
-    // rotateModelLeft,
-    // rotateModelRight,
-    // rotateModelXPos,
-    // rotateModelXNeg,
-    // rotateModelZPos,
-    // rotateModelZNeg,
-    resetModelRotation,
-  } = useThreeScene(customRoom || selectedRoom);
-
-  const [modalVisible, setModalVisible] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { roomId } = useParams<{ roomId?: string }>();
+  const { handleAddingRoom } = useAddRooms();
+  const existingRoom = useSelector((state: RootState) =>
+    roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined
+  );
+  const userId = useSelector((state: RootState) => state.auth.userToken);
   const [selectedType, setSelectedType] = useState<number | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [devices, setDevices] = useState<IRoomDevice[]>(
+    existingRoom?.devices ?? []
+  );
+  const [newRoomName, setNewRoomName] = useState(existingRoom?.name ?? "");
+  const [newRoomDescription, setNewRoomDescription] = useState(
+    existingRoom?.description ?? ""
+  );
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchRooms(userId));
+    }
+  }, [dispatch, userId, roomId]);
+
+  useEffect(() => {
+    if (!existingRoom) return;
+    setDevices(existingRoom.devices);
+    setNewRoomName(existingRoom.name);
+    setNewRoomDescription(existingRoom.description);
+  }, [existingRoom]);
+
+  const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
+    useThreeScene(roomId, devices, handleDeletingDevice);
 
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
+
   const handleOk = () => {
-    form.validateFields().then((v) => {
-      handleAddDevice({
-        type: selectedType!,
-        name: v.name,
-        power: v.power,
-        uptime: v.uptime,
-        workingDayTime: v.workingDayTime,
-      });
+    form.validateFields().then((values) => {
+      // create  IRoomDevice obj
+      const newDevice: IRoomDevice = {
+        ...values,
+        type: selectedType,
+        deviceId: Date.now(),
+        position: { x: 0, y: 0, z: 0 },
+      };
+      handleAddDevice(newDevice);
+      setDevices((prev) => [...prev, newDevice]);
       setModalVisible(false);
       form.resetFields();
     });
   };
 
+  const handleCancel = () => {
+    setModalVisible(false);
+    form.resetFields();
+  };
+
+  const onSaveClick = () => {
+    const nameToUse = newRoomName ?? "";
+    const descToUse = newRoomDescription ?? "";
+
+    const updateDevice = getUpdatedDevicesPositions();
+    const matchingItems = getMatchingItems(devices, updateDevice);
+    const updatedDevicetArray = devices.map((item) => {
+      console.log(item, "item", matchingItems);
+      const matchingItem = matchingItems.find(
+        (secondItem) => secondItem.name === `device-${item.deviceId}`
+      );
+      if (matchingItem) {
+        return {
+          ...item,
+          position: {
+            ...item.position, // keep any existing sub-fields
+            ...matchingItem.position, // overwrite x, y, z from the match
+          },
+        };
+      }
+      return item;
+    });
+
+    console.log(devices, "onSaveClick", updateDevice, updatedDevicetArray);
+    handleAddingRoom(nameToUse, descToUse, updatedDevicetArray);
+    setDevices(updatedDevicetArray);
+  };
+
+  const getMatchingItems = (devices: any[], updateDevice: any[]) => {
+    return devices.flatMap((item) => {
+      const deviceId = item.deviceId;
+      return updateDevice.filter(
+        (updateDevice) => updateDevice.name === `device-${deviceId}`
+      );
+    });
+  };
+
+  function handleDeletingDevice(id: number) {
+    setDevices((prev) => {
+      return prev.filter((device) => {
+        return device.deviceId !== id;
+      });
+    });
+  }
+
+  function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
+    setDevices(
+      devices.map((device) => {
+        return device.deviceId === id
+          ? { ...device, ...replacementObject }
+          : device;
+      })
+    );
+  }
+
   return (
     <Layout style={{ height: "100vh" }}>
-      <Content style={{ flex: 1 }}>{threeScene}</Content>
+      <Content className="kkkkkk" style={{ flex: 1 }}>
+        {threeScene}
+      </Content>
 
-      <Sider width={380} style={{ background: "#fff", padding: 16 }}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
-          <Select
-            value={customRoom ? "custom" : selectedRoom}
-            onChange={(v) => {
-              setCustomRoom(null);
-              setSelectedRoom(v);
-            }}
-            style={{ width: "100%" }}
+      <Sider width={400} style={{ background: "#fff", padding: 16 }}>
+        <Space direction="vertical" style={{ width: "100%", marginBottom: 24 }}>
+          <Form layout="vertical">
+            <Form.Item label="Room Name">
+              <Input
+                placeholder={existingRoom?.name}
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+              />
+            </Form.Item>
+
+            <Form.Item label="Room Description">
+              <Input
+                placeholder={existingRoom?.description}
+                value={newRoomDescription}
+                onChange={(e) => setNewRoomDescription(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
+          <Button type="primary" block onClick={onSaveClick}>
+            Save Room
+          </Button>
+          <Button block onClick={() => setDevices([])}>
+            Reset Room
+          </Button>
+
+          <Button
+            block
+            onClick={() =>
+              EditDevice(
+                {
+                  name: "toaster",
+                  power: 123,
+                  uptime: 13134,
+                  workingDayTime: DayTime.Night,
+                  deviceId: 1,
+                  type: DeviceType.Dishwasher,
+                },
+                () => {
+                  console.log("eler");
+                },
+                () => handleDeletingDevice(1)
+              )
+            }
           >
-            <Option value="emptyroom.glb">🟦 Empty room</Option>
-          </Select>
-
-          {/* <div className="rotation-buttons">
-            <Button onClick={rotateModelLeft}>↺</Button>
-            <Button onClick={rotateModelRight}>↻</Button>
-            <Button onClick={rotateModelXPos}>X+</Button>
-            <Button onClick={rotateModelXNeg}>X-</Button>
-            <Button onClick={rotateModelZPos}>Z+</Button>
-            <Button onClick={rotateModelZNeg}>Z-</Button>
-            <Button onClick={resetModelRotation}>Reset</Button>
-          </div> */}
-
-          {/* список устройств */}
-          <List
-            grid={{ gutter: 8, column: 3 }}
-            dataSource={DEVICE_SELECT_OPTONS}
-            renderItem={(item) => (
-              <List.Item>
-                <Button
-                  type="primary"
-                  block
-                  onClick={() => showModal(item.type)}
-                >
-                  {item.icon} {item.label}
-                </Button>
-              </List.Item>
-            )}
-          />
+            Edit something
+          </Button>
         </Space>
+        <h3>Devices</h3>
+        <List
+          dataSource={DEVICE_SELECT_OPTONS}
+          renderItem={(item) => (
+            <List.Item>
+              <Button type="primary" onClick={() => showModal(item.type)}>
+                {item.icon} {item.label}
+              </Button>
+            </List.Item>
+          )}
+        />
       </Sider>
 
       {/* модалка добавления устройства */}
@@ -159,6 +259,11 @@ const RoomContainer = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* name: string;
+    power: number;
+    uptime: number;
+    workingDayTime: DayTime; */}
     </Layout>
   );
 };

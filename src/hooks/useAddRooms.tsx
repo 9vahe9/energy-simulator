@@ -14,31 +14,25 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
-import {
-  addRoom,
-  type Device,
-  type Room,
-  updateRoom,
-} from "../store/user/userSlice";
+import { addRoom, updateRoom } from "../store/user/userSlice";
+import type { IRoomDevice } from "../types/device.ts";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
-
-const { Option } = Select;
+import type { IRoom } from "../types/room.ts";
+import { executeQuery } from "firebase/data-connect";
+//const { Content } = Layout;
 
 const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
-
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [form] = Form.useForm();
   const userId: string = useSelector(
     (state: RootState) => state.auth.userToken
   );
+  const existingRoom = useSelector((state: RootState) => {
+    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
+  });
 
   const randomId = (() => {
     const now = new Date();
@@ -53,87 +47,42 @@ const useAddRooms = () => {
       .join("_");
   })();
 
-  const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
-  });
+  const handleAddingRoom = async (
+    name: string,
+    description: string,
+    devices: IRoomDevice[]
+  ) => {
+    if (!userId) return;
+    console.log(devices, "devices");
+    const totalEnergy = devices.reduce((sum, device) => sum + device.power, 0);
+    const cost = totalEnergy * 0.12;
 
-  useEffect(() => {
-    if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
-      setDevices(existingRoom.devices);
-    }
-  }, [existingRoom]);
-
-  const setRoomData = (name: string, description: string) => {
-    setRoomName(name);
-    setDescription(description);
-  };
-
-  const showModal = (type: number) => {
-    setModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
-
-  function handleAddingDevice(device: Device) {
-    setDevices([...devices, device]);
-  }
-
-  const handleAddingRoom = async (name: string, description: string) => {
-    console.log("roomName перед сохранением:", name);
-
-    const room: Room = {
-      name,
-      description,
-      levelOfEnergyConsumption: "15w",
-      monthlyCost: 12,
-      id: " ",
-      energyConsumption: "15135w",
-      devices: devices,
-    };
-
-    const finalRoom = {
-      ...room,
-      id: roomId ? existingRoom?.id || "" : randomId,
+    const room: IRoom = {
+      name: name || existingRoom?.name || " ",
+      description: description || existingRoom?.description || " ",
+      energy: totalEnergy,
+      cost: cost,
+      id: roomId || randomId,
+      priority: existingRoom?.priority || "Low",
       devices,
+      icons: existingRoom?.icons || [],
     };
 
     try {
       if (roomId) {
-        await dispatch(updateRoom({ userId, roomObject: finalRoom }));
-      } else {
-        await dispatch(addRoom({ userId, roomObject: finalRoom }));
-      }
+        await dispatch(updateRoom({ userId, roomObject: room }));
 
-      navigate(`${ROOM_PATH}/${randomId}`);
+        navigate(DASHBOARD_PATH);
+      } else {
+        await dispatch(addRoom({ userId, roomObject: room }));
+        navigate(`${ROOM_PATH}/${randomId}`);
+      }
     } catch (err) {
       console.error("Operation failed:", err);
     }
   };
 
-  return {
-    handleAddingRoom,
-    setRoomData,
-    singleRoomPage: (
-      <div
-        className="single-room"
-        style={{ width: "100vh", height: "100vh" }}
-      />
-    ),
-  };
+  return { handleAddingRoom };
 };
 
 export default useAddRooms;

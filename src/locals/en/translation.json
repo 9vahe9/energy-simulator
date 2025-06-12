@@ -1,0 +1,91 @@
+{
+    "signup": {
+        "mainTitle": "Energy Emulator",
+        "signupTitle": "Sign Up",
+        "email": "Email",
+        "emailMessage": "Enter your email",
+        "emailValidation": "Email is invalid",
+        "password": "Password",
+        "passwordMessage": "Enter your password",
+        "username": "username",
+        "usernameMessage": "Enter your username",
+        "signupButton": "Create An Account",
+        "homeButton": "Back to Home",
+        "TryButton": "Try without auth...",
+        "loginButton": "Login"
+    },
+    "login": {
+        "alert": "Authorization has been failed. Check your email or password",
+        "mainTitle": "Energy Emulator",
+        "loginTitle": "Login",
+        "email": "Email",
+        "emailMessage": "Enter your email",
+        "emailValidation": "Email is invalid",
+        "password": "Password",
+        "passwordMessage": "Enter your password",
+        "signupButton": "Signup",
+        "homeButton": "Back to Home",
+        "TryButton": "Try without auth...",
+        "loginButton": "Login"
+    },
+    "home": {
+        "mainTitle": "Energy Emulator",
+        "homeTitle": "Simulate & control Systems",
+        "mainParagraph": "Experience the future of energy management with our advanced emulation platform. Create your own smart home and optimize energy consumption in real-time.",
+        "firstTitle": "Smart Room Configuration",
+        "firstParagraph": "Design your own room layout with appliances and monitor their energy usage.",
+        "secondTitle": "Advanced Analytics",
+        "secondParagraph": "Track efficiency, output, and performance metrics with our comprehensive dashboard.",
+        "thirdTitle": "Energy Optimization",
+        "thirdParagraph": "Get recommendations to reduce energy consumption and save costs.",
+        "loginButton": "Login",
+        "signupButton": "Signup",
+        "tryButton": "Try it now"
+    },
+    "dashboard": {
+        "valError": "Validation failed:",
+        "title": "Room Energy Management",
+        "addButton": "Add New Room",
+        "sortButton": "Sort rooms",
+        "reportButton": "Report",
+        "Modal": {
+            "title": "Add room",
+            "ok": "Add",
+            "cancel": "Cancel",
+            "name": "Name",
+            "nameMessage": "Please enter room name",
+            "nameVal": "min 3 characters",
+            "description": "Description",
+            "descriptionMessage": "Please enter room description",
+            "descrVal": "min 3 characters"
+        },
+        "totalEnergy": "Total Energy Consumption։",
+        "cost": "Monthly Cost։",
+        "search": "Search rooms...",
+        "logout": "Log out"
+    },
+    "roomCards": {
+        "Modal": {
+            "title": "Delete room",
+            "content": "Are you sure you want to delete the {{name}}?",
+            "ok": "Yes",
+            "cancel": "No"
+        },
+        "energy": "Energy Consumption",
+        "cost": "Monthly Cost",
+        "edit": "Edit Room",
+        "delete": "Delete room",
+        "description": "This room has no description."
+    },
+    "report": {
+        "title": "Reporting",
+        "download": "Download report",
+        "consumers": "Top Energy Consumers",
+        "tabs": {
+            "day": "Daily",
+            "week": "Weekly",
+            "month": "Monthly",
+            "consumption": "Energy Consumption"
+        }
+    }
+}

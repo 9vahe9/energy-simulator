@@ -3,16 +3,23 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
-import { createVacuumCleaner } from "../components/models/vacuum";
-import { createRefrigerator } from "../components/models/refrigerator";
+import { useSelector, useDispatch } from "react-redux";
 
-const useThreeScene = (roomPath: string = "emptyroom.glb") => {
+const useThreeScene = (
+  roomId: string | undefined,
+  initialDevices: IRoomDevice[] = [],
+  deleteFunction: (id: number) => void,
+  roomPath: string = "emptyroom.glb"
+) => {
+  const rooms = [];
+  const mountRef = useRef<HTMLDivElement | null>(null);
+  const roomModelRef = useRef<THREE.Group | null>(null);
   const [loadedFlag, setLoadedFlag] = useState(false);
+  const [devicePosition, setDevicePosition] = useState({ x: 0, y: 0, z: 0 });
+  const [loaded, setLoaded] = useState(false);
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
-  const mountRef = useRef<HTMLDivElement | null>(null);
-
-  const roomModelRef = useRef<THREE.Group | null>(null);
+  const [devices, setDevices] = useState(initialDevices);
   const interactable = useRef<THREE.Object3D[]>([]);
   const selectedPrev = useRef<THREE.Mesh | null>(null);
   const [selectedModelInfo, setSelectedModelInfo] = useState<{
@@ -22,26 +29,33 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
     name: string;
     object: THREE.Object3D;
   } | null>(null);
+  const hasInitialized = useRef(false);
+  console.log(initialDevices, "initialDevices");
   const handleAddDevice = (type: IRoomDevice) => {
     if (!roomModelRef.current) return;
-
+    console.log(type, "typetype");
     const loadGLB = (modelPath: string, name: string) => {
-      const loader = new GLTFLoader(); // ✅ переместили сюда
+      const loader = new GLTFLoader();
       console.log(type, "type");
       loader.load(`/models/${modelPath}`, (gltf) => {
-        const model = gltf.scene;
-        model.name = name;
-        model.position.set(0, 0, 0);
-
-        const box = new THREE.Box3().setFromObject(model);
+        const device = gltf.scene;
+        device.name = `device-${type.deviceId}`;
+        device.position.set(
+          device.position.x,
+          device.position.y,
+          device.position.z
+        );
+        device.deviceId = type.deviceId;
+        const box = new THREE.Box3().setFromObject(device);
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z);
         const scaleFactor = 0.1 / maxDim;
-        model.scale.setScalar(scaleFactor);
+        device.scale.setScalar(scaleFactor);
 
-        roomModelRef.current!.add(model);
-        interactableObjects.current.push(model);
+        roomModelRef.current!.add(device);
+        interactableObjects.current.push(device);
+        console.log(interactableObjects, "interactableObjects");
       });
     };
 
@@ -97,15 +111,6 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
       case 17:
         loadGLB("stove_with_hood.glb", type.name);
         break;
-        const cylinder = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.01, 0.02, 0.01, 18, 1),
-          new THREE.MeshStandardMaterial({ color: 0xffd700 })
-        );
-        cylinder.position.set(0, 0, 0);
-        cylinder.name = type.name;
-        roomModelRef.current.add(cylinder);
-        interactableObjects.current.push(cylinder);
-        break;
       default:
         loadGLB("ref.glb", type.name);
     }
@@ -118,6 +123,7 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
   const roomBoundsRef = useRef<THREE.Box3 | null>(null);
 
   useEffect(() => {
+    console.log(1);
     const container = mountRef.current;
     const tooltip = document.createElement("div");
     tooltip.style.position = "absolute";
@@ -195,9 +201,15 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
         controls.current!.update();
       },
       undefined,
-      (e) => console.error("room load error", e)
+      (error) => console.error("Error loading model:", error)
     );
-
+    if (!hasInitialized.current) {
+      console.log(initialDevices, "initialDevices");
+      if (initialDevices.length > 0) {
+        initialDevices.forEach((device) => handleRerenderDevice(device));
+      }
+      hasInitialized.current = true;
+    }
     let isRotateEnabled = false;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -247,7 +259,7 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
         }
 
         setSelectedObjectInfo({
-          name: clicked.name || "Без имени",
+          name: clicked.name || "No name",
           object: clicked,
         });
 
@@ -338,6 +350,7 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
       );
 
       const intersectionPoint = new THREE.Vector3();
+      console.log(raycaster, selectedObject, "onMouseMove");
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
         const newPos = intersectionPoint.clone().add(dragOffset);
 
@@ -352,6 +365,9 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
         }
 
         selectedObject.position.copy(newPos);
+        selectedObject.position.set(newPos.x, newPos.y, newPos.z);
+        setDevicePosition({ x: newPos.x, y: newPos.y, z: newPos.z });
+        interactableObjects.current.push(selectedObject);
       }
     }
 
@@ -444,7 +460,7 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
       );
       document.body.removeChild(tooltip);
     };
-  }, [loadedFlag, roomPath]);
+  }, [roomPath]);
   const handleDeleteSelectedObject = () => {
     if (selectedObjectInfo?.object && roomModelRef.current) {
       roomModelRef.current.remove(selectedObjectInfo.object);
@@ -454,55 +470,126 @@ const useThreeScene = (roomPath: string = "emptyroom.glb") => {
       setSelectedObjectInfo(null);
     }
   };
+  const getUpdatedDevicesPositions = () => {
+    console.log(
+      "getUpdatedDevicesPositions",
+      devices,
+      scene,
+      roomModelRef.current.children
+    );
+    let count = devices.length;
+    return roomModelRef.current.children;
+    // return devices.map((device) => {
+    //   const mesh = roomModelRef.current.children.find(
+    //     (obj) => obj.name === `device-${device.deviceId}`
+    //   );
+    //   console.log("mesh", mesh);
+    //   if (mesh) {
+    //     return {
+    //       ...device,
+    //       position: {
+    //         x: mesh.position.x,
+    //         y: mesh.position.y,
+    //         z: mesh.position.z,
+    //       },
+    //     };
+    //   }
+    //   return device;
+    // });
+  };
+  const handleRerenderDevice = (device) => {
+    console.log("device", device);
+    const loadGLB = (modelPath: string, name: string) => {
+      const loader = new GLTFLoader();
+      console.log(device.type, "type");
+      loader.load(`/models/${modelPath}`, (gltf) => {
+        const model = gltf.scene;
+        model.name = name;
+        model.position.set(
+          device.position.x,
+          device.position.y,
+          device.position.z
+        );
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scaleFactor = 0.1 / maxDim;
+        model.scale.setScalar(scaleFactor);
+
+        roomModelRef.current!.add(model);
+        interactableObjects.current.push(model);
+      });
+    };
+
+    switch (device.type) {
+      case 1:
+        loadGLB("refreg.glb", device.name);
+        break;
+      case 2:
+        loadGLB("vacuum_cleaner.glb", device.name);
+        break;
+      case 3:
+        loadGLB(
+          "aire_acondicionado_-_rafael_blanco_est_usb_im.glb",
+          device.name
+        );
+        break;
+      case 4:
+        loadGLB("tv.glb", device.name);
+        break;
+      case 5:
+        loadGLB("phone-1.glb", device.name);
+        break;
+      case 6:
+        loadGLB("all-in-one_desktop_computer_and_smartphone.glb", device.name);
+        break;
+      case 7:
+        loadGLB("printer.glb", device.name);
+        break;
+      case 8:
+        loadGLB("printer.glb", device.name);
+        break;
+      case 9:
+        loadGLB("hair_dryer.glb", device.name);
+        break;
+      case 10:
+        loadGLB("simple_heater.glb", device.name);
+        break;
+      case 11:
+        break;
+      case 12:
+        loadGLB("lamp.glb", device.name);
+        break;
+      case 13:
+        loadGLB("microwave_-_sharp_34l.glb", device.name);
+        break;
+      case 14:
+        loadGLB("czajnik_elektrycznyelectric_kettle.glb", device.name);
+        break;
+      case 15:
+        loadGLB("dishwasher.glb", device.name);
+        break;
+      case 16:
+        loadGLB("mixer.glb", device.name);
+        break;
+      case 17:
+        loadGLB("stove_with_hood.glb", device.name);
+        break;
+      default:
+        loadGLB("ref.glb", device.name);
+    }
+  };
   const rotateModelLeft = () => {
     if (roomModelRef.current) {
       roomModelRef.current.rotation.y += Math.PI / 8;
     }
   };
-
-  const rotateModelRight = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.y -= Math.PI / 8;
-    }
-  };
-  const rotateModelXPos = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.x += Math.PI / 8;
-    }
-  };
-
-  const rotateModelXNeg = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.x -= Math.PI / 8;
-    }
-  };
-
-  const rotateModelZPos = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.z += Math.PI / 8;
-    }
-  };
-
-  const rotateModelZNeg = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.z -= Math.PI / 8;
-    }
-  };
-  const resetModelRotation = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.set(0, 0, 0);
-    }
-  };
   return {
     handleAddDevice,
-    // rotateModelLeft,
-    // rotateModelRight,
-    // rotateModelXPos,
-    // rotateModelXNeg,
-    // rotateModelZPos,
-    // rotateModelZNeg,
-    resetModelRotation,
     handleDeleteSelectedObject,
+    getUpdatedDevicesPositions,
     threeScene: (
       <>
         <div

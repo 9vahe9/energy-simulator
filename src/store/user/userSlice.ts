@@ -5,7 +5,10 @@ import { dataBase } from '../../firebaseConfig/firebase';
 import { createAppSlice } from "../../app/CreateAppSlice";
 import type { RootState } from "../store";
 import type { Reducer } from "redux";
-
+import type { IRoomDevice } from '../../types/device';
+import type { IRoom } from '../../types/room';
+import { DayTime } from '../../constants/DayTime';
+import { DeviceType } from '../../constants/Devices';
 
 
 export interface Device {
@@ -14,35 +17,48 @@ export interface Device {
     deviceId: string
 }
 
-export interface Room {
-    name: string,
-    description: string,
-    levelOfEnergyConsumption: number, // The icon that's either red yellow or green
-    monthlyCost: number,
-    id: string,
-    energyConsumption: number,
-    devices: Device[],
-}
+// export interface Room {
+//     name: string,
+//     description: string,
+//     levelOfEnergyConsumption: number, // The icon that's either red yellow or green
+//     monthlyCost: number,
+//     id: string,
+//     energyConsumption: number,
+//     devices: IRoomDevice[],
+// }
 
+// export interface IRoom {
+//   id: string;
+//   name: string;
+//   description: string;
+//   energy: number;
+//   cost: number;
+//   priority: 'High' | 'Medium' | 'Low';
+//   devices: IRoomDevice[];        // для реальной выборки из Firebase
+//   icons: { type: string; count: number }[]; // плейсхолдер для UI
+// }
 
 interface UserState {
     userName: string,
-    rooms: Room[];
+    rooms: IRoom[];
     status: "idle" | "loading" | "failed";
 }
-
-
 
 const initialState: UserState = {
     userName: "",
     rooms: [{
+        id: " ",
         name: " ",
         description: " ",
-        levelOfEnergyConsumption: 0,
-        monthlyCost: 0,
-        energyConsumption: 0,
-        id: " ",
-        devices: [{ name: " ", wattage: " ", deviceId: " " }],
+        energy: 0,
+        cost: 0,
+        priority: 'Low',
+        devices: [{
+            name: " ", power: 0, uptime: 0,
+            type: DeviceType.Other, workingDayTime: DayTime.Day,
+            deviceId: Date.now(), position: { x: 0, y: 0, z: 0 }
+        }],
+        icons: [{ type: "something", count: 3 }]
     }],
     status: "idle",
 }
@@ -73,7 +89,7 @@ export const userSlice = createAppSlice({
                 }
                 catch (err) {
                     console.log("There was an error creating a userName", err);
-                     return thunkAPI.rejectWithValue("Api error");
+                    return thunkAPI.rejectWithValue("Api error");
                 }
             },
             {
@@ -126,7 +142,7 @@ export const userSlice = createAppSlice({
                 try {
                     const response = await getDoc(doc(dataBase, "users", userId));
                     if (!response.exists()) {
-                        return [];
+                        return thunkAPI.rejectWithValue("Failed to get response")
                     }
                     const data = response.data();
                     return [data?.rooms, data?.userName];
@@ -148,11 +164,39 @@ export const userSlice = createAppSlice({
 
                 rejected: (state) => { state.status = "failed"; }
             }
-        ),
+         ),
+        // fetchOneRoom: create.asyncThunk <IRoom,{ userId: string; roomId: string } >(
+
+        //     async ({ userId, roomId }, thunkAPI) => {
+
+        //         try {
+        //             const response = await getDoc(doc(dataBase, "users", userId))
+        //             if (!response.exists()) {
+        //                 return thunkAPI.rejectWithValue("Failed to get the room")
+        //             }
+        //             const data = response.data()
+        //             const room = data[roomId];
+        //             if (!room) {
+        //                 return thunkAPI.rejectWithValue("Room not found");
+        //             }
+        //             return room;
+        //         }
+        //         catch (err) {
+        //             console.log("error with getting the room");
+        //             return thunkAPI.rejectWithValue("Couldn't get the room")
+        //         }
+
+        //     },
+        //     {
+        //         pending: state => {state.status = 'loading'},
+        //         fulfilled: state => {state.status = "idle"},
+        //         rejected: state => {state.status = "failed"},
+        //     }
+        // ),
 
 
         addRoom: create.asyncThunk(
-            async ({ userId, roomObject }: { userId: string, roomObject: Room }, thunkAPI) => {
+            async ({ userId, roomObject }: { userId: string, roomObject: IRoom }, thunkAPI) => {
 
                 try {
 
@@ -188,7 +232,7 @@ export const userSlice = createAppSlice({
         ),
 
 
-        deleteRoom: create.asyncThunk<Room[], string>(
+        deleteRoom: create.asyncThunk<IRoom[], string>(
             async (roomId: string, thunkAPI) => {
 
                 const state = thunkAPI.getState() as RootState;
@@ -199,7 +243,7 @@ export const userSlice = createAppSlice({
 
                     const currentArray = docSnapshot.exists() ? docSnapshot.data()?.rooms || [] : [];
 
-                    const arrayWithDeletedRoom = currentArray.filter((room: Room) => room.id !== roomId)
+                    const arrayWithDeletedRoom = currentArray.filter((room: IRoom) => room.id !== roomId)
 
                     await setDoc(doc(dataBase, "users", state.auth.userToken),
                         { rooms: arrayWithDeletedRoom },
@@ -225,7 +269,7 @@ export const userSlice = createAppSlice({
             }
         ),
 
-        updateRoom: create.asyncThunk<Room, { userId: string; roomObject: Room }>(
+        updateRoom: create.asyncThunk<IRoom, { userId: string; roomObject: IRoom }>(
             async ({ userId, roomObject }, thunkAPI) => {
 
                 try {
@@ -242,7 +286,7 @@ export const userSlice = createAppSlice({
                     }
 
 
-                    const current: Room[] = snap.data()?.rooms || []
+                    const current: IRoom[] = snap.data()?.rooms || []
                     const updatedRooms = current.map((r) => {
                         return r.id === roomObject.id ? roomObject : r;
                     })
@@ -272,7 +316,9 @@ export const userSlice = createAppSlice({
                     state.status = "failed";
                 }
             }
-        )
+        ),
+
+
     }),
 
     selectors: {
@@ -283,6 +329,6 @@ export const userSlice = createAppSlice({
 )
 
 export const userReducer: Reducer<UserState> = userSlice.reducer;
-export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom, createUserName } = userSlice.actions;
+export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom, createUserName,  } = userSlice.actions;
 export const { selectRooms, selectStatus } = userSlice.selectors;
 
