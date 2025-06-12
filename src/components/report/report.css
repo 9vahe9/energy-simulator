@@ -19,6 +19,13 @@
     background-color: #26a69a;
 }
 
+<<<<<<< dev
+.dashboard-button {
+    background-color: #26a69a;
+}
+
+=======
+>>>>>>> main
 .tag {
     color:black !important;
 }
@@ -31,6 +38,17 @@
     gap: 12px;
 }
 
+<<<<<<< dev
+.splitter {
+    background-color: #b2dfdb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+
+=======
+>>>>>>> main
 .rooms-list {
     background-color: #b2dfdb;
     padding: 16px;

@@ -23,22 +23,20 @@ import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
 import type { IRoom } from "../types/room.ts";
+import { executeQuery } from "firebase/data-connect";
 //const { Content } = Layout;
 
-  const { Option } = Select;
-  const useAddRooms = () => {
-  const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<IRoomDevice[]>([]);
 
+const useAddRooms = () => {
+  const { roomId } = useParams<{ roomId?: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [form] = Form.useForm();
   const userId: string = useSelector(
     (state: RootState) => state.auth.userToken
   );
+  const existingRoom = useSelector((state: RootState) => {
+    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
+  });
 
   const randomId = (() => {
     const now = new Date();
@@ -53,6 +51,8 @@ import type { IRoom } from "../types/room.ts";
       .join("_");
   })();
 
+<<<<<<< dev
+=======
   const existingRoom = useSelector((state: RootState) => {
     return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
   });
@@ -76,47 +76,38 @@ import type { IRoom } from "../types/room.ts";
     //setSelectedType(type);
     setModalVisible(true);
   };
+>>>>>>> main
 
-  const handleOk = () => {
 
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
 
   const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
-    console.log("handleAddingRoom", userId);
+
     if (!userId) return;
 
-     const room: IRoom = {
-    name: name,
-    description: description,
-    energy: 0,
-    cost: 0,
-    id: "",
-    priority: "Low",
-    devices: devices,
-    icons: [{type: "something", count: 0}]
-  };
+    const totalEnergy = devices.reduce((sum, device) => sum + device.power, 0);
+    const cost = totalEnergy * 0.12;
 
-    const finalRoom = {
-      ...room,
-      id: roomId ? existingRoom?.id || "" : randomId,
+    const room: IRoom = {
+      name: name || existingRoom?.name || " ",
+      description: description || existingRoom?.description || " ",
+      energy: totalEnergy,
+      cost: cost,
+      id: roomId || randomId,
+      priority: existingRoom?.priority || 'Low',
       devices,
+      icons: existingRoom?.icons || [],
     };
+
+
 
     try {
       if (roomId) {
-        console.log("roomId=", roomId);
-        await dispatch(updateRoom({ userId, roomObject: finalRoom }));
 
-         navigate(DASHBOARD_PATH); 
+        await dispatch(updateRoom({ userId, roomObject: room }));
+
+        navigate(DASHBOARD_PATH);
       } else {
-        await dispatch(addRoom({ userId, roomObject: finalRoom }));
+        await dispatch(addRoom({ userId, roomObject: room }));
         navigate(`${ROOM_PATH}/${randomId}`);
       }
 
@@ -125,6 +116,9 @@ import type { IRoom } from "../types/room.ts";
     }
   };
 
+<<<<<<< dev
+  return { handleAddingRoom };
+=======
   return {
     handleAddingRoom,
   
@@ -135,6 +129,7 @@ import type { IRoom } from "../types/room.ts";
       />
     ),
   };
+>>>>>>> main
 };
 
 export default useAddRooms;
