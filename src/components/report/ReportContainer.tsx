@@ -3,7 +3,7 @@ import { DownloadOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store/store";
-<<<<<<< dev
+
 import { useTabs } from "../../constants/ReportTabs";
 import "./report.css"
 import { fetchRooms } from "../../store/user/userSlice";
