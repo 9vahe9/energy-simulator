@@ -73,15 +73,16 @@ export const RoomCards = ({
           backgroundColor: "#26a69a",
 
         },
-        onOk() {
-          deleteFunction(id);
-          console.log(`${name} deleted successfully!`);
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
-      });
-    };
+      },
+      onOk() {
+        deleteFunction(id);
+        console.log(`${name} deleted successfully!`);
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
 
   return (
