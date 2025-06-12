@@ -3,6 +3,7 @@ import { DownloadOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store/store";
+<<<<<<< dev
 import { useTabs } from "../../constants/ReportTabs";
 import "./report.css"
 import { fetchRooms } from "../../store/user/userSlice";
@@ -20,10 +21,12 @@ export const ReportContainer = () => {
     const roomsArray = useSelector((state: RootState) => state.user.rooms);
     const [month, setMonth] = useState("");
     const dispatch = useDispatch<AppDispatch>();
+
     const navigate = useNavigate();
 
     const { t } = useTranslation();
     const tabs = useTabs();
+
 
     useEffect(() => {
         const mnt = new Date().toLocaleString("en-US", { month: "long" });
@@ -46,6 +49,7 @@ export const ReportContainer = () => {
                 <Row justify="space-between" align="middle" style={{ width: "100%" }}>
                     <Col>
                         <Title level={2}>
+
                             {t("report.title")}
                         </Title>
                     </Col>
@@ -60,14 +64,9 @@ export const ReportContainer = () => {
                 </Row>
                 <Row justify="space-between" align="middle" style={{ width: "100%" }}>
                     <Col>
-                        {/* {<Button
-                            type="primary"
-                            icon={<DownloadOutlined />}
-                            className="download-button"
-                        >
-                            {t("report.download")}
-                        </Button>} */}
+                     
                         <ReportDownloadButton />
+
                     </Col>
                     <Col>
                         <Tag
@@ -80,6 +79,7 @@ export const ReportContainer = () => {
                     </Col>
                 </Row>
             </div>
+
             <div id="report-container">
                 <Splitter>
                     <Splitter.Panel defaultSize="60%" resizable={false}>
@@ -118,6 +118,7 @@ export const ReportContainer = () => {
                         ))}
                     </Flex>
                 </div>
+
             </div>
         </div>
     )

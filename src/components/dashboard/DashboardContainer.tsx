@@ -143,7 +143,11 @@ export const DashboardContainer: React.FC = () => {
       <div className="wrapper">
         <Row className="dashboard-title" justify="space-between" align="middle">
           <Col>
+<<<<<<< dev
             <Title level={2}>{t("dashboard.title")}</Title>
+=======
+            <Title level={2}>Room Energy Management</Title>
+>>>>>>> main
           </Col>
           <Col>
             <Space>
@@ -152,7 +156,11 @@ export const DashboardContainer: React.FC = () => {
                 icon={<AreaChartOutlined />}
                 className="report-button"
                 onClick={handleReportButton}
+<<<<<<< dev
               >{t("dashboard.reportButton")}</Button>
+=======
+              >Report</Button>
+>>>>>>> main
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
