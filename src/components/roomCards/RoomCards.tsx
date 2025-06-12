@@ -4,7 +4,6 @@ import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design
 
   import type { IRoomDevice } from "../../types/device";
 
-  import type { Device } from "../../store/user/userSlice";
   import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
@@ -85,7 +84,6 @@ export const RoomCards = ({
       okButtonProps: {
         style: {
           backgroundColor: "#26a69a",
-
         },
       },
       onOk() {

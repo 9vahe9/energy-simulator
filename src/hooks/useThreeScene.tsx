@@ -4,17 +4,16 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
-<<<<<<< dev
+
 const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[] = [], deleteFunction: (id: number) => void) => {
-=======
-const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: number) => void) => {
->>>>>>> main
+
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
   const [loadedFlag, setLoadedFlag] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
+  const [devices, setDevices] = useState(initialDevices);
 
   const hasInitialized = useRef(false);
 
@@ -108,7 +107,7 @@ const useThreeScene = (initialDevices: IRoomDevice[] = [], deleteFunction: (id: 
       "/models/emptyroom.glb",
       (gltf) => {
         const model = gltf.scene;
-        model.scale.set(1, 1, 1);
+        model.scale.set(1, 1, 1);                       
         model.position.set(0, 0, 0);
         //model.rotation.set(-Math.PI / 22, Math.PI, 0);
         model.traverse((child) => {
