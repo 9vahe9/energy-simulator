@@ -17,7 +17,12 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import EditDevice from "./EditDevice.tsx";
-import { fetchRooms } from "../../store/user/userSlice";
+
+
+
+import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+
+
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 
@@ -38,6 +43,7 @@ const RoomContainer = () => {
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+
   const [devices, setDevices] = useState<IRoomDevice[]>(existingRoom?.devices ?? []);
   const [newRoomName, setNewRoomName] = useState(existingRoom?.name ?? "");
   const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description ?? "");
@@ -67,10 +73,6 @@ const RoomContainer = () => {
     setModalVisible(true);
   };
 
-
-
-
-
   const handleOk = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
@@ -95,6 +97,7 @@ const RoomContainer = () => {
   const onSaveClick = () => {
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
+
 
     handleAddingRoom(nameToUse, descToUse, devices);
   };
@@ -197,7 +200,7 @@ const RoomContainer = () => {
             name="power"
             label="Power"
             rules={[{ required: true, message: "Please enter device power" }]}
-          >
+          > 
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
@@ -226,6 +229,8 @@ const RoomContainer = () => {
     power: number;
     uptime: number;
     workingDayTime: DayTime; */}
+
+
 
 
 

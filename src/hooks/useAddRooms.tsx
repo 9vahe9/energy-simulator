@@ -50,6 +50,32 @@ const useAddRooms = () => {
       .join("_");
   })();
 
+<<<<<<< dev
+=======
+  const existingRoom = useSelector((state: RootState) => {
+    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
+  });
+
+  useEffect(() => {
+    if (existingRoom) {
+      setRoomName(existingRoom.name);
+      setDescription(existingRoom.description);
+      setDevices(existingRoom.devices);
+    }
+  }, [existingRoom]);
+
+
+  const setRoomData = (name: string, description: string) => {
+    setRoomName(name);
+    setDescription(description);
+  };
+
+
+  const showModal = (type: number) => {
+    //setSelectedType(type);
+    setModalVisible(true);
+  };
+>>>>>>> main
 
 
 
@@ -89,7 +115,20 @@ const useAddRooms = () => {
     }
   };
 
+<<<<<<< dev
   return { handleAddingRoom };
+=======
+  return {
+    handleAddingRoom,
+  
+    singleRoomPage: (
+      <div
+        className="single-room"
+        style={{ width: "100vh", height: "100vh" }}
+      />
+    ),
+  };
+>>>>>>> main
 };
 
 export default useAddRooms;
