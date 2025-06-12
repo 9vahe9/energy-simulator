@@ -144,7 +144,7 @@ export const RoomCards = ({
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Progress
-                percent={Math.round((Number(waste) / 5) * 100)}
+                percent={Math.round((Number(waste) / 8) * 100)}
                 showInfo={false}
                 strokeColor={
                   waste >= 5
@@ -161,7 +161,7 @@ export const RoomCards = ({
 
             <Text>{t("roomCards.cost")}</Text>
 
-            <Text strong>${cost}</Text>
+            <Text strong>${cost.toFixed(2)}</Text>
           </Space>
         </div>
       
