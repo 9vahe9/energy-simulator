@@ -1,17 +1,6 @@
-import {
-  Select,
-  Button,
-  Layout,
-  List,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-} from "antd";
-import { DEVICE_SELECT_OPTONS } from "../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+
 import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
 import {
@@ -19,11 +8,8 @@ import {
   updateRoom,
 } from "../store/user/userSlice";
 import type { IRoomDevice } from "../types/device.ts";
-import { Content } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
-import { DayTime } from "../constants/DayTime.ts";
 import type { IRoom } from "../types/room.ts";
-import { executeQuery } from "firebase/data-connect";
+
 
 
 const useAddRooms = () => {
@@ -50,32 +36,6 @@ const useAddRooms = () => {
       .join("_");
   })();
 
-<<<<<<< dev
-=======
-  const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
-  });
-
-  useEffect(() => {
-    if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
-      setDevices(existingRoom.devices);
-    }
-  }, [existingRoom]);
-
-
-  const setRoomData = (name: string, description: string) => {
-    setRoomName(name);
-    setDescription(description);
-  };
-
-
-  const showModal = (type: number) => {
-    //setSelectedType(type);
-    setModalVisible(true);
-  };
->>>>>>> main
 
 
 
@@ -115,20 +75,7 @@ const useAddRooms = () => {
     }
   };
 
-<<<<<<< dev
   return { handleAddingRoom };
-=======
-  return {
-    handleAddingRoom,
-  
-    singleRoomPage: (
-      <div
-        className="single-room"
-        style={{ width: "100vh", height: "100vh" }}
-      />
-    ),
-  };
->>>>>>> main
 };
 
 export default useAddRooms;
