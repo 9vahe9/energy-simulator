@@ -4,8 +4,8 @@ import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design
 
   import type { IRoomDevice } from "../../types/device";
 
-  import type { Device } from "../../store/user/userSlice";
   import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
   const { Title, Text } = Typography;
 
@@ -28,6 +28,7 @@ export const RoomCards = ({
   deleteFunction,
   editRoomFunction,
   description,
+  devices,
 }: {
   id: string;
   name: string;
@@ -35,21 +36,33 @@ export const RoomCards = ({
   energy: number;
   cost: number;
   description: string;
+  devices: IRoomDevice[];
 
   icons: IRoomDevice[];
   deleteFunction: Function;
   editRoomFunction: Function;
 }) => {
 
-
+  const [waste, setWaste] = useState(0);
   const { t } = useTranslation();
 
-  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description });
+  useEffect(() => {
+    let tmpWaste = devices.reduce((acc, curr) => {
+      const e = curr.power/1000 * curr.uptime/60;
+      acc += e;
+      return acc;
+    }, 0);
+
+    setWaste(Number(tmpWaste.toFixed(2)));
+  }, [energy]);
+
+  console.log("waste -> ", waste);
+  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description, devices });
 
   const descriptionModal = () => {
     Modal.info({
       title: t("dashboard.Modal.description"),
-      content: description || t("roomCards.description"),
+      content: description.trim() || t("roomCards.description"),
       okText: "Ok",
 
       okButtonProps: {
@@ -73,16 +86,15 @@ export const RoomCards = ({
           backgroundColor: "#26a69a",
         },
       },
-        onOk() {
-          deleteFunction(id);
-          console.log(`${name} deleted successfully!`);
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
-      });
-    
-    };
+      onOk() {
+        deleteFunction(id);
+        console.log(`${name} deleted successfully!`);
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
 
   return (
@@ -97,21 +109,25 @@ export const RoomCards = ({
           <Tag
             icon={<ThunderboltFilled />}
             className={
-              priority >= 1000
+              waste >= 5
                 ? "priority-tag-high"
-                : priority >= 500 && priority < 1000
+                : waste >= 2 && waste < 5
                 ? "priority-tag-medium"
                 : "priority-tag-low"
             }
             color={
-              priority >= 1000
+              waste >= 5
                 ? "red"
-                : priority >= 500 && priority < 1000
+                : waste >= 2 && waste < 5
                 ? "yellow"
                 : "green"
             }
           >
-            {priority}
+            {waste >= 5
+                ? "High"
+                : waste >= 2 && waste < 5
+                ? "Medium"
+                : "Low"}
           </Tag>
         </div>
 
@@ -126,17 +142,18 @@ export const RoomCards = ({
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Progress
-                percent={Math.round((Number(energy) / 1000) * 100)}
+                percent={Math.round((Number(waste) / 5) * 100)}
                 showInfo={false}
                 strokeColor={
-                  priority >= 1000
+                  waste >= 5
                     ? "#C70039"
-                    : priority >= 500 && priority < 1000
+                    : waste >= 2 && waste < 5
                     ? "#FFDE2B"
                     : "green"
                 }
+                style={{ width: "72%" }}
               />
-              <Text strong>{energy}kWh</Text>
+              <Text strong >{waste}kWh</Text>
               
             </div>
 
