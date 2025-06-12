@@ -62,6 +62,15 @@ const RoomContainer = () => {
     setNewRoomDescription(existingRoom.description);
   }, [existingRoom]);
 
+  function handleDeletingDevice(id: number) {
+    setDevices((prev) => {
+      return prev.filter((device) => {
+        return device.deviceId !== id;
+      });
+    });
+  }
+
+
   const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
     useThreeScene(roomId, devices, handleDeletingDevice);
 
@@ -127,15 +136,8 @@ const RoomContainer = () => {
         (updateDevice) => updateDevice.name === `device-${deviceId}`
       );
     });
-
-
-  function handleDeletingDevice(id: number) {
-    setDevices((prev) => {
-      return prev.filter((device) => {
-        return device.deviceId !== id;
-      });
-    });
   }
+
 
   function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
     setDevices(
@@ -276,5 +278,6 @@ const RoomContainer = () => {
     </Layout>
   );
 };
+
 
 export default RoomContainer;
