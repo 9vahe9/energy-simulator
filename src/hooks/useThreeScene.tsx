@@ -11,6 +11,7 @@ const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[]
   const [loaded, setLoaded] = useState(false);
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
+  const [devices, setDevices] = useState(initialDevices);
 
   const hasInitialized = useRef(false);
 
@@ -104,7 +105,7 @@ const useThreeScene = (roomId: string | undefined, initialDevices: IRoomDevice[]
       "/models/emptyroom.glb",
       (gltf) => {
         const model = gltf.scene;
-        model.scale.set(1, 1, 1);
+        model.scale.set(1, 1, 1);                       
         model.position.set(0, 0, 0);
         //model.rotation.set(-Math.PI / 22, Math.PI, 0);
         model.traverse((child) => {

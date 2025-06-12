@@ -7,13 +7,8 @@ import {
   Typography,
   Row,
   Col,
-  Card,
-  Tag,
   Space,
-  Progress,
-  Popconfirm,
   Modal,
-  InputNumber,
   Affix,
 } from "antd";
 
@@ -24,15 +19,13 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, REPORT_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
 import {
   PlusOutlined,
   SortAscendingOutlined,
-  SearchOutlined,
-  EditOutlined,
-  ThunderboltFilled,
+
   AreaChartOutlined
 } from "@ant-design/icons";
 import "./dashboard.css";
@@ -53,7 +46,9 @@ export const DashboardContainer: React.FC = () => {
   const navigate = useNavigate();
   const [totalEnergy, setTotalEnergy] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
-
+  const { handleAddingRoom } = useAddRooms();
+  const [isSorted, setIsSorted] = useState(false);
+ 
   useEffect(() => {
 
     if(roomsArray.length > 0) {
@@ -80,17 +75,21 @@ export const DashboardContainer: React.FC = () => {
 
   }, [roomsArray])
 
-  const { handleAddingRoom } = useAddRooms();
 
   const { t } = useTranslation();
 
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
-  console.log(userID);
 
-  const filteredRooms = roomsArray.filter((room) => {
-    return room.name.toLowerCase().includes(userSearch.toLowerCase());
-  });
+const filteredRooms =  roomsArray.filter(room => room.name.toLowerCase().includes(userSearch.toLowerCase()))
+  
+
+const sortedFilteredRooms = useMemo(() => {
+  const arr = [...filteredRooms];
+  return arr.sort((a, b) => b.energy - a.energy);
+}, [filteredRooms]);
+
+const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
 
   const showModal = () => {
     setModalVisible(true);
@@ -206,6 +205,7 @@ export const DashboardContainer: React.FC = () => {
                 </Form>
               </Modal>
               <Button
+                onClick = {() => setIsSorted(true)}
                 icon={<SortAscendingOutlined />}
                 style={{ marginLeft: 12 }}
               >
@@ -230,13 +230,14 @@ export const DashboardContainer: React.FC = () => {
       </div>
       <div className="wrapper">
         <Row gutter={[24, 24]}>
-          {filteredRooms.length > 0 &&
-            filteredRooms.map(
+          {displayedRooms.length > 0 &&
+            displayedRooms.map(
               (room) =>
                 room.name !== " " && (
-                  <Col xs={24} sm={12} xl={6}>
+                  <Col  key={room.id} xs={24} sm={12} xl={6}
+                  >
                     <RoomCards
-                      key={room.id}
+                      
                       name={room.name}
                       id={room.id}
                       priority={1}

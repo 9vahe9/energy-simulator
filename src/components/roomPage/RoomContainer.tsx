@@ -11,14 +11,13 @@ import {
 } from "antd";
 import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
-import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import EditDevice from "./EditDevice.tsx";
-import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+import { fetchRooms } from "../../store/user/userSlice";
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 

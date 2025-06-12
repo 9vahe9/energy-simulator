@@ -24,7 +24,6 @@ import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
 import type { IRoom } from "../types/room.ts";
 import { executeQuery } from "firebase/data-connect";
-//const { Content } = Layout;
 
 
 const useAddRooms = () => {
