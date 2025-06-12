@@ -7,21 +7,22 @@ import {
   LOGIN_PATH,
   SIGNUP_PATH,
   REPORT_PATH,
+  ABOUT_US,
 } from "../constants/RoutePaths";
 
 import HomePage from "../pages/HomePage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
 import SignUpContainer from "../components/signUp/SignUpContainer";
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage from "../pages/DashBoardPage";
 import ProtectedRoutes from "../components/protected_routes/ProtectedRoutes";
-import { AppLayout } from "../components/AppLayout";
 import { ReportPage } from "../pages/ReportPage";
+import AboutUsPage from "../pages/AboutUsPage";
 
 export const router = createBrowserRouter([
   {
     path: HOME_PATH,
-    element: <AppLayout />,
+    element: <ContentContainer />,
     children: [
       {
         index: true,
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
         path: SIGNUP_PATH,
         element: <SignUpContainer />
       },
+      {
+        path: ABOUT_US,
+        element: <AboutUsPage />
+      }
       
     ],
   },
