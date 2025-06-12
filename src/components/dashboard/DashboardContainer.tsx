@@ -1,4 +1,3 @@
-
 import "./dashboard.css";
 import {
   Input,
@@ -7,13 +6,8 @@ import {
   Typography,
   Row,
   Col,
-  Card,
-  Tag,
   Space,
-  Progress,
-  Popconfirm,
   Modal,
-  InputNumber,
   Affix,
 } from "antd";
 
@@ -24,16 +18,17 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, REPORT_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
 import {
   PlusOutlined,
   SortAscendingOutlined,
+
   SearchOutlined,
   EditOutlined,
   ThunderboltFilled,
-  AreaChartOutlined
+  AreaChartOutlined,
 } from "@ant-design/icons";
 import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
@@ -52,30 +47,50 @@ export const DashboardContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [totalEnergy, setTotalEnergy] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
+  const { handleAddingRoom } = useAddRooms();
+  const [isSorted, setIsSorted] = useState(false);
+ 
+  useEffect(() => {
+    if (roomsArray.length > 0) {
+      let waste = 0;
+      roomsArray.forEach((room) => {
+        waste += room.devices.reduce((acc, curr) => {
+          const e = ((curr.power / 1000) * curr.uptime) / 60;
+          acc += e;
+          return acc;
+        }, 0);
+      });
 
-
+      setTotalEnergy(Number(waste.toFixed(2)));
+    }
+  }, [roomsArray]);
 
   useEffect(() => {
-
-    if(roomsArray.length > 0){
-      setTotalEnergy(roomsArray.reduce((accum, room) => {
-        return accum += room.cost;
-      } ,0));
+    if (roomsArray.length > 0) {
+      setTotalCost(
+        roomsArray.reduce((accum, room) => {
+          return (accum += room.cost);
+        }, 0)
+      );
     }
+  }, [roomsArray]);
 
-  }, [roomsArray])
-
-  const { handleAddingRoom } = useAddRooms();
 
   const { t } = useTranslation();
 
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
-  console.log(userID);
 
-  const filteredRooms = roomsArray.filter((room) => {
-    return room.name.toLowerCase().includes(userSearch.toLowerCase());
-  });
+const filteredRooms =  roomsArray.filter(room => room.name.toLowerCase().includes(userSearch.toLowerCase()))
+  
+
+const sortedFilteredRooms = useMemo(() => {
+  const arr = [...filteredRooms];
+  return arr.sort((a, b) => b.energy - a.energy);
+}, [filteredRooms]);
+
+const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
 
   const showModal = () => {
     setModalVisible(true);
@@ -128,16 +143,20 @@ export const DashboardContainer: React.FC = () => {
       <div className="wrapper">
         <Row className="dashboard-title" justify="space-between" align="middle">
           <Col>
-            <Title level={2}>{t("dashboard.title")}</Title>
+            <Title level={2}>Room Energy Management</Title>
           </Col>
           <Col>
             <Space>
-              <Button 
+              <Button
                 type="primary"
                 icon={<AreaChartOutlined />}
                 className="report-button"
                 onClick={handleReportButton}
-              >{t("dashboard.reportButton")}</Button>
+
+              >
+                {t("dashboard.reportButton")}
+              </Button>
+
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
@@ -169,7 +188,10 @@ export const DashboardContainer: React.FC = () => {
                     name="name"
                     label={t("dashboard.Modal.name")}
                     rules={[
-                      { required: true, message: t("dashboard.Modal.nameMessage") },
+                      {
+                        required: true,
+                        message: t("dashboard.Modal.nameMessage"),
+                      },
                       { min: 3, message: t("dashboard.Modal.nameVal") },
                     ]}
                   >
@@ -191,6 +213,7 @@ export const DashboardContainer: React.FC = () => {
                 </Form>
               </Modal>
               <Button
+                onClick = {() => setIsSorted(true)}
                 icon={<SortAscendingOutlined />}
                 style={{ marginLeft: 12 }}
               >
@@ -201,13 +224,7 @@ export const DashboardContainer: React.FC = () => {
           <Col className="header-summary">
             <Space>
               <Text>{t("dashboard.totalEnergy") + `  ${totalEnergy}`}</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalEnergy} */}
-              </Title>
-              <Text>{t("dashboard.cost")}</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalCost} */}
-              </Title>
+              <Text>{t("dashboard.cost") + ` ${totalCost}`}</Text>
             </Space>
           </Col>
           <Col className="header-right">
@@ -221,13 +238,14 @@ export const DashboardContainer: React.FC = () => {
       </div>
       <div className="wrapper">
         <Row gutter={[24, 24]}>
-          {filteredRooms.length > 0 &&
-            filteredRooms.map(
+          {displayedRooms.length > 0 &&
+            displayedRooms.map(
               (room) =>
                 room.name !== " " && (
-                  <Col xs={24} sm={12} xl={6}>
+                  <Col  key={room.id} xs={24} sm={12} xl={6}
+                  >
                     <RoomCards
-                      key={room.id}
+                      
                       name={room.name}
                       id={room.id}
                       priority={1}
@@ -236,7 +254,7 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
-
+                      devices={room.devices}
                       description={room.description}
                     />
                   </Col>
@@ -247,7 +265,6 @@ export const DashboardContainer: React.FC = () => {
       <Affix offsetBottom={16}>
         <Button onClick={handleLogOut}>{t("dashboard.logout")}</Button>
       </Affix>
-      
     </div>
   );
 };

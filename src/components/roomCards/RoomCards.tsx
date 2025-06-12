@@ -1,11 +1,11 @@
 import "./RoomCards.css"
-import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
+import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex, Divider } from "antd";
 import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design/icons";
 
   import type { IRoomDevice } from "../../types/device";
 
-  import type { Device } from "../../store/user/userSlice";
   import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 
   const { Title, Text } = Typography;
 
@@ -28,6 +28,7 @@ export const RoomCards = ({
   deleteFunction,
   editRoomFunction,
   description,
+  devices,
 }: {
   id: string;
   name: string;
@@ -35,21 +36,33 @@ export const RoomCards = ({
   energy: number;
   cost: number;
   description: string;
+  devices: IRoomDevice[];
 
   icons: IRoomDevice[];
   deleteFunction: Function;
   editRoomFunction: Function;
 }) => {
 
-
+  const [waste, setWaste] = useState(0);
   const { t } = useTranslation();
 
-  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description });
+  useEffect(() => {
+    let tmpWaste = devices.reduce((acc, curr) => {
+      const e = curr.power/1000 * curr.uptime/60;
+      acc += e;
+      return acc;
+    }, 0);
+
+    setWaste(Number(tmpWaste.toFixed(2)));
+  }, [energy]);
+
+  console.log("waste -> ", waste);
+  console.log("RoomCards props:", { id, name, priority, energy, cost, icons, description, devices });
 
   const descriptionModal = () => {
     Modal.info({
       title: t("dashboard.Modal.description"),
-      content: description || t("roomCards.description"),
+      content: description.trim() || t("roomCards.description"),
       okText: "Ok",
 
       okButtonProps: {
@@ -71,7 +84,6 @@ export const RoomCards = ({
       okButtonProps: {
         style: {
           backgroundColor: "#26a69a",
-
         },
       },
       onOk() {
@@ -87,9 +99,7 @@ export const RoomCards = ({
 
   return (
     <Card key={id} className="room-card">
-      {/* Название и приоритет */}
-      <div> 
-      <div className="main-part">
+      <div className="main-part" style={{ flexGrow: 1 }}>
         <div className="card-header">
           <Title level={4} onClick={descriptionModal} style={{ margin: 0, cursor: "pointer" }}>
             {name} <InfoCircleOutlined style={{ marginLeft: 8, color: "#26a69a" }} />
@@ -97,87 +107,71 @@ export const RoomCards = ({
           <Tag
             icon={<ThunderboltFilled />}
             className={
-              priority >= 1000
+              waste >= 5
                 ? "priority-tag-high"
-                : priority >= 500 && priority < 1000
+                : waste >= 2 && waste < 5
                 ? "priority-tag-medium"
                 : "priority-tag-low"
             }
             color={
-              priority >= 1000
+              waste >= 5
                 ? "red"
-                : priority >= 500 && priority < 1000
+                : waste >= 2 && waste < 5
                 ? "yellow"
                 : "green"
             }
           >
-            {priority}
+            {waste >= 5 ? "High" : waste >= 2 ? "Medium" : "Low"}
           </Tag>
         </div>
 
-        {/* Card body */}
-        <div className="card-body"></div>
-
-        {/* Statics */}
+        {/* Статистика */}
         <div className="card-stats">
           <Space direction="vertical" style={{ width: "100%" }}>
-
             <Text>{t("roomCards.energy")}</Text>
-
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Progress
-                percent={Math.round((Number(energy) / 1000) * 100)}
+                percent={Math.round((Number(waste) / 8) * 100)}
                 showInfo={false}
                 strokeColor={
-                  priority >= 1000
-                    ? "#C70039"
-                    : priority >= 500 && priority < 1000
-                    ? "#FFDE2B"
-                    : "green"
+                  waste >= 5 ? "#C70039" : waste >= 2 ? "#FFDE2B" : "green"
                 }
+                style={{ width: "72%" }}
               />
-              <Text strong>{energy}kWh</Text>
-              
+              <Text strong>{waste}kWh</Text>
             </div>
-
-            <Text>{t("roomCards.cost")}</Text>
-
-            <Text strong>${cost}</Text>
+            <Flex justify="space-between">
+              <Text>{t("roomCards.cost")}</Text>
+              <Text strong>${cost.toFixed(2)}</Text>
+            </Flex>
           </Space>
         </div>
-      
 
-        {/* Icon Device */}
+        {/* Иконки */}
         <div className="device-icons">
-          {icons.map((ic) => (
+          {icons.length > 0 ? icons.map((ic) => (
             <Space key={ic.name}>
               <span>{ICON_MAP[ic.name] || "🔌"}</span>
             </Space>
-          ))}
+          )) : <br />}
         </div>
       </div>
 
-      {/* Button edit */}
-      <Flex align="center" justify="center" className="card-buttons">
+      <Divider />
+
+      <Flex align="center" justify="center" className="card-buttons" style={{ gap: "0.5rem" }}>
         <Button
           type="primary"
           icon={<EditOutlined />}
           className="ant-btn-edit"
           onClick={() => editRoomFunction(id)}
         >
-
           {t("roomCards.edit")}
-
         </Button>
-        <Button
-          onClick={() => {
-            confirmModal(name);
-          }}
-        >
+        <Button onClick={() => confirmModal(name)}>
           {t("roomCards.delete")}
         </Button>
       </Flex>
-      </div>
     </Card>
   );
 };

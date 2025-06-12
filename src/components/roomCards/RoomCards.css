@@ -1,7 +1,19 @@
 .room-card {
-  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px;
+  height: 100%;
+  padding: 16px;
 }
 
+.main-part {
+  flex-grow: 1;
+}
+
+.card-buttons {
+  margin-top: 1rem;
+}
 
 
 

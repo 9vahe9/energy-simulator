@@ -11,47 +11,49 @@ import {
 } from "antd";
 import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
-import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import EditDevice from "./EditDevice.tsx";
+
+
+
 import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+
+
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
-
-
 
 const { Option } = Select;
 const { Content, Sider } = Layout;
 
 const RoomContainer = () => {
-
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   const { roomId } = useParams<{ roomId?: string }>();
   const { handleAddingRoom } = useAddRooms();
   const existingRoom = useSelector((state: RootState) =>
-    roomId ? state.user.rooms.find(r => r.id === roomId) : undefined,
+    roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined
   );
   const userId = useSelector((state: RootState) => state.auth.userToken);
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [devices, setDevices] = useState<IRoomDevice[]>(existingRoom?.devices ?? []);
+
+  const [devices, setDevices] = useState<IRoomDevice[]>(
+    existingRoom?.devices ?? []
+  );
   const [newRoomName, setNewRoomName] = useState(existingRoom?.name ?? "");
-  const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description ?? "");
+  const [newRoomDescription, setNewRoomDescription] = useState(
+    existingRoom?.description ?? ""
+  );
 
   useEffect(() => {
-
     if (userId) {
       dispatch(fetchRooms(userId));
     }
-
-  }, [dispatch, userId, roomId])
-
-
+  }, [dispatch, userId, roomId]);
 
   useEffect(() => {
     if (!existingRoom) return;
@@ -60,17 +62,22 @@ const RoomContainer = () => {
     setNewRoomDescription(existingRoom.description);
   }, [existingRoom]);
 
+  function handleDeletingDevice(id: number) {
+    setDevices((prev) => {
+      return prev.filter((device) => {
+        return device.deviceId !== id;
+      });
+    });
+  }
 
-  const { threeScene, handleAddDevice } = useThreeScene(roomId, devices, handleDeletingDevice);
+
+  const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
+    useThreeScene(roomId, devices, handleDeletingDevice);
 
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
-
-
-
-
 
   const handleOk = () => {
     form.validateFields().then((values) => {
@@ -79,10 +86,10 @@ const RoomContainer = () => {
         ...values,
         type: selectedType,
         deviceId: Date.now(),
-        position: { x: 0, y: 0, z: 0 }
+        position: { x: 0, y: 0, z: 0 },
       };
       handleAddDevice(newDevice);
-      setDevices(prev => [...prev, newDevice]);
+      setDevices((prev) => [...prev, newDevice]);
       setModalVisible(false);
       form.resetFields();
     });
@@ -97,23 +104,50 @@ const RoomContainer = () => {
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
 
-    handleAddingRoom(nameToUse, descToUse, devices);
+
+    const updateDevice = getUpdatedDevicesPositions();
+    const matchingItems = getMatchingItems(devices, updateDevice);
+    const updatedDevicetArray = devices.map((item) => {
+      console.log(item, "item", matchingItems);
+      const matchingItem = matchingItems.find(
+        (secondItem) => secondItem.name === `device-${item.deviceId}`
+      );
+      if (matchingItem) {
+        return {
+          ...item,
+          position: {
+            ...item.position, // keep any existing sub-fields
+            ...matchingItem.position, // overwrite x, y, z from the match
+          },
+        };
+      }
+      return item;
+    });
+
+    console.log(devices, "onSaveClick", updateDevice, updatedDevicetArray);
+    handleAddingRoom(nameToUse, descToUse, updatedDevicetArray);
+    setDevices(updatedDevicetArray);
   };
 
-  function handleDeletingDevice(id: number) {
-    setDevices((prev) => {
-      return prev.filter((device) => {
-        return device.deviceId !== id;
-      })
-    })
+  const getMatchingItems = (devices: any[], updateDevice: any[]) => {
+    return devices.flatMap((item) => {
+      const deviceId = item.deviceId;
+      return updateDevice.filter(
+        (updateDevice) => updateDevice.name === `device-${deviceId}`
+      );
+    });
   }
+
 
   function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
-    setDevices(devices.map((device) => {
-      return device.deviceId === id ? { ...device, ...replacementObject } : device
-    }))
+    setDevices(
+      devices.map((device) => {
+        return device.deviceId === id
+          ? { ...device, ...replacementObject }
+          : device;
+      })
+    );
   }
-
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -139,7 +173,6 @@ const RoomContainer = () => {
                 onChange={(e) => setNewRoomDescription(e.target.value)}
               />
             </Form.Item>
-
           </Form>
           <Button type="primary" block onClick={onSaveClick}>
             Save Room
@@ -148,15 +181,27 @@ const RoomContainer = () => {
             Reset Room
           </Button>
 
-          <Button block onClick={() => EditDevice({
-            name: "toaster",
-            power: 123,
-            uptime: 13134,
-            workingDayTime: DayTime.Night,
-            deviceId: 1,
-            type: DeviceType.Dishwasher,
-          }, () => { console.log("eler") }, () => handleDeletingDevice(1))}>Edit something</Button>
-
+          <Button
+            block
+            onClick={() =>
+              EditDevice(
+                {
+                  name: "toaster",
+                  power: 123,
+                  uptime: 13134,
+                  workingDayTime: DayTime.Night,
+                  deviceId: 1,
+                  type: DeviceType.Dishwasher,
+                },
+                () => {
+                  console.log("eler");
+                },
+                () => handleDeletingDevice(1)
+              )
+            }
+          >
+            Edit something
+          </Button>
         </Space>
         <h3>Devices</h3>
         <List
@@ -171,12 +216,15 @@ const RoomContainer = () => {
         />
       </Sider>
 
+      {/* модалка добавления устройства */}
       <Modal
-        title="add device"
+        title="Add device"
         open={modalVisible}
         onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Add"
+        onCancel={() => {
+          setModalVisible(false);
+          form.resetFields();
+        }}
       >
         <Form
           form={form}
@@ -186,34 +234,33 @@ const RoomContainer = () => {
           <Form.Item
             name="name"
             label="Name"
-            rules={[
-              { required: true, message: "Please enter device name" },
-              { min: 3, message: "min 3 charachter" },
-            ]}
+            rules={[{ required: true }, { min: 3 }]}
           >
-            <Input minLength={3} maxLength={15} />
+            <Input />
           </Form.Item>
 
           <Form.Item
             name="power"
-            label="Power"
-            rules={[{ required: true, message: "Please enter device power" }]}
+
+            label="Power (W)"
+            rules={[{ required: true }]}
           >
-            <InputNumber min={0} style={{ width: "100%" }} />
+            <InputNumber min={1} style={{ width: "100%" }} />
+
           </Form.Item>
 
           <Form.Item
             name="uptime"
-            label="Uptime (minute)"
-            rules={[{ required: true, message: "please enter uptime " }]}
+            label="Uptime (min)"
+            rules={[{ required: true }]}
           >
-            <InputNumber min={0} max={1440} style={{ width: "100%" }} />
+            <InputNumber min={1} max={1440} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="workingDayTime"
-            label="Working on Day"
-            rules={[{ required: true, message: "please choose time on day" }]}
+            label="Working time"
+            rules={[{ required: true }]}
           >
             <Select>
               <Option value={DayTime.Day}>Day</Option>
@@ -228,10 +275,9 @@ const RoomContainer = () => {
     uptime: number;
     workingDayTime: DayTime; */}
 
-
-
     </Layout>
   );
 };
+
 
 export default RoomContainer;

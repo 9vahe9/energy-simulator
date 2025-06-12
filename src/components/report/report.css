@@ -41,6 +41,7 @@
     border-radius: 8px;
     margin-bottom: 24px;
     gap: 12px;
+    max-height: 562px;
 }
 
 .rooms-list {
@@ -57,4 +58,5 @@
     border-radius: 8px;
     margin-bottom: 24px;
     gap: 12px;
+    max-height: 562px;
 }
