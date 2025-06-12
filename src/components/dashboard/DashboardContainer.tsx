@@ -24,10 +24,6 @@ import React from "react";
 import {
   PlusOutlined,
   SortAscendingOutlined,
-
-  SearchOutlined,
-  EditOutlined,
-  ThunderboltFilled,
   AreaChartOutlined,
 } from "@ant-design/icons";
 import "./dashboard.css";

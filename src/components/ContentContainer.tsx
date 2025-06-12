@@ -2,7 +2,7 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { LanguageSwitcher } from "../components/LanguageSwitcher"; // ваш компонент переключения
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu } from "antd";
 
 const { Header, Content } = Layout;
 

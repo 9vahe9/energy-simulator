@@ -20,7 +20,7 @@ import EditDevice from "./EditDevice.tsx";
 
 
 
-import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+import { fetchRooms } from "../../store/user/userSlice";
 
 
 import useAddRooms from "../../hooks/useAddRooms.tsx";
@@ -95,10 +95,10 @@ const RoomContainer = () => {
     });
   };
 
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
+  // const handleCancel = () => {
+  //   setModalVisible(false);
+  //   form.resetFields();
+  // };
 
   const onSaveClick = () => {
     const nameToUse = newRoomName ?? "";
@@ -139,15 +139,15 @@ const RoomContainer = () => {
   }
 
 
-  function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
-    setDevices(
-      devices.map((device) => {
-        return device.deviceId === id
-          ? { ...device, ...replacementObject }
-          : device;
-      })
-    );
-  }
+  // function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
+  //   setDevices(
+  //     devices.map((device) => {
+  //       return device.deviceId === id
+  //         ? { ...device, ...replacementObject }
+  //         : device;
+  //     })
+  //   );
+  // }
 
   return (
     <Layout style={{ height: "100vh" }}>

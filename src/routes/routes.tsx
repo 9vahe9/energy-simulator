@@ -9,7 +9,6 @@ import {
   REPORT_PATH,
 } from "../constants/RoutePaths";
 
-import { ContentContainer } from "../components/ContentContainer";
 import HomePage from "../pages/HomePage";
 import RoomPage from "../pages/RoomPage";
 import { LoginContainer } from "../components/login/LoginContainer";
