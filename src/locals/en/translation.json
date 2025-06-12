@@ -87,5 +87,13 @@
             "day": "Energy",
             "week": "Cost"
         }
+    },
+    "about": {
+        "title": "About Us",
+        "mission": "Our Mission.",
+        "description": "We created this project with a simple goal: to help people better understand and optimize their energy consumption. Energy is precious, and with the right tools, anyone can reduce waste, save money, and contribute to a greener planet. Our app makes that process visual, simple, and effective.",
+        "team": "Our Team",
+        "teamdesc": "We’re a group of passionate developers who teamed up to build a smart, clean and useful energy tracking platform.",
+        "technologies": "Technologies Used"
     }
 }

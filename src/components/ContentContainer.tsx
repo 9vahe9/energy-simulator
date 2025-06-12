@@ -2,32 +2,35 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { LanguageSwitcher } from "../components/LanguageSwitcher"
-import { Layout, Menu, Typography } from "antd";
+import { Affix, Layout, Menu, Typography } from "antd";
 import { ABOUT_US, DASHBOARD_PATH, HOME_PATH, LOGIN_PATH, SIGNUP_PATH } from "../constants/RoutePaths";
 import "./contentContainer.css"
 
 const { Header, Content } = Layout;
 
 export const ContentContainer: React.FC = () => {
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header className="header" style={{ display: "flex", alignItems: "center", padding: "0 24px", border: "0px" }} >
-        <div style={{ flex: 1, }}>
-          <Menu className="menu" mode="horizontal" selectable={false}>
-            <Menu.Item key={"home"}>
-              <Link to={HOME_PATH}>Home</Link>
-            </Menu.Item>
-            <Menu.Item key="dashboard">
-              <Link to={DASHBOARD_PATH}>Dashboard</Link>
-            </Menu.Item>
-            <Menu.Item key="room">
-              <Link to={ABOUT_US}>About us</Link>
-            </Menu.Item>
-          </Menu>
-        </div>
+      <Affix>
+        <Header className="header" style={{ display: "flex", alignItems: "center", padding: "0 24px", border: "0px" }} >
+          <div style={{ flex: 1, }}>
+            <Menu className="menu" mode="horizontal" selectable={false}>
+              <Menu.Item key={"home"}>
+                <Link to={HOME_PATH}>Home</Link>
+              </Menu.Item>
+              <Menu.Item key="dashboard">
+                <Link to={DASHBOARD_PATH}>Dashboard</Link>
+              </Menu.Item>
+              <Menu.Item key="room">
+                <Link to={ABOUT_US}>About us</Link>
+              </Menu.Item>
+            </Menu>
+          </div>
 
-        <LanguageSwitcher />
-      </Header>
+          <LanguageSwitcher />
+        </Header>
+      </Affix>
 
       <Content style={{ padding: "24px" }}>
         <Outlet />
