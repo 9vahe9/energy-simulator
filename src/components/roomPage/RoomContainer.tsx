@@ -7,112 +7,116 @@ import {
   Input,
   InputNumber,
   Select,
+  Space,
+  Upload,
+  message,
 } from "antd";
-import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import type { AppDispatch, RootState } from "../../store/store";
-import useThreeScene from "../../hooks/useThreeScene.tsx";
-import { DayTime } from "../../constants/DayTime.ts";
-import { DASHBOARD_PATH } from "../../constants/RoutePaths";
-import {
-  addRoom,
-  type Device,
-  type Room,
-  updateRoom,
-} from "../../store/user/userSlice";
+import useThreeScene from "../../hooks/useThreeScene";
+import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
+import { DayTime } from "../../constants/DayTime";
+import "./roomContainer.css";
+
+/* --------------- */
+
 const { Content, Sider } = Layout;
 const { Option } = Select;
+
 const RoomContainer = () => {
-  const { threeScene, handleAddDevice } = useThreeScene();
+  /* === выбор комнаты === */
+  const [selectedRoom, setSelectedRoom] = useState("emptyroom.glb");
+  const [customRoom, setCustomRoom] = useState<string | null>(null);
 
-  const [selectedType, setSelectedType] = useState<number | null>(null);
+  const {
+    threeScene,
+    handleAddDevice,
+    // rotateModelLeft,
+    // rotateModelRight,
+    // rotateModelXPos,
+    // rotateModelXNeg,
+    // rotateModelZPos,
+    // rotateModelZNeg,
+    resetModelRotation,
+  } = useThreeScene(customRoom || selectedRoom);
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState<number | null>(null);
   const [form] = Form.useForm();
-  const { roomId } = useParams<{ roomId?: string }>();
-  const [roomName, setRoomName] = useState("");
-  const [description, setDescription] = useState("");
-  const [devices, setDevices] = useState<Device[]>([]);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const userId: string = useSelector(
-    (state: RootState) => state.auth.userToken
-  );
-
-  const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
-  });
-
-  useEffect(() => {
-    if (existingRoom) {
-      setRoomName(existingRoom.name);
-      setDescription(existingRoom.description);
-      setDevices(existingRoom.devices);
-    }
-  }, [existingRoom]);
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
   };
-
-
   const handleOk = () => {
-    form.validateFields().then((values) => {
-      // create  IRoomDevice obj
-      const device = {
+    form.validateFields().then((v) => {
+      handleAddDevice({
         type: selectedType!,
-        name: values.name,
-        power: values.power,
-        uptime: values.uptime,
-        workingDayTime: values.workingDayTime,
-      };
-      handleAddDevice(device);
+        name: v.name,
+        power: v.power,
+        uptime: v.uptime,
+        workingDayTime: v.workingDayTime,
+      });
       setModalVisible(false);
       form.resetFields();
     });
   };
 
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
-
-  function handleDeletingDevice(id: string) {
-    setDevices(devices.filter((device) => device.deviceId !== id));
-  }
-
-  function handleAddingDevice(device: Device) {
-    setDevices([...devices, device]);
-  }
-
   return (
     <Layout style={{ height: "100vh" }}>
-      <Content className="kkkkkk" style={{ flex: 1 }}>
-        {threeScene}
-      </Content>
-      <Sider width={400} style={{ background: "#fff", padding: 16 }}>
-        <h3>Devices</h3>
-        <List
-          dataSource={DEVICE_SELECT_OPTONS}
-          renderItem={(item) => (
-            <List.Item>
-              <Button type="primary" onClick={() => showModal(item.type)}>
-                {item.icon} {item.label}
-              </Button>
-            </List.Item>
-          )}
-        />
+      <Content style={{ flex: 1 }}>{threeScene}</Content>
+
+      <Sider width={380} style={{ background: "#fff", padding: 16 }}>
+        <Space direction="vertical" style={{ width: "100%" }} size="large">
+          <Select
+            value={customRoom ? "custom" : selectedRoom}
+            onChange={(v) => {
+              setCustomRoom(null);
+              setSelectedRoom(v);
+            }}
+            style={{ width: "100%" }}
+          >
+            <Option value="emptyroom.glb">🟦 Empty room</Option>
+          </Select>
+
+          {/* <div className="rotation-buttons">
+            <Button onClick={rotateModelLeft}>↺</Button>
+            <Button onClick={rotateModelRight}>↻</Button>
+            <Button onClick={rotateModelXPos}>X+</Button>
+            <Button onClick={rotateModelXNeg}>X-</Button>
+            <Button onClick={rotateModelZPos}>Z+</Button>
+            <Button onClick={rotateModelZNeg}>Z-</Button>
+            <Button onClick={resetModelRotation}>Reset</Button>
+          </div> */}
+
+          {/* список устройств */}
+          <List
+            grid={{ gutter: 8, column: 3 }}
+            dataSource={DEVICE_SELECT_OPTONS}
+            renderItem={(item) => (
+              <List.Item>
+                <Button
+                  type="primary"
+                  block
+                  onClick={() => showModal(item.type)}
+                >
+                  {item.icon} {item.label}
+                </Button>
+              </List.Item>
+            )}
+          />
+        </Space>
       </Sider>
 
+      {/* модалка добавления устройства */}
       <Modal
-        title="add device"
+        title="Add device"
         open={modalVisible}
         onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Add"
+        onCancel={() => {
+          setModalVisible(false);
+          form.resetFields();
+        }}
       >
         <Form
           form={form}
@@ -122,34 +126,31 @@ const RoomContainer = () => {
           <Form.Item
             name="name"
             label="Name"
-            rules={[
-              { required: true, message: "Please enter device name" },
-              { min: 3, message: "min 3 charachter" },
-            ]}
+            rules={[{ required: true }, { min: 3 }]}
           >
-            <Input minLength={3} maxLength={15} />
+            <Input />
           </Form.Item>
 
           <Form.Item
             name="power"
-            label="Power"
-            rules={[{ required: true, message: "Please enter device power" }]}
+            label="Power (W)"
+            rules={[{ required: true }]}
           >
-            <InputNumber min={0} style={{ width: "100%" }} />
+            <InputNumber min={1} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="uptime"
-            label="Uptime (minute)"
-            rules={[{ required: true, message: "please enter uptime " }]}
+            label="Uptime (min)"
+            rules={[{ required: true }]}
           >
-            <InputNumber min={0} max={1440} style={{ width: "100%" }} />
+            <InputNumber min={1} max={1440} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="workingDayTime"
-            label="Working on Day"
-            rules={[{ required: true, message: "please choose time on day" }]}
+            label="Working time"
+            rules={[{ required: true }]}
           >
             <Select>
               <Option value={DayTime.Day}>Day</Option>

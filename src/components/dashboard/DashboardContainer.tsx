@@ -62,8 +62,9 @@ export const DashboardContainer: React.FC = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+      console.log("values", values);
       setRoomData(values.name, values.description || "");
-      await handleAddingRoom();
+      await handleAddingRoom(values.name, values.description || "");
       setModalVisible(false);
       form.resetFields();
     } catch (error) {

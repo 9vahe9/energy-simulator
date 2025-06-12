@@ -23,8 +23,9 @@ import {
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { DayTime } from "../constants/DayTime.ts";
-//const { Content } = Layout;
+
 const { Option } = Select;
+
 const useAddRooms = () => {
   const { roomId } = useParams<{ roomId?: string }>();
   const [roomName, setRoomName] = useState("");
@@ -63,21 +64,13 @@ const useAddRooms = () => {
       setDevices(existingRoom.devices);
     }
   }, [existingRoom]);
+
   const setRoomData = (name: string, description: string) => {
     setRoomName(name);
     setDescription(description);
   };
-  const room: Room = {
-    name: roomName,
-    description: description,
-    levelOfEnergyConsumption: "15w",
-    monthlyCost: 12,
-    id: " ",
-    energyConsumption: "15135w",
-    devices: devices,
-  };
+
   const showModal = (type: number) => {
-    //setSelectedType(type);
     setModalVisible(true);
   };
 
@@ -99,9 +92,18 @@ const useAddRooms = () => {
     setDevices([...devices, device]);
   }
 
-  const handleAddingRoom = async () => {
-    console.log("handleAddingRoom", userId);
-    if (!userId) return;
+  const handleAddingRoom = async (name: string, description: string) => {
+    console.log("roomName перед сохранением:", name);
+
+    const room: Room = {
+      name,
+      description,
+      levelOfEnergyConsumption: "15w",
+      monthlyCost: 12,
+      id: " ",
+      energyConsumption: "15135w",
+      devices: devices,
+    };
 
     const finalRoom = {
       ...room,
@@ -111,10 +113,8 @@ const useAddRooms = () => {
 
     try {
       if (roomId) {
-        console.log("roomId=", roomId);
         await dispatch(updateRoom({ userId, roomObject: finalRoom }));
       } else {
-        console.log("else", finalRoom);
         await dispatch(addRoom({ userId, roomObject: finalRoom }));
       }
 
