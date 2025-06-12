@@ -229,12 +229,12 @@ export const DashboardContainer: React.FC = () => {
         </Row>
       </div>
       <div className="wrapper">
-        <Row gutter={[24, 24]}>
+        <Row gutter={[24, 24]} align="stretch">
           {filteredRooms.length > 0 &&
             filteredRooms.map(
               (room) =>
                 room.name !== " " && (
-                  <Col xs={24} sm={12} xl={6}>
+                  <Col xs={24} sm={12} xl={6} style={{height: "100%"}}>
                     <RoomCards
                       key={room.id}
                       name={room.name}

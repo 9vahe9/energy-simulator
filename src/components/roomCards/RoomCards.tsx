@@ -1,5 +1,5 @@
 import "./RoomCards.css"
-import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex } from "antd";
+import { Button, Typography, Tag, Space, Progress, Modal, Card, Flex, Divider } from "antd";
 import { EditOutlined, ThunderboltFilled, InfoCircleOutlined } from "@ant-design/icons";
 
   import type { IRoomDevice } from "../../types/device";
@@ -101,9 +101,7 @@ export const RoomCards = ({
 
   return (
     <Card key={id} className="room-card">
-      {/* Название и приоритет */}
-      <div> 
-      <div className="main-part">
+      <div className="main-part" style={{ flexGrow: 1 }}>
         <div className="card-header">
           <Title level={4} onClick={descriptionModal} style={{ margin: 0, cursor: "pointer" }}>
             {name} <InfoCircleOutlined style={{ marginLeft: 8, color: "#26a69a" }} />
@@ -125,78 +123,57 @@ export const RoomCards = ({
                 : "green"
             }
           >
-            {waste >= 5
-                ? "High"
-                : waste >= 2 && waste < 5
-                ? "Medium"
-                : "Low"}
+            {waste >= 5 ? "High" : waste >= 2 ? "Medium" : "Low"}
           </Tag>
         </div>
 
-        {/* Card body */}
-        <div className="card-body"></div>
-
-        {/* Statics */}
+        {/* Статистика */}
         <div className="card-stats">
           <Space direction="vertical" style={{ width: "100%" }}>
-
             <Text>{t("roomCards.energy")}</Text>
-
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Progress
                 percent={Math.round((Number(waste) / 8) * 100)}
                 showInfo={false}
                 strokeColor={
-                  waste >= 5
-                    ? "#C70039"
-                    : waste >= 2 && waste < 5
-                    ? "#FFDE2B"
-                    : "green"
+                  waste >= 5 ? "#C70039" : waste >= 2 ? "#FFDE2B" : "green"
                 }
                 style={{ width: "72%" }}
               />
-              <Text strong >{waste}kWh</Text>
-              
+              <Text strong>{waste}kWh</Text>
             </div>
-
-            <Text>{t("roomCards.cost")}</Text>
-
-            <Text strong>${cost.toFixed(2)}</Text>
+            <Flex justify="space-between">
+              <Text>{t("roomCards.cost")}</Text>
+              <Text strong>${cost.toFixed(2)}</Text>
+            </Flex>
           </Space>
         </div>
-      
 
-        {/* Icon Device */}
+        {/* Иконки */}
         <div className="device-icons">
-          {icons.map((ic) => (
+          {icons.length > 0 ? icons.map((ic) => (
             <Space key={ic.name}>
               <span>{ICON_MAP[ic.name] || "🔌"}</span>
             </Space>
-          ))}
+          )) : <br />}
         </div>
       </div>
 
-      {/* Button edit */}
-      <Flex align="center" justify="center" className="card-buttons">
+      <Divider />
+
+      <Flex align="center" justify="center" className="card-buttons" style={{ gap: "0.5rem" }}>
         <Button
           type="primary"
           icon={<EditOutlined />}
           className="ant-btn-edit"
           onClick={() => editRoomFunction(id)}
         >
-
           {t("roomCards.edit")}
-
         </Button>
-        <Button
-          onClick={() => {
-            confirmModal(name);
-          }}
-        >
+        <Button onClick={() => confirmModal(name)}>
           {t("roomCards.delete")}
         </Button>
       </Flex>
-      </div>
     </Card>
   );
 };
