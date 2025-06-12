@@ -1,0 +1,120 @@
+/* CSS */
+@keyframes fall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.snowflake:nth-child(1) {
+  left: 10%;
+  animation-duration: 10s;
+}
+
+.snowflake:nth-child(2) {
+  left: 50%;
+  animation-duration: 14s;
+}
+
+.snowflake:nth-child(3) {
+  left: 80%;
+  animation-duration: 12s;
+}
+.ant-modal-content {
+  border-radius: 12px;
+  background-color: #f0ffff;
+}
+
+.ant-modal-title {
+  font-weight: bold;
+  color: #333;
+}
+.ant-layout-sider {
+  background-color: #c6f5f7 !important;
+  border-left: 2px dashed #a0e0e0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ant-list-item {
+  justify-content: center;
+}
+.ant-layout-content,
+.canvas_area,
+canvas {
+  background-color: #c6f5f7 !important;
+}
+.room-btn {
+  width: 100%;
+  border-radius: 10px;
+  background-color: #58c9c4;
+  border: none;
+}
+
+.room-btn:hover {
+  background-color: #46b2ac;
+}
+/* RoomContainer.css */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #d1f1f1; /* нежно-голубой фон */
+}
+
+.kkkkkk {
+  background: #e0f7f9;
+  border-radius: 12px;
+  margin: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 2px dashed #a0e0e0;
+  min-height: 400px;
+  position: relative;
+}
+.device-button {
+  width: 80px;
+  height: 60px;
+  font-size: 12px;
+  padding: 4px;
+  border-radius: 10px;
+  background-color: #58c9c4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: white;
+  margin: 8px auto;
+}
+
+.device-button:hover {
+  background-color: #46b2ac;
+}
+.rotation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.rotation-buttons button {
+  padding: 8px 12px;
+  background-color: #46b2ac;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.rotation-buttons button:hover {
+  background-color: #46b2ac;
+}

@@ -3,13 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import type { AppDispatch, RootState } from "../store/store";
 import { DASHBOARD_PATH, ROOM_PATH } from "../constants/RoutePaths";
-import {
-  addRoom,
-  updateRoom,
-} from "../store/user/userSlice";
+import { addRoom, updateRoom } from "../store/user/userSlice";
 import type { IRoomDevice } from "../types/device.ts";
 import type { IRoom } from "../types/room.ts";
-
 
 
 const useAddRooms = () => {
@@ -36,13 +32,13 @@ const useAddRooms = () => {
       .join("_");
   })();
 
-
-
-
-  const handleAddingRoom = async (name: string, description: string, devices: IRoomDevice[]) => {
-
+  const handleAddingRoom = async (
+    name: string,
+    description: string,
+    devices: IRoomDevice[]
+  ) => {
     if (!userId) return;
-
+    console.log(devices, "devices");
     const totalEnergy = devices.reduce((sum, device) => sum + device.power, 0);
     const cost = totalEnergy * 0.12;
 
@@ -52,16 +48,13 @@ const useAddRooms = () => {
       energy: totalEnergy,
       cost: cost,
       id: roomId || randomId,
-      priority: existingRoom?.priority || 'Low',
+      priority: existingRoom?.priority || "Low",
       devices,
       icons: existingRoom?.icons || [],
     };
 
-
-
     try {
       if (roomId) {
-
         await dispatch(updateRoom({ userId, roomObject: room }));
 
         navigate(DASHBOARD_PATH);
@@ -69,7 +62,6 @@ const useAddRooms = () => {
         await dispatch(addRoom({ userId, roomObject: room }));
         navigate(`${ROOM_PATH}/${randomId}`);
       }
-
     } catch (err) {
       console.error("Operation failed:", err);
     }
