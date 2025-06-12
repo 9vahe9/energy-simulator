@@ -1,4 +1,3 @@
-
 import "./dashboard.css";
 import {
   Input,
@@ -26,7 +25,10 @@ import {
   PlusOutlined,
   SortAscendingOutlined,
 
-  AreaChartOutlined
+  SearchOutlined,
+  EditOutlined,
+  ThunderboltFilled,
+  AreaChartOutlined,
 } from "@ant-design/icons";
 import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
@@ -50,12 +52,11 @@ export const DashboardContainer: React.FC = () => {
   const [isSorted, setIsSorted] = useState(false);
  
   useEffect(() => {
-
-    if(roomsArray.length > 0) {
+    if (roomsArray.length > 0) {
       let waste = 0;
       roomsArray.forEach((room) => {
         waste += room.devices.reduce((acc, curr) => {
-          const e = curr.power/1000 * curr.uptime/60;
+          const e = ((curr.power / 1000) * curr.uptime) / 60;
           acc += e;
           return acc;
         }, 0);
@@ -66,14 +67,14 @@ export const DashboardContainer: React.FC = () => {
   }, [roomsArray]);
 
   useEffect(() => {
-
-    if(roomsArray.length > 0){
-      setTotalCost(roomsArray.reduce((accum, room) => {
-        return accum += room.cost;
-      } ,0));
+    if (roomsArray.length > 0) {
+      setTotalCost(
+        roomsArray.reduce((accum, room) => {
+          return (accum += room.cost);
+        }, 0)
+      );
     }
-
-  }, [roomsArray])
+  }, [roomsArray]);
 
 
   const { t } = useTranslation();
@@ -142,24 +143,20 @@ const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
       <div className="wrapper">
         <Row className="dashboard-title" justify="space-between" align="middle">
           <Col>
-<<<<<<< dev
-            <Title level={2}>{t("dashboard.title")}</Title>
-=======
             <Title level={2}>Room Energy Management</Title>
->>>>>>> main
           </Col>
           <Col>
             <Space>
-              <Button 
+              <Button
                 type="primary"
                 icon={<AreaChartOutlined />}
                 className="report-button"
                 onClick={handleReportButton}
-<<<<<<< dev
-              >{t("dashboard.reportButton")}</Button>
-=======
-              >Report</Button>
->>>>>>> main
+
+              >
+                {t("dashboard.reportButton")}
+              </Button>
+
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
@@ -191,7 +188,10 @@ const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
                     name="name"
                     label={t("dashboard.Modal.name")}
                     rules={[
-                      { required: true, message: t("dashboard.Modal.nameMessage") },
+                      {
+                        required: true,
+                        message: t("dashboard.Modal.nameMessage"),
+                      },
                       { min: 3, message: t("dashboard.Modal.nameVal") },
                     ]}
                   >
@@ -265,7 +265,6 @@ const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
       <Affix offsetBottom={16}>
         <Button onClick={handleLogOut}>{t("dashboard.logout")}</Button>
       </Affix>
-      
     </div>
   );
 };
