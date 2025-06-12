@@ -11,18 +11,18 @@ import {
 } from "antd";
 import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
-import { DASHBOARD_PATH } from "../../constants/RoutePaths";
 import EditDevice from "./EditDevice.tsx";
-<<<<<<< dev
+
+
+
 import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
-=======
-import { addRoom, updateRoom } from "../../store/user/userSlice";
->>>>>>> main
+
+
 import useAddRooms from "../../hooks/useAddRooms.tsx";
 import type { IRoomDevice } from "../../types/device.ts";
 
@@ -43,23 +43,10 @@ const RoomContainer = () => {
   const [selectedType, setSelectedType] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
-<<<<<<< dev
+
   const [devices, setDevices] = useState<IRoomDevice[]>(existingRoom?.devices ?? []);
   const [newRoomName, setNewRoomName] = useState(existingRoom?.name ?? "");
   const [newRoomDescription, setNewRoomDescription] = useState(existingRoom?.description ?? "");
-=======
-  const { roomId } = useParams<{ roomId?: string }>();
-  const [devices, setDevices] = useState<IRoomDevice[]>([]);
-
-  const existingRoom = useSelector((state: RootState) => {
-    return roomId ? state.user.rooms.find((r) => r.id === roomId) : undefined;
-  });
-  const initialDevices: IRoomDevice[] = existingRoom
-    ? existingRoom.devices
-    : [];
-
-  const { threeScene, handleAddDevice } = useThreeScene(initialDevices, handleDeletingDevice);
->>>>>>> main
 
   useEffect(() => {
 
@@ -86,13 +73,6 @@ const RoomContainer = () => {
     setModalVisible(true);
   };
 
-<<<<<<< dev
-
-
-
-=======
->>>>>>> main
-
   const handleOk = () => {
     form.validateFields().then((values) => {
       // create  IRoomDevice obj
@@ -115,14 +95,10 @@ const RoomContainer = () => {
   };
 
   const onSaveClick = () => {
-<<<<<<< dev
     const nameToUse = newRoomName ?? "";
     const descToUse = newRoomDescription ?? "";
 
-=======
-    const nameToUse = existingRoom?.name ?? "";
-    const descToUse = existingRoom?.description ?? "";
->>>>>>> main
+
     handleAddingRoom(nameToUse, descToUse, devices);
   };
 
@@ -140,10 +116,7 @@ const RoomContainer = () => {
     }))
   }
 
-<<<<<<< dev
 
-=======
->>>>>>> main
   return (
     <Layout style={{ height: "100vh" }}>
       <Content className="kkkkkk" style={{ flex: 1 }}>
@@ -257,21 +230,10 @@ const RoomContainer = () => {
     uptime: number;
     workingDayTime: DayTime; */}
 
-<<<<<<< dev
 
 
-=======
-      <Button onClick={onSaveClick}>Save Room</Button>
-      <Button onClick={() => setDevices([])}>Reset Room</Button>
-      <Button onClick={() => EditDevice({
-        name: "toaster",
-        power: 123,
-        uptime: 13134,
-        workingDayTime: DayTime.Night,
-        deviceId: 1,
-        type: DeviceType.Dishwasher,
-      }, () => { console.log("eler") }, () => handleDeletingDevice(1))}>Edit something</Button>
->>>>>>> main
+
+
     </Layout>
   );
 };
