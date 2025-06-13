@@ -6,13 +6,9 @@ import {
   Typography,
   Row,
   Col,
-  Card,
-  Tag,
   Space,
-  Progress,
-  Popconfirm,
   Modal,
-  InputNumber,
+  Affix,
 } from "antd";
 import {
   PlusOutlined,
@@ -30,14 +26,14 @@ import { useNavigate } from "react-router-dom";
 import { HOME_PATH, REPORT_PATH, ROOM_PATH } from "../../constants/RoutePaths";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig/firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
 import { useTranslation } from "react-i18next";
-import { AIChatModal } from "../AIchatModal/AIChatModal";
+import { AIChatModal } from "../AIChatModal/AIChatModal"; // Исправлен путь с AIchatModal на AIChatModal
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
@@ -49,14 +45,48 @@ export const DashboardContainer: React.FC = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
+  const [totalEnergy, setTotalEnergy] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
   const { handleAddingRoom } = useAddRooms();
+  const [isSorted, setIsSorted] = useState(false);
+
+  useEffect(() => {
+    if (roomsArray.length > 0) {
+      let waste = 0;
+      roomsArray.forEach((room) => {
+        waste += room.devices.reduce((acc, curr) => {
+          const e = ((curr.power / 1000) * curr.uptime) / 60;
+          acc += e;
+          return acc;
+        }, 0);
+      });
+      setTotalEnergy(Number(waste.toFixed(2)));
+    }
+  }, [roomsArray]);
+
+  useEffect(() => {
+    if (roomsArray.length > 0) {
+      setTotalCost(
+        roomsArray.reduce((accum, room) => {
+          return (accum += room.cost);
+        }, 0)
+      );
+    }
+  }, [roomsArray]);
+
   const { t } = useTranslation();
   const userID = useSelector((state: RootState) => state.auth.userToken);
 
-  const filteredRooms = roomsArray.filter((room) => {
-    return room.name.toLowerCase().includes(userSearch.toLowerCase());
-  });
+  const filteredRooms = roomsArray.filter((room) =>
+    room.name.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
+  const sortedFilteredRooms = useMemo(() => {
+    const arr = [...filteredRooms];
+    return arr.sort((a, b) => b.energy - a.energy);
+  }, [filteredRooms]);
+
+  const displayedRooms = isSorted ? sortedFilteredRooms : filteredRooms;
 
   const showModal = () => {
     setModalVisible(true);
@@ -135,7 +165,7 @@ export const DashboardContainer: React.FC = () => {
                 className="report-button"
                 onClick={handleReportButton}
               >
-                Report
+                {t("dashboard.reportButton")}
               </Button>
               <Text italic style={{ margin: 0 }}>
                 {userName}
@@ -153,35 +183,39 @@ export const DashboardContainer: React.FC = () => {
                 onClick={() => showModal()}
                 className="add-room-button"
               >
-                Add New Room
+                {t("dashboard.addButton")}
               </Button>
               <Modal
-                title="Add Device"
+                title={t("dashboard.Modal.title")}
                 open={modalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                okText="Add"
+                okText={t("dashboard.Modal.ok")}
+                cancelText={t("dashboard.Modal.cancel")}
               >
                 <Form form={form} layout="vertical">
                   <Form.Item
                     name="name"
-                    label="Name"
+                    label={t("dashboard.Modal.name")}
                     rules={[
-                      { required: true, message: "Please enter room name" },
-                      { min: 3, message: "min 3 characters" },
+                      {
+                        required: true,
+                        message: t("dashboard.Modal.nameMessage"),
+                      },
+                      { min: 3, message: t("dashboard.Modal.nameVal") },
                     ]}
                   >
                     <Input minLength={3} maxLength={15} />
                   </Form.Item>
                   <Form.Item
                     name="description"
-                    label="Description"
+                    label={t("dashboard.Modal.description")}
                     rules={[
                       {
                         required: false,
-                        message: "Please enter room description",
+                        message: t("dashboard.Modal.descriptionMessage"),
                       },
-                      { min: 3, message: "min 150 characters" },
+                      { min: 3, message: t("dashboard.Modal.descrVal") },
                     ]}
                   >
                     <Input minLength={3} maxLength={150} />
@@ -189,28 +223,23 @@ export const DashboardContainer: React.FC = () => {
                 </Form>
               </Modal>
               <Button
+                onClick={() => setIsSorted(true)}
                 icon={<SortAscendingOutlined />}
                 style={{ marginLeft: 12 }}
               >
-                Sort Rooms
+                {t("dashboard.sortButton")}
               </Button>
             </Space>
           </Col>
           <Col className="header-summary">
             <Space>
-              <Text>Total Energy Consumption:</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalEnergy} */}
-              </Title>
-              <Text>Monthly Cost:</Text>
-              <Title level={4} style={{ margin: 0 }}>
-                {/* {totalCost} */}
-              </Title>
+              <Text>{t("dashboard.totalEnergy") + ` ${totalEnergy}`}</Text>
+              <Text>{t("dashboard.cost") + ` ${totalCost}`}</Text>
             </Space>
           </Col>
           <Col className="header-right">
             <Search
-              placeholder="Search rooms..."
+              placeholder={t("dashboard.search")}
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
             />
@@ -219,13 +248,12 @@ export const DashboardContainer: React.FC = () => {
       </div>
       <div className="wrapper">
         <Row gutter={[24, 24]}>
-          {filteredRooms.length > 0 &&
-            filteredRooms.map(
+          {displayedRooms.length > 0 &&
+            displayedRooms.map(
               (room) =>
                 room.name !== " " && (
-                  <Col xs={24} sm={12} xl={6}>
+                  <Col key={room.id} xs={24} sm={12} xl={6}>
                     <RoomCards
-                      key={room.id}
                       name={room.name}
                       id={room.id}
                       priority={1}
@@ -234,14 +262,18 @@ export const DashboardContainer: React.FC = () => {
                       cost={room.cost}
                       deleteFunction={handleDelete}
                       editRoomFunction={handleEditRoom}
+                      devices={room.devices}
+                      description={room.description}
                     />
                   </Col>
                 )
             )}
         </Row>
       </div>
+      <Affix offsetBottom={16}>
+        <Button onClick={handleLogOut}>{t("dashboard.logout")}</Button>
+      </Affix>
       <AIChatModal visible={aiChatVisible} onClose={handleAIChatClose} />
-      <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
 };
