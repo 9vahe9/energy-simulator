@@ -1,8 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
-import { label } from "three/tsl";
 
 const items = [
   {

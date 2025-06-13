@@ -6,15 +6,15 @@ import {
   DesktopOutlined,
   FireOutlined,
   SmileOutlined,
-  ReloadOutlined,
+  // ReloadOutlined,
   CloudOutlined,
   CoffeeOutlined,
   DropboxOutlined,
   ThunderboltOutlined,
   AppstoreOutlined,
-  UsbFilled,
+  // UsbFilled,
   ToolOutlined,
-  DatabaseOutlined,
+  // DatabaseOutlined,
 } from "@ant-design/icons";
 
 export enum DeviceType {

@@ -19,8 +19,7 @@ import { DayTime } from "../../constants/DayTime.ts";
 import EditDevice from "./EditDevice.tsx";
 
 
-
-import { addRoom, updateRoom, fetchRooms } from "../../store/user/userSlice";
+import { fetchRooms } from "../../store/user/userSlice";
 
 
 import useAddRooms from "../../hooks/useAddRooms.tsx";
@@ -72,7 +71,7 @@ const RoomContainer = () => {
 
 
   const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
-    useThreeScene(roomId, devices, handleDeletingDevice);
+    useThreeScene( devices);
 
   const showModal = (type: number) => {
     setSelectedType(type);
@@ -95,10 +94,10 @@ const RoomContainer = () => {
     });
   };
 
-  const handleCancel = () => {
-    setModalVisible(false);
-    form.resetFields();
-  };
+  // const handleCancel = () => {
+  //   setModalVisible(false);
+  //   form.resetFields();
+  // };
 
   const onSaveClick = () => {
     const nameToUse = newRoomName ?? "";
@@ -106,11 +105,14 @@ const RoomContainer = () => {
 
 
     const updateDevice = getUpdatedDevicesPositions();
+    //@ts-ignore
     const matchingItems = getMatchingItems(devices, updateDevice);
     const updatedDevicetArray = devices.map((item) => {
       console.log(item, "item", matchingItems);
       const matchingItem = matchingItems.find(
-        (secondItem) => secondItem.name === `device-${item.deviceId}`
+        (secondItem) =>
+          secondItem.name === `device-${item.deviceId}` ||
+          secondItem.name === item.name
       );
       if (matchingItem) {
         return {
@@ -133,21 +135,23 @@ const RoomContainer = () => {
     return devices.flatMap((item) => {
       const deviceId = item.deviceId;
       return updateDevice.filter(
-        (updateDevice) => updateDevice.name === `device-${deviceId}`
+        (updateDevice) =>
+          updateDevice.name === `device-${deviceId}` ||
+          updateDevice.name === item.name
       );
     });
   }
 
 
-  function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
-    setDevices(
-      devices.map((device) => {
-        return device.deviceId === id
-          ? { ...device, ...replacementObject }
-          : device;
-      })
-    );
-  }
+  // function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
+  //   setDevices(
+  //     devices.map((device) => {
+  //       return device.deviceId === id
+  //         ? { ...device, ...replacementObject }
+  //         : device;
+  //     })
+  //   );
+  // }
 
   return (
     <Layout style={{ height: "100vh" }}>

@@ -5,17 +5,17 @@ import { dataBase } from '../../firebaseConfig/firebase';
 import { createAppSlice } from "../../app/CreateAppSlice";
 import type { RootState } from "../store";
 import type { Reducer } from "redux";
-import type { IRoomDevice } from '../../types/device';
+// import type { IRoomDevice } from '../../types/device';
 import type { IRoom } from '../../types/room';
 import { DayTime } from '../../constants/DayTime';
 import { DeviceType } from '../../constants/Devices';
 
 
-export interface Device {
-    name: string,
-    wattage: string,
-    deviceId: string
-}
+// export interface Device {
+//     name: string,
+//     wattage: string,
+//     deviceId: string
+// }
 
 // export interface Room {
 //     name: string,
@@ -53,9 +53,7 @@ const initialState: UserState = {
         energy: 0,
         cost: 0,
         priority: 'Low',
-        devices: [{ name: " ", power: 0, uptime: 0, 
-                type: DeviceType.Other, workingDayTime: DayTime.Day, 
-                deviceId: Date.now(), position: {x: 0, y: 0, z: 0}}],
+        devices: [{ name: " ", power: 0, uptime: 0, type: DeviceType.Other, workingDayTime: DayTime.Day, deviceId: 0}],
         icons: [{type: "something", count: 3}]
     }],
     status: "idle",
@@ -87,7 +85,7 @@ export const userSlice = createAppSlice({
                 }
                 catch (err) {
                     console.log("There was an error creating a userName", err);
-                    return thunkAPI.rejectWithValue("Api error");
+                     return thunkAPI.rejectWithValue("Api error");
                 }
             },
             {
@@ -140,7 +138,7 @@ export const userSlice = createAppSlice({
                 try {
                     const response = await getDoc(doc(dataBase, "users", userId));
                     if (!response.exists()) {
-                        return thunkAPI.rejectWithValue("Failed to get response")
+                        return [];
                     }
                     const data = response.data();
                     return [data?.rooms, data?.userName];
@@ -162,35 +160,7 @@ export const userSlice = createAppSlice({
 
                 rejected: (state) => { state.status = "failed"; }
             }
-         ),
-        // fetchOneRoom: create.asyncThunk <IRoom,{ userId: string; roomId: string } >(
-
-        //     async ({ userId, roomId }, thunkAPI) => {
-
-        //         try {
-        //             const response = await getDoc(doc(dataBase, "users", userId))
-        //             if (!response.exists()) {
-        //                 return thunkAPI.rejectWithValue("Failed to get the room")
-        //             }
-        //             const data = response.data()
-        //             const room = data[roomId];
-        //             if (!room) {
-        //                 return thunkAPI.rejectWithValue("Room not found");
-        //             }
-        //             return room;
-        //         }
-        //         catch (err) {
-        //             console.log("error with getting the room");
-        //             return thunkAPI.rejectWithValue("Couldn't get the room")
-        //         }
-
-        //     },
-        //     {
-        //         pending: state => {state.status = 'loading'},
-        //         fulfilled: state => {state.status = "idle"},
-        //         rejected: state => {state.status = "failed"},
-        //     }
-        // ),
+        ),
 
 
         addRoom: create.asyncThunk(
@@ -314,9 +284,7 @@ export const userSlice = createAppSlice({
                     state.status = "failed";
                 }
             }
-        ),
-        
- 
+        )
     }),
 
     selectors: {
@@ -327,6 +295,6 @@ export const userSlice = createAppSlice({
 )
 
 export const userReducer: Reducer<UserState> = userSlice.reducer;
-export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom, createUserName,  } = userSlice.actions;
+export const { createRoom, fetchRooms, addRoom, deleteRoom, updateRoom, createUserName } = userSlice.actions;
 export const { selectRooms, selectStatus } = userSlice.selectors;
 

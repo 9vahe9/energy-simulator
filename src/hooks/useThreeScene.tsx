@@ -1,33 +1,21 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
-import { useSelector, useDispatch } from "react-redux";
-
 const useThreeScene = (
-  roomId: string | undefined,
+
   initialDevices: IRoomDevice[] = [],
-  deleteFunction: (id: number) => void,
   roomPath: string = "emptyroom.glb"
 ) => {
-  const rooms = [];
-
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
-  const [loadedFlag, setLoadedFlag] = useState(false);
-  const [devicePosition, setDevicePosition] = useState({ x: 0, y: 0, z: 0 });
-  const [loaded, setLoaded] = useState(false);
+  const [, setLoadedFlag] = useState(false);
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
-  const [devices, setDevices] = useState(initialDevices);
+  const [devices] = useState(initialDevices);
 
-  const interactable = useRef<THREE.Object3D[]>([]);
-  const selectedPrev = useRef<THREE.Mesh | null>(null);
-  const [selectedModelInfo, setSelectedModelInfo] = useState<{
-    name: string;
-  } | null>(null);
   const [selectedObjectInfo, setSelectedObjectInfo] = useState<{
     name: string;
     object: THREE.Object3D;
@@ -44,12 +32,13 @@ const useThreeScene = (
       loader.load(`/models/${modelPath}`, (gltf) => {
         const device = gltf.scene;
         device.name = `device-${type.deviceId}`;
+        device.userData.name = name;
         device.position.set(
           device.position.x,
           device.position.y,
           device.position.z
         );
-        device.deviceId = type.deviceId;
+        device.userData.deviceId = type.deviceId;
         const box = new THREE.Box3().setFromObject(device);
         const size = new THREE.Vector3();
         box.getSize(size);
@@ -65,58 +54,58 @@ const useThreeScene = (
 
     switch (type.type) {
       case 1:
-        loadGLB("refreg.glb", type.name);
+        loadGLB("refreg.glb", `${type.name}`);
         break;
       case 2:
-        loadGLB("vacuum_cleaner.glb", type.name);
+        loadGLB("vacuum_cleaner.glb", `${type.name}`);
         break;
       case 3:
-        loadGLB("aire_acondicionado_-_rafael_blanco_est_usb_im.glb", type.name);
+        loadGLB("aire_acondicionado_-_rafael_blanco_est_usb_im.glb", `${type.name}`);
         break;
       case 4:
-        loadGLB("tv.glb", type.name);
+        loadGLB("tv.glb", `${type.name}`);
         break;
       case 5:
-        loadGLB("phone-1.glb", type.name);
+        loadGLB("phone-1.glb", `${type.name}`);
         break;
       case 6:
-        loadGLB("all-in-one_desktop_computer_and_smartphone.glb", type.name);
+        loadGLB("all-in-one_desktop_computer_and_smartphone.glb", `${type.name}`);
         break;
       case 7:
-        loadGLB("printer.glb", type.name);
+        loadGLB("printer.glb", `${type.name}`);
         break;
       case 8:
-        loadGLB("printer.glb", type.name);
+        loadGLB("printer.glb", `${type.name}`);
         break;
       case 9:
-        loadGLB("hair_dryer.glb", type.name);
+        loadGLB("hair_dryer.glb", `${type.name}`);
         break;
       case 10:
-        loadGLB("simple_heater.glb", type.name);
+        loadGLB("simple_heater.glb", `${type.name}`);
         break;
       case 11:
-        loadGLB("humidifier.glb", type.name);
+        loadGLB("humidifier.glb", `${type.name}`);
         break;
       case 12:
-        loadGLB("lamp.glb", type.name);
+        loadGLB("lamp.glb", `${type.name}`);
         break;
       case 13:
-        loadGLB("microwave_-_sharp_34l.glb", type.name);
+        loadGLB("microwave_-_sharp_34l.glb", `${type.name}`);
         break;
       case 14:
-        loadGLB("czajnik_elektrycznyelectric_kettle.glb", type.name);
+        loadGLB("czajnik_elektrycznyelectric_kettle.glb", `${type.name}`);
         break;
       case 15:
-        loadGLB("dishwasher.glb", type.name);
+        loadGLB("dishwasher.glb", `${type.name}`);
         break;
       case 16:
-        loadGLB("mixer.glb", type.name);
+        loadGLB("mixer.glb", `${type.name}`);
         break;
       case 17:
-        loadGLB("stove_with_hood.glb", type.name);
+        loadGLB("stove_with_hood.glb", `${type.name}`);
         break;
       default:
-        loadGLB("ref.glb", type.name);
+        loadGLB("ref.glb", `${type.name}`);
     }
   };
 
@@ -129,6 +118,7 @@ const useThreeScene = (
   useEffect(() => {
     console.log(1);
     const container = mountRef.current;
+    const mountNode = mountRef.current;
     const tooltip = document.createElement("div");
     tooltip.style.position = "absolute";
     tooltip.style.background = "#333";
@@ -182,7 +172,7 @@ const useThreeScene = (
     loader.load(
       roomPath.startsWith("blob:") ? roomPath : `/models/${roomPath}`,
       (gltf) => {
-        if (roomModelRef.current) scene.current.remove(roomModelRef.current);
+        if (roomModelRef.current) scene.current?.remove(roomModelRef.current);
 
         const room = gltf.scene;
 
@@ -196,9 +186,8 @@ const useThreeScene = (
           room.scale.setScalar(scale);
         }
 
-        scene.current.add(room);
+        scene.current?.add(room);
         roomModelRef.current = room;
-
 
         roomBoundsRef.current = new THREE.Box3().setFromObject(room);
         const center = roomBoundsRef.current.getCenter(new THREE.Vector3());
@@ -211,10 +200,11 @@ const useThreeScene = (
     if (!hasInitialized.current) {
       console.log(initialDevices, "initialDevices");
       if (initialDevices.length > 0) {
-        initialDevices.forEach((device) => handleRerenderDevice(device));
+        initialDevices.forEach((device: IRoomDevice) => handleRerenderDevice(device));
       }
       hasInitialized.current = true;
     }
+    //@ts-ignore
     let isRotateEnabled = false;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -355,27 +345,42 @@ const useThreeScene = (
       );
 
       const intersectionPoint = new THREE.Vector3();
-      console.log(raycaster, selectedObject, "onMouseMove");
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
         const newPos = intersectionPoint.clone().add(dragOffset);
 
-        // check box area
+        const box = new THREE.Box3().setFromObject(selectedObject);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+
         if (roomBoundsRef.current) {
           const roomMin = roomBoundsRef.current.min;
           const roomMax = roomBoundsRef.current.max;
 
-          newPos.x = Math.max(roomMin.x, Math.min(roomMax.x, newPos.x));
-          newPos.y = Math.max(roomMin.y, Math.min(roomMax.y, newPos.y));
-          newPos.z = Math.max(roomMin.z, Math.min(roomMax.z, newPos.z));
+          const halfWidth = size.x / 2;
+          const halfHeight = size.y / 2;
+          const halfDepth = size.z / 2;
+
+          newPos.x = Math.max(
+            roomMin.x + halfWidth,
+            Math.min(roomMax.x - 2 * halfWidth, newPos.x)
+          );
+          newPos.y = Math.max(
+            roomMin.y + halfHeight,
+            Math.min(roomMax.y - 2 * halfHeight, newPos.y)
+          );
+          newPos.z = Math.max(
+            roomMin.z + halfDepth,
+            Math.min(roomMax.z - 2 * halfDepth, newPos.z)
+          );
+          console.log(roomMin, roomMax, "roomMax");
         }
 
         selectedObject.position.copy(newPos);
         selectedObject.position.set(newPos.x, newPos.y, newPos.z);
-        setDevicePosition({ x: newPos.x, y: newPos.y, z: newPos.z });
         interactableObjects.current.push(selectedObject);
+        console.log(newPos, "newPos");
       }
     }
-
     function onMouseUp() {
       selectedObject = null;
       if (controls.current) {
@@ -456,8 +461,8 @@ const useThreeScene = (
       );
       renderer.current?.domElement.removeEventListener("mouseup", onMouseUp);
       renderer.current?.domElement.removeEventListener("click", handleClick);
-      if (renderer.current && mountRef.current) {
-        mountRef.current.removeChild(renderer.current.domElement);
+      if (renderer.current && mountNode) {
+        mountNode?.removeChild(renderer.current.domElement);
       }
       renderer.current?.domElement.removeEventListener(
         "mousemove",
@@ -480,29 +485,11 @@ const useThreeScene = (
       "getUpdatedDevicesPositions",
       devices,
       scene,
-      roomModelRef.current.children
+      roomModelRef.current?.children
     );
-    let count = devices.length;
-    return roomModelRef.current.children;
-    // return devices.map((device) => {
-    //   const mesh = roomModelRef.current.children.find(
-    //     (obj) => obj.name === `device-${device.deviceId}`
-    //   );
-    //   console.log("mesh", mesh);
-    //   if (mesh) {
-    //     return {
-    //       ...device,
-    //       position: {
-    //         x: mesh.position.x,
-    //         y: mesh.position.y,
-    //         z: mesh.position.z,
-    //       },
-    //     };
-    //   }
-    //   return device;
-    // });
+    return roomModelRef.current?.children;
   };
-  const handleRerenderDevice = (device) => {
+  const handleRerenderDevice = (device: IRoomDevice) => {
     console.log("device", device);
     const loadGLB = (modelPath: string, name: string) => {
       const loader = new GLTFLoader();
@@ -511,9 +498,10 @@ const useThreeScene = (
         const model = gltf.scene;
         model.name = name;
         model.position.set(
-          device.position.x,
-          device.position.y,
-          device.position.z
+          //@ts-ignore
+          device?.position?.x,
+          device?.position?.y,
+          device?.position?.z
         );
 
         const box = new THREE.Box3().setFromObject(model);
@@ -586,11 +574,7 @@ const useThreeScene = (
         loadGLB("ref.glb", device.name);
     }
   };
-  const rotateModelLeft = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.y += Math.PI / 8;
-    }
-  };
+
   return {
     handleAddDevice,
     handleDeleteSelectedObject,
@@ -625,9 +609,9 @@ const useThreeScene = (
             >
               Delete Device
             </button>
-            <button onClick={() => alert("Editing feature under development")}>
+            {/* <button onClick={() => alert("Editing feature under development")}>
               Edit
-            </button>
+            </button> */}
           </div>
         )}
       </>

@@ -1,11 +1,11 @@
-import { Button, Space, DatePicker, version, Card, Typography, Form} from 'antd';
+import { Button,  Card, Typography, Flex} from 'antd';
 import "./home.css"
 import {  useNavigate } from 'react-router-dom';
 import { LOGIN_PATH } from '../../constants/RoutePaths';
 import { SIGNUP_PATH } from '../../constants/RoutePaths';
 import { useTranslation } from 'react-i18next';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 export const HomeContainer = () => {
 
@@ -53,11 +53,11 @@ export const HomeContainer = () => {
           </div>
         </div>
 
-        <div className='buttons'>
+        <Flex justify="start" gap={8}>
           <Button className='loginButton' onClick={() => navigate(LOGIN_PATH)}>{t("home.loginButton")}</Button>
           <Button className='registrationButton' onClick={() => navigate(SIGNUP_PATH)}> {t("home.signupButton")}</Button>
-          <Button className='tryButton'>{t("home.tryButton")}</Button>
-        </div>
+          {/* {<Button className='tryButton'>{t("home.tryButton")}</Button>} */}
+        </Flex>
       </Card>
     </div>
 );

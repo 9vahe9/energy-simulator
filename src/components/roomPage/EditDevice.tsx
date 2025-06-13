@@ -28,7 +28,7 @@ const EditDevice = (device: IRoomDevice,
                     workingDayTime: device.workingDayTime,
                 }}
 
-                onValuesChange={(changedValues, allValues) => {
+                onValuesChange={( allValues) => {
                     Object.assign(tempDevice, allValues);
                 }}
             >
