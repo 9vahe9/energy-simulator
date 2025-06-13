@@ -8,6 +8,7 @@ import {
   InputNumber,
   Select,
   Space,
+  Divider,
 } from "antd";
 import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +18,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
 import EditDevice from "./EditDevice.tsx";
+import "./roomCont.css";
 
 
 import { fetchRooms } from "../../store/user/userSlice";
@@ -159,7 +161,7 @@ const RoomContainer = () => {
         {threeScene}
       </Content>
 
-      <Sider width={400} style={{ background: "#fff", padding: 16 }}>
+      <Sider width={400} style={{ background: "#fff", padding: 16, display: "flex", flexDirection: "column" }}>
         <Space direction="vertical" style={{ width: "100%", marginBottom: 24 }}>
           <Form layout="vertical">
             <Form.Item label="Room Name">
@@ -178,7 +180,8 @@ const RoomContainer = () => {
               />
             </Form.Item>
           </Form>
-          <Button type="primary" block onClick={onSaveClick}>
+          <Divider />
+          <Button className="save-button" type="primary" block onClick={onSaveClick}>
             Save Room
           </Button>
           <Button block onClick={() => setDevices([])}>
@@ -207,17 +210,24 @@ const RoomContainer = () => {
             Edit something
           </Button>
         </Space>
-        <h3>Devices</h3>
-        <List
-          dataSource={DEVICE_SELECT_OPTONS}
-          renderItem={(item) => (
-            <List.Item>
-              <Button type="primary" onClick={() => showModal(item.type)}>
-                {item.icon} {item.label}
-              </Button>
-            </List.Item>
-          )}
-        />
+        <Divider>Devices</Divider>
+        <div style={{ overflowY: "auto", maxHeight: "200px", paddingRight: 4 }}>
+          <List
+            dataSource={DEVICE_SELECT_OPTONS}
+            renderItem={(item) => (
+              <List.Item style={{ padding: "4px 0" }}>
+                <Button
+                  className="save-button"
+                  type="primary"
+                  block
+                  onClick={() => showModal(item.type)}
+                >
+                  {item.icon} {item.label}
+                </Button>
+              </List.Item>
+            )}
+          />
+        </div>
       </Sider>
 
       {/* модалка добавления устройства */}
