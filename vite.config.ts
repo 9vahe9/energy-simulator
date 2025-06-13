@@ -8,7 +8,7 @@ export default defineConfig({
     open: true,
   },
   plugins: [react()],
-    build: {
+  build: {
     outDir: 'dist',         // ← default Vite build output
   }
 })
