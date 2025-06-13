@@ -53,12 +53,10 @@ const initialState: UserState = {
         energy: 0,
         cost: 0,
         priority: 'Low',
-        devices: [{
-            name: " ", power: 0, uptime: 0,
-            type: DeviceType.Other, workingDayTime: DayTime.Day,
-            deviceId: Date.now(), position: { x: 0, y: 0, z: 0 }
-        }],
-        icons: [{ type: "something", count: 3 }]
+        devices: [{ name: " ", power: 0, uptime: 0, 
+                type: DeviceType.Other, workingDayTime: DayTime.Day, 
+                deviceId: Date.now(), position: {x: 0, y: 0, z: 0}}],
+        icons: [{type: "something", count: 3}]
     }],
     status: "idle",
 }
@@ -317,8 +315,8 @@ export const userSlice = createAppSlice({
                 }
             }
         ),
-
-
+        
+ 
     }),
 
     selectors: {

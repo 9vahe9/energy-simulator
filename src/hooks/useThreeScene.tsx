@@ -21,6 +21,7 @@ const useThreeScene = (
     name: string;
     object: THREE.Object3D;
   } | null>(null);
+
   const hasInitialized = useRef(false);
   console.log(initialDevices, "initialDevices");
   const handleAddDevice = (type: IRoomDevice) => {

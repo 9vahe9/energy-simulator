@@ -1,14 +1,11 @@
 import { Typography } from "antd";
-import { useTranslation } from "react-i18next";
 import { AreaChart, LineChart, XAxis, YAxis } from "recharts";
 
 const { Title } = Typography;
 
 export const MonthlyReport = () => {
-    const { t } = useTranslation();
-
     return <div className="report-tab">
-                <Title level={3}>{t("report.tabs.consumption")}</Title>
+                <Title level={3}>Energy Consuption</Title>
                 <AreaChart width={700} height={400}>
                     <XAxis dataKey="day"/>
                     <YAxis />
