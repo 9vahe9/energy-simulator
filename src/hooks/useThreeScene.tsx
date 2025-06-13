@@ -4,30 +4,19 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
-import { useSelector, useDispatch } from "react-redux";
-
 const useThreeScene = (
   roomId: string | undefined,
   initialDevices: IRoomDevice[] = [],
   deleteFunction: (id: number) => void,
   roomPath: string = "emptyroom.glb"
 ) => {
-  const rooms = [];
-
   const mountRef = useRef<HTMLDivElement | null>(null);
   const roomModelRef = useRef<THREE.Group | null>(null);
-  const [loadedFlag, setLoadedFlag] = useState(false);
-  const [devicePosition, setDevicePosition] = useState({ x: 0, y: 0, z: 0 });
-  const [loaded, setLoaded] = useState(false);
+  const [, setLoadedFlag] = useState(false);
   const interactableObjects = useRef<THREE.Object3D[]>([]);
   const previouslySelected = useRef<THREE.Mesh | null>(null);
-  const [devices, setDevices] = useState(initialDevices);
+  const [devices] = useState(initialDevices);
 
-  const interactable = useRef<THREE.Object3D[]>([]);
-  const selectedPrev = useRef<THREE.Mesh | null>(null);
-  const [selectedModelInfo, setSelectedModelInfo] = useState<{
-    name: string;
-  } | null>(null);
   const [selectedObjectInfo, setSelectedObjectInfo] = useState<{
     name: string;
     object: THREE.Object3D;
@@ -129,6 +118,7 @@ const useThreeScene = (
   useEffect(() => {
     console.log(1);
     const container = mountRef.current;
+    const mountNode = mountRef.current;
     const tooltip = document.createElement("div");
     tooltip.style.position = "absolute";
     tooltip.style.background = "#333";
@@ -182,7 +172,7 @@ const useThreeScene = (
     loader.load(
       roomPath.startsWith("blob:") ? roomPath : `/models/${roomPath}`,
       (gltf) => {
-        if (roomModelRef.current) scene.current.remove(roomModelRef.current);
+        if (roomModelRef.current) scene.current?.remove(roomModelRef.current);
 
         const room = gltf.scene;
 
@@ -196,9 +186,8 @@ const useThreeScene = (
           room.scale.setScalar(scale);
         }
 
-        scene.current.add(room);
+        scene.current?.add(room);
         roomModelRef.current = room;
-
 
         roomBoundsRef.current = new THREE.Box3().setFromObject(room);
         const center = roomBoundsRef.current.getCenter(new THREE.Vector3());
@@ -355,27 +344,42 @@ const useThreeScene = (
       );
 
       const intersectionPoint = new THREE.Vector3();
-      console.log(raycaster, selectedObject, "onMouseMove");
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
         const newPos = intersectionPoint.clone().add(dragOffset);
 
-        // check box area
+        const box = new THREE.Box3().setFromObject(selectedObject);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+
         if (roomBoundsRef.current) {
           const roomMin = roomBoundsRef.current.min;
           const roomMax = roomBoundsRef.current.max;
 
-          newPos.x = Math.max(roomMin.x, Math.min(roomMax.x, newPos.x));
-          newPos.y = Math.max(roomMin.y, Math.min(roomMax.y, newPos.y));
-          newPos.z = Math.max(roomMin.z, Math.min(roomMax.z, newPos.z));
+          const halfWidth = size.x / 2;
+          const halfHeight = size.y / 2;
+          const halfDepth = size.z / 2;
+
+          newPos.x = Math.max(
+            roomMin.x + halfWidth,
+            Math.min(roomMax.x - 2 * halfWidth, newPos.x)
+          );
+          newPos.y = Math.max(
+            roomMin.y + halfHeight,
+            Math.min(roomMax.y - 2 * halfHeight, newPos.y)
+          );
+          newPos.z = Math.max(
+            roomMin.z + halfDepth,
+            Math.min(roomMax.z - 2 * halfDepth, newPos.z)
+          );
+          console.log(roomMin, roomMax, "roomMax");
         }
 
         selectedObject.position.copy(newPos);
         selectedObject.position.set(newPos.x, newPos.y, newPos.z);
-        setDevicePosition({ x: newPos.x, y: newPos.y, z: newPos.z });
         interactableObjects.current.push(selectedObject);
+        console.log(newPos, "newPos");
       }
     }
-
     function onMouseUp() {
       selectedObject = null;
       if (controls.current) {
@@ -456,8 +460,8 @@ const useThreeScene = (
       );
       renderer.current?.domElement.removeEventListener("mouseup", onMouseUp);
       renderer.current?.domElement.removeEventListener("click", handleClick);
-      if (renderer.current && mountRef.current) {
-        mountRef.current.removeChild(renderer.current.domElement);
+      if (renderer.current && mountNode) {
+        mountNode?.removeChild(renderer.current.domElement);
       }
       renderer.current?.domElement.removeEventListener(
         "mousemove",
@@ -480,27 +484,9 @@ const useThreeScene = (
       "getUpdatedDevicesPositions",
       devices,
       scene,
-      roomModelRef.current.children
+      roomModelRef.current?.children
     );
-    let count = devices.length;
-    return roomModelRef.current.children;
-    // return devices.map((device) => {
-    //   const mesh = roomModelRef.current.children.find(
-    //     (obj) => obj.name === `device-${device.deviceId}`
-    //   );
-    //   console.log("mesh", mesh);
-    //   if (mesh) {
-    //     return {
-    //       ...device,
-    //       position: {
-    //         x: mesh.position.x,
-    //         y: mesh.position.y,
-    //         z: mesh.position.z,
-    //       },
-    //     };
-    //   }
-    //   return device;
-    // });
+    return roomModelRef.current?.children;
   };
   const handleRerenderDevice = (device) => {
     console.log("device", device);
@@ -586,11 +572,7 @@ const useThreeScene = (
         loadGLB("ref.glb", device.name);
     }
   };
-  const rotateModelLeft = () => {
-    if (roomModelRef.current) {
-      roomModelRef.current.rotation.y += Math.PI / 8;
-    }
-  };
+
   return {
     handleAddDevice,
     handleDeleteSelectedObject,
@@ -625,9 +607,9 @@ const useThreeScene = (
             >
               Delete Device
             </button>
-            <button onClick={() => alert("Editing feature under development")}>
+            {/* <button onClick={() => alert("Editing feature under development")}>
               Edit
-            </button>
+            </button> */}
           </div>
         )}
       </>

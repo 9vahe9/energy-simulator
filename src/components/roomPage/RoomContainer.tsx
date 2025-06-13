@@ -110,7 +110,9 @@ const RoomContainer = () => {
     const updatedDevicetArray = devices.map((item) => {
       console.log(item, "item", matchingItems);
       const matchingItem = matchingItems.find(
-        (secondItem) => secondItem.name === `device-${item.deviceId}`
+        (secondItem) =>
+          secondItem.name === `device-${item.deviceId}` ||
+          secondItem.name === item.name
       );
       if (matchingItem) {
         return {
@@ -133,7 +135,9 @@ const RoomContainer = () => {
     return devices.flatMap((item) => {
       const deviceId = item.deviceId;
       return updateDevice.filter(
-        (updateDevice) => updateDevice.name === `device-${deviceId}`
+        (updateDevice) =>
+          updateDevice.name === `device-${deviceId}` ||
+          updateDevice.name === item.name
       );
     });
   }
