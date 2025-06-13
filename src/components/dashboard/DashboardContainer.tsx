@@ -1,4 +1,3 @@
-
 import "./dashboard.css";
 import {
   Input,
@@ -15,7 +14,15 @@ import {
   Modal,
   InputNumber,
 } from "antd";
-
+import {
+  PlusOutlined,
+  SortAscendingOutlined,
+  SearchOutlined,
+  EditOutlined,
+  ThunderboltFilled,
+  AreaChartOutlined,
+  RobotOutlined,
+} from "@ant-design/icons";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/authentication/authSlice";
@@ -26,20 +33,11 @@ import { auth } from "../../firebaseConfig/firebase";
 import { useEffect, useState } from "react";
 import useAddRooms from "../../hooks/useAddRooms";
 import React from "react";
-import {
-  PlusOutlined,
-  SortAscendingOutlined,
-  SearchOutlined,
-  EditOutlined,
-  ThunderboltFilled,
-  AreaChartOutlined
-} from "@ant-design/icons";
-import "./dashboard.css";
 import { fetchRooms, deleteRoom } from "../../store/user/userSlice";
 import { RoomCards } from "../roomCards/RoomCards";
 import Search from "antd/es/transfer/search";
-
 import { useTranslation } from "react-i18next";
+import { AIChatModal } from "../AIchatModal/AIChatModal";
 
 export const DashboardContainer: React.FC = () => {
   const { Title, Text } = Typography;
@@ -47,17 +45,14 @@ export const DashboardContainer: React.FC = () => {
   const userName = useSelector((state: RootState) => state.user.userName);
   const [userSearch, setUserSearch] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [aiChatVisible, setAiChatVisible] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const { handleAddingRoom } = useAddRooms();
-
   const { t } = useTranslation();
-
   const userID = useSelector((state: RootState) => state.auth.userToken);
-
-  console.log(userID);
 
   const filteredRooms = roomsArray.filter((room) => {
     return room.name.toLowerCase().includes(userSearch.toLowerCase());
@@ -66,10 +61,10 @@ export const DashboardContainer: React.FC = () => {
   const showModal = () => {
     setModalVisible(true);
   };
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-
       await handleAddingRoom(values.name, values.description, []);
       setModalVisible(false);
       form.resetFields();
@@ -82,6 +77,15 @@ export const DashboardContainer: React.FC = () => {
     setModalVisible(false);
     form.resetFields();
   };
+
+  const showAIChat = () => {
+    setAiChatVisible(true);
+  };
+
+  const handleAIChatClose = () => {
+    setAiChatVisible(false);
+  };
+
   useEffect(() => {
     if (userID) {
       dispatch(fetchRooms(userID));
@@ -93,7 +97,6 @@ export const DashboardContainer: React.FC = () => {
       dispatch(setCurrentUser(null));
       sessionStorage.setItem("userToken", "");
       navigate(HOME_PATH);
-      console.log(userID);
     });
   }
 
@@ -118,12 +121,22 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col>
             <Space>
-              <Button 
+              <Button
+                type="primary"
+                icon={<RobotOutlined />}
+                className="ai-chat-button"
+                onClick={showAIChat}
+              >
+                AI Assistant
+              </Button>
+              <Button
                 type="primary"
                 icon={<AreaChartOutlined />}
                 className="report-button"
                 onClick={handleReportButton}
-              >Report</Button>
+              >
+                Report
+              </Button>
               <Text italic style={{ margin: 0 }}>
                 {userName}
               </Text>
@@ -143,7 +156,7 @@ export const DashboardContainer: React.FC = () => {
                 Add New Room
               </Button>
               <Modal
-                title="add device"
+                title="Add Device"
                 open={modalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -155,7 +168,7 @@ export const DashboardContainer: React.FC = () => {
                     label="Name"
                     rules={[
                       { required: true, message: "Please enter room name" },
-                      { min: 3, message: "min 3 charachter" },
+                      { min: 3, message: "min 3 characters" },
                     ]}
                   >
                     <Input minLength={3} maxLength={15} />
@@ -168,7 +181,7 @@ export const DashboardContainer: React.FC = () => {
                         required: false,
                         message: "Please enter room description",
                       },
-                      { min: 3, message: "min 150 charachter" },
+                      { min: 3, message: "min 150 characters" },
                     ]}
                   >
                     <Input minLength={3} maxLength={150} />
@@ -185,11 +198,11 @@ export const DashboardContainer: React.FC = () => {
           </Col>
           <Col className="header-summary">
             <Space>
-              <Text>Total Energy Consumption։</Text>
+              <Text>Total Energy Consumption:</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalEnergy} */}
               </Title>
-              <Text>Monthly Cost։</Text>
+              <Text>Monthly Cost:</Text>
               <Title level={4} style={{ margin: 0 }}>
                 {/* {totalCost} */}
               </Title>
@@ -227,7 +240,7 @@ export const DashboardContainer: React.FC = () => {
             )}
         </Row>
       </div>
-
+      <AIChatModal visible={aiChatVisible} onClose={handleAIChatClose} />
       <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
