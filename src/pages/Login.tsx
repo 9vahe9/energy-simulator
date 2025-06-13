@@ -8,13 +8,12 @@ function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [userToken, setUserToke] = useState(null);
-
+    
 
     async function handleClick() {
 
         try {
-            const useCredentials = await signInWithEmailAndPassword(auth, email, password);
+           await signInWithEmailAndPassword(auth, email, password);
             alert("loggedIn")
         }
         catch (err) {

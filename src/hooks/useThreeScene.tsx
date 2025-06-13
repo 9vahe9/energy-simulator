@@ -5,7 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { IRoomDevice } from "../types/device";
 
 const useThreeScene = (
-
+  deletFunction: Function,
   initialDevices: IRoomDevice[] = [],
   roomPath: string = "emptyroom.glb"
 ) => {
@@ -472,11 +472,20 @@ const useThreeScene = (
     };
   }, [roomPath]);
   const handleDeleteSelectedObject = () => {
+
     if (selectedObjectInfo?.object && roomModelRef.current) {
+
       roomModelRef.current.remove(selectedObjectInfo.object);
+
       interactableObjects.current = interactableObjects.current.filter(
         (obj) => obj !== selectedObjectInfo.object
       );
+
+      const idToDelete = selectedObjectInfo.object.userData.deviceId as number;
+
+
+      deletFunction(idToDelete);
+
       setSelectedObjectInfo(null);
     }
   };

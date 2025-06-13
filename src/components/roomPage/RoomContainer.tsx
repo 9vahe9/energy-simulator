@@ -9,14 +9,13 @@ import {
   Select,
   Space,
 } from "antd";
-import { DEVICE_SELECT_OPTONS, DeviceType } from "../../constants/Devices";
+import { DEVICE_SELECT_OPTONS } from "../../constants/Devices";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { AppDispatch, RootState } from "../../store/store";
 import useThreeScene from "../../hooks/useThreeScene.tsx";
 import { DayTime } from "../../constants/DayTime.ts";
-import EditDevice from "./EditDevice.tsx";
 
 
 import { fetchRooms } from "../../store/user/userSlice";
@@ -61,18 +60,18 @@ const RoomContainer = () => {
     setNewRoomDescription(existingRoom.description);
   }, [existingRoom]);
 
-  function handleDeletingDevice(id: number) {
-    setDevices((prev) => {
-      return prev.filter((device) => {
-        return device.deviceId !== id;
-      });
+  const handleDeletingDevice = (id: number) => {
+    setDevices(prev => {
+      const next = prev.filter(d => d.deviceId !== id);
+      console.log(devices, "this is a device");
+      return next;
     });
-  }
+
+  };
 
 
-  const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
-    useThreeScene( devices);
-
+const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
+  useThreeScene(handleDeletingDevice, devices); // Pass the current devices state
   const showModal = (type: number) => {
     setSelectedType(type);
     setModalVisible(true);
@@ -94,10 +93,7 @@ const RoomContainer = () => {
     });
   };
 
-  // const handleCancel = () => {
-  //   setModalVisible(false);
-  //   form.resetFields();
-  // };
+
 
   const onSaveClick = () => {
     const nameToUse = newRoomName ?? "";
@@ -143,15 +139,6 @@ const RoomContainer = () => {
   }
 
 
-  // function saveEditedDevice(id: number, replacementObject: IRoomDevice) {
-  //   setDevices(
-  //     devices.map((device) => {
-  //       return device.deviceId === id
-  //         ? { ...device, ...replacementObject }
-  //         : device;
-  //     })
-  //   );
-  // }
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -185,27 +172,7 @@ const RoomContainer = () => {
             Reset Room
           </Button>
 
-          <Button
-            block
-            onClick={() =>
-              EditDevice(
-                {
-                  name: "toaster",
-                  power: 123,
-                  uptime: 13134,
-                  workingDayTime: DayTime.Night,
-                  deviceId: 1,
-                  type: DeviceType.Dishwasher,
-                },
-                () => {
-                  console.log("eler");
-                },
-                () => handleDeletingDevice(1)
-              )
-            }
-          >
-            Edit something
-          </Button>
+
         </Space>
         <h3>Devices</h3>
         <List
