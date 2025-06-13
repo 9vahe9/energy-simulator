@@ -2,8 +2,8 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { LanguageSwitcher } from "../components/LanguageSwitcher"
-import { Affix, Layout, Menu, Typography } from "antd";
-import { ABOUT_US, DASHBOARD_PATH, HOME_PATH, LOGIN_PATH, SIGNUP_PATH } from "../constants/RoutePaths";
+import { Affix, Layout, Menu } from "antd";
+import { ABOUT_US, DASHBOARD_PATH, HOME_PATH } from "../constants/RoutePaths";
 import "./contentContainer.css"
 
 const { Header, Content } = Layout;

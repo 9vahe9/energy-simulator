@@ -19,7 +19,6 @@ import { DayTime } from "../../constants/DayTime.ts";
 import EditDevice from "./EditDevice.tsx";
 
 
-
 import { fetchRooms } from "../../store/user/userSlice";
 
 
@@ -72,7 +71,7 @@ const RoomContainer = () => {
 
 
   const { threeScene, handleAddDevice, getUpdatedDevicesPositions } =
-    useThreeScene(roomId, devices, handleDeletingDevice);
+    useThreeScene( devices);
 
   const showModal = (type: number) => {
     setSelectedType(type);
@@ -106,6 +105,7 @@ const RoomContainer = () => {
 
 
     const updateDevice = getUpdatedDevicesPositions();
+    //@ts-ignore
     const matchingItems = getMatchingItems(devices, updateDevice);
     const updatedDevicetArray = devices.map((item) => {
       console.log(item, "item", matchingItems);

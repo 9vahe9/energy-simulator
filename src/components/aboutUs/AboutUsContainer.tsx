@@ -1,4 +1,4 @@
-import { Card, Col, Row, Typography, Divider, Space, Tag } from "antd";
+import { Card, Col, Row, Typography, Divider, Space } from "antd";
 import { useTranslation } from "react-i18next";
 
 const { Title, Paragraph, Text } = Typography;

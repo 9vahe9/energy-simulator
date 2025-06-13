@@ -1,11 +1,11 @@
-import { Button, Space, DatePicker, version, Card, Typography, Flex} from 'antd';
+import { Button,  Card, Typography, Flex} from 'antd';
 import "./home.css"
 import {  useNavigate } from 'react-router-dom';
 import { LOGIN_PATH } from '../../constants/RoutePaths';
 import { SIGNUP_PATH } from '../../constants/RoutePaths';
 import { useTranslation } from 'react-i18next';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 export const HomeContainer = () => {
 
